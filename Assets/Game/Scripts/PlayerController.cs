@@ -23,8 +23,8 @@ namespace Game.Scripts
 
         [SerializeField] private bool canJump = false;
         [SerializeField] private float jumpForce = 10f;
-        [SerializeField] private Spring rideSpring;
-        [SerializeField] private Spring uprightJointSpring;
+        [SerializeField] private Spring rideSpring = new() { strength = 100, damping = 10 };
+        [SerializeField] private Spring uprightJointSpring = new() { strength = 100, damping = 10 };
         
         private Quaternion _uprightJointTargetRotation = Quaternion.identity;
         private Rigidbody _rb;
@@ -34,15 +34,15 @@ namespace Game.Scripts
             _rb = GetComponent<Rigidbody>();
         }
 
-        private void Update()
+        private void OnJump()
         {
-            if (canJump && Input.GetKeyDown(KeyCode.Space))
+            if (canJump)
             {
                 _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             }
         }
 
-        public void UpdateUprightForce(float elapsedTime)
+        private void UpdateUprightForce(float elapsedTime)
         {
             var currentRotation = transform.rotation;
             var goalRotation = _uprightJointTargetRotation.ShortestRotation(currentRotation);
@@ -60,7 +60,6 @@ namespace Game.Scripts
             var movement = value.Get<Vector2>();
             movement.Normalize();
             
-            // TODO: implement movement
             _rb.AddForce(movement.Bulk() * 10f);
         }
 
