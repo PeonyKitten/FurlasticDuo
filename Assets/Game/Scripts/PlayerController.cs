@@ -18,20 +18,31 @@ namespace Game.Scripts
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private float rideHeight = 0.5f;
-
         [SerializeField] private float groundCheckLength = 1f;
 
-        [SerializeField] private bool canJump = false;
-        [SerializeField] private float jumpForce = 10f;
+        [Header("Movement")]
+        [SerializeField] private bool useCameraRelativeMovement = true;
+        [SerializeField] private float playerSpeed = 20f;
+        
+        [Header("Jump")]
+        [SerializeField] private bool canJump;
+        [SerializeField] private float jumpForce = 15f;
+        
         [SerializeField] private Spring rideSpring = new() { strength = 100, damping = 10 };
         [SerializeField] private Spring uprightJointSpring = new() { strength = 100, damping = 10 };
         
         private Quaternion _uprightJointTargetRotation = Quaternion.identity;
         private Rigidbody _rb;
+        private Vector2 _movement;
+        private Transform _camera;
         
         private void Start()
         {
             _rb = GetComponent<Rigidbody>();
+            
+            // TODO: we might want to allow easily switching out our Camera
+            var mainCamera = Camera.main;
+            if (mainCamera) _camera = mainCamera.transform;
         }
 
         private void OnJump()
@@ -51,16 +62,19 @@ namespace Game.Scripts
             rotAxis.Normalize();
 
             var rotRadians = rotDegrees * Mathf.Deg2Rad;
-
+        
             _rb.AddTorque(rotAxis * (rotRadians * uprightJointSpring.strength) - _rb.angularVelocity * uprightJointSpring.damping);
         }
 
         private void OnMovement(InputValue value)
         {
-            var movement = value.Get<Vector2>();
-            movement.Normalize();
-            
-            _rb.AddForce(movement.Bulk() * 10f);
+            _movement = value.Get<Vector2>();
+
+            if (useCameraRelativeMovement)
+            {
+                var projected = Quaternion.Inverse(_camera.rotation) * _movement.Bulk();
+                _movement = projected.Flatten();
+            }
         }
 
         // Update is called once per frame
@@ -71,7 +85,7 @@ namespace Game.Scripts
             if (!hitGround) return;
             
             var velocity = _rb.velocity;
-            var rayDir = transform.TransformDirection(Vector3.down);
+            var rayDir = -hitInfo.normal;
 
             var otherVelocity = Vector3.zero;
             var hitBody = hitInfo.rigidbody;
@@ -97,7 +111,16 @@ namespace Game.Scripts
                 hitBody.AddForceAtPosition(rayDir * -springForce, hitInfo.point);
             }
             
-            UpdateUprightForce(Time.deltaTime);
+            // UpdateUprightForce(Time.deltaTime);
+            
+            _movement.Normalize();
+
+            _rb.AddForce(_movement.Bulk() * playerSpeed);
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.DrawRay(transform.position, _movement.Bulk());
         }
     }
 }
