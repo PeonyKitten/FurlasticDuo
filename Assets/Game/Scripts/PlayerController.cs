@@ -23,10 +23,17 @@ namespace Game.Scripts
         [Header("Movement")]
         [SerializeField] private bool useCameraRelativeMovement = true;
         [SerializeField] private float playerSpeed = 20f;
+        [SerializeField] private float maxSpeed = 10f;
+        [SerializeField] private float acceleration = 200f;
+        [SerializeField] private AnimationCurve accelerationFactorDot;
+        [SerializeField] private float maxAcceleration = 150f;
+        [SerializeField] private AnimationCurve maxAccelerationFactorDot;
         
         [Header("Jump")]
         [SerializeField] private bool canJump;
         [SerializeField] private float jumpForce = 15f;
+        [SerializeField] private float jumpInputBuffer = 0.33f;
+        [SerializeField] private float coyoteTime = 0.33f;
         
         [SerializeField] private Spring rideSpring = new() { strength = 100, damping = 10 };
         [SerializeField] private Spring uprightJointSpring = new() { strength = 100, damping = 10 };
@@ -111,7 +118,7 @@ namespace Game.Scripts
                 hitBody.AddForceAtPosition(rayDir * -springForce, hitInfo.point);
             }
             
-            // UpdateUprightForce(Time.deltaTime);
+            UpdateUprightForce(Time.deltaTime);
             
             _movement.Normalize();
 
