@@ -82,6 +82,11 @@ namespace Game.Scripts
                 var projected = Quaternion.Inverse(_camera.rotation) * _movement.Bulk();
                 _movement = projected.Flatten();
             }
+
+            if (_movement != Vector2.zero)
+            {
+                _uprightJointTargetRotation = Quaternion.LookRotation(_movement.Bulk(), Vector3.up);
+            }
         }
 
         // Update is called once per frame
@@ -118,11 +123,11 @@ namespace Game.Scripts
                 hitBody.AddForceAtPosition(rayDir * -springForce, hitInfo.point);
             }
             
-            UpdateUprightForce(Time.deltaTime);
+            // UpdateUprightForce(Time.deltaTime);
             
             _movement.Normalize();
-
             _rb.AddForce(_movement.Bulk() * playerSpeed);
+            _movement = Vector2.zero;
         }
 
         private void OnDrawGizmos()
