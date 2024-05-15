@@ -40,6 +40,8 @@ namespace Game.Scripts
         [SerializeField] private Spring rideSpring = new() { strength = 100, damping = 10 };
         [SerializeField] private Spring uprightJointSpring = new() { strength = 100, damping = 10 };
         [SerializeField] private Camera primaryCamera;
+
+        public float speedFactor = 1f;
         
         private Quaternion _uprightJointTargetRotation = Quaternion.identity;
         private Rigidbody _rb;
@@ -48,6 +50,8 @@ namespace Game.Scripts
 
         /// Camera to be used for camera-relative movement
         public Camera PrimaryCamera { get => primaryCamera; set => primaryCamera = value; }
+
+        public float Mass => _rb.mass;
         
         private void Start()
         {
@@ -172,7 +176,7 @@ namespace Game.Scripts
             // groundVel = velocity of the object we're standing on / GetPointVelocity()
             // speedFactor = used for special effects, not needed?
             
-            var goalVel = _movement.Bulk() * maxSpeed;
+            var goalVel = _movement.Bulk() * maxSpeed * speedFactor;
 
             _goalVel = Vector3.MoveTowards(_goalVel,
                 goalVel + groundVel,
