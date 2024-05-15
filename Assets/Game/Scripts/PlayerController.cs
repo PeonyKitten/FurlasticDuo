@@ -65,7 +65,7 @@ namespace Game.Scripts
             // set a velocity directly, no need for a force
             if (canJump)
             {
-                _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+                _rb.velocity = new Vector3(_rb.velocity.x, jumpForce, _rb.velocity.z);
             }
         }
 
