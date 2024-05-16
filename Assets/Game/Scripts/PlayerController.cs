@@ -52,6 +52,7 @@ namespace Game.Scripts
         public Camera PrimaryCamera { get => primaryCamera; set => primaryCamera = value; }
 
         public float Mass => _rb.mass;
+        public Quaternion TargetRotation => _uprightJointTargetRotation;
         
         private void Start()
         {
