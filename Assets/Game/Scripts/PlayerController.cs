@@ -28,12 +28,6 @@ namespace Game.Scripts
         [SerializeField] private AnimationCurve maxAccelerationFactorDot;
         [SerializeField] private Vector3 forceScale = new(1, 0, 1);
         
-        [Header("Jump")]
-        [SerializeField] private bool canJump;
-        [SerializeField] private float jumpForce = 15f;
-        [SerializeField] private float jumpInputBuffer = 0.33f;
-        [SerializeField] private float coyoteTime = 0.33f;
-        
         [Header("Character Controller")]
         [SerializeField] private float rideHeight = 0.5f;
         [SerializeField] private float groundCheckLength = 1f;
@@ -42,18 +36,19 @@ namespace Game.Scripts
         [SerializeField] private Camera primaryCamera;
 
         public float speedFactor = 1f;
-        
-        private Quaternion _uprightJointTargetRotation = Quaternion.identity;
+
         private Rigidbody _rb;
         private Vector2 _movement;
         private Vector3 _goalVel;
+        private float _movementControlDisabledTimer;
+        private float _groundCheckDisabledTimer;
 
         /// Camera to be used for camera-relative movement
         public Camera PrimaryCamera { get => primaryCamera; set => primaryCamera = value; }
-
         public float Mass => _rb.mass;
-        public Quaternion TargetRotation => _uprightJointTargetRotation;
-        
+        public Quaternion TargetRotation { get; private set; } = Quaternion.identity;
+        public float GroundCheckLength => groundCheckLength;
+
         private void Start()
         {
             _rb = GetComponent<Rigidbody>();
@@ -64,20 +59,15 @@ namespace Game.Scripts
             }
         }
 
-        private void OnJump()
+        public void DisableGroundCheckForSeconds(float delay)
         {
-            // TODO: turn off raycast and floating force for a bit :)
-            // set a velocity directly, no need for a force
-            if (canJump)
-            {
-                _rb.velocity = new Vector3(_rb.velocity.x, jumpForce, _rb.velocity.z);
-            }
+            _groundCheckDisabledTimer = delay;
         }
 
         private void UpdateUprightForce(float elapsedTime)
         {
             var currentRotation = transform.rotation;
-            var goalRotation = _uprightJointTargetRotation.ShortestRotation(currentRotation);
+            var goalRotation = TargetRotation.ShortestRotation(currentRotation);
 
             goalRotation.ToAngleAxis(out var rotDegrees, out var rotAxis);
             rotAxis.Normalize();
@@ -113,8 +103,6 @@ namespace Game.Scripts
                 input = CalculateCameraRelativeMovement(input);
             }
 
-            var _movementControlDisabledTimer = 0f;
-
             _movementControlDisabledTimer -= Time.deltaTime;
 
             if (_movementControlDisabledTimer > 0)
@@ -126,58 +114,58 @@ namespace Game.Scripts
 
             if (input != Vector2.zero)
             {
-                _uprightJointTargetRotation = Quaternion.LookRotation(input.Bulk(), Vector3.up);
+                TargetRotation = Quaternion.LookRotation(input.Bulk(), Vector3.up);
             }
 
             _movement = input;
         }
 
-        // Update is called once per frame
         private void FixedUpdate()
         {
-            var hitGround = Physics.Raycast(transform.position, Vector3.down, out var hitInfo, groundCheckLength);
-
-            if (!hitGround) return;
+            _groundCheckDisabledTimer -= Time.deltaTime;
             
-            var velocity = _rb.velocity;
-            var rayDir = -hitInfo.normal;
-
-            var otherVelocity = Vector3.zero;
-            var hitBody = hitInfo.rigidbody;
-
-            if (hitBody)
-            {
-                otherVelocity = hitBody.velocity;
-            }
-
-            var rayDirVelocity = Vector3.Dot(rayDir, velocity);
-            var otherDirVelocity = Vector3.Dot(rayDir, otherVelocity);
-
-            var relativeVelocity = rayDirVelocity - otherDirVelocity;
-
-            var displacement = hitInfo.distance - rideHeight;
-
-            var springForce = displacement * rideSpring.strength - relativeVelocity * rideSpring.damping;
-                
-            _rb.AddForce(rayDir * springForce);
-
             var groundVel = Vector3.zero;
-            if (hitBody)
-            {
-                hitBody.AddForceAtPosition(rayDir * -springForce, hitInfo.point);
-                groundVel = hitBody.GetPointVelocity(hitInfo.point);
-            }
             
+            var hitGround = Physics.Raycast(transform.position, Vector3.down, out var hitInfo, groundCheckLength);
+            
+            if (hitGround && _groundCheckDisabledTimer < 0)
+            {
+                var velocity = _rb.velocity;
+                var rayDir = -hitInfo.normal;
+
+                var otherVelocity = Vector3.zero;
+                var hitBody = hitInfo.rigidbody;
+
+                if (hitBody)
+                {
+                    otherVelocity = hitBody.velocity;
+                }
+
+                var rayDirVelocity = Vector3.Dot(rayDir, velocity);
+                var otherDirVelocity = Vector3.Dot(rayDir, otherVelocity);
+
+                var relativeVelocity = rayDirVelocity - otherDirVelocity;
+
+                var displacement = hitInfo.distance - rideHeight;
+
+                var springForce = displacement * rideSpring.strength - relativeVelocity * rideSpring.damping;
+
+                _rb.AddForce(rayDir * springForce);
+
+                if (hitBody)
+                {
+                    hitBody.AddForceAtPosition(rayDir * -springForce, hitInfo.point);
+                    hitBody.GetPointVelocity(hitInfo.point);
+                }
+            }
+
             UpdateUprightForce(Time.deltaTime);
             
             var unitVel = _goalVel.normalized;
             var velDot = Vector3.Dot(_goalVel, unitVel);
             var accel = acceleration * accelerationFactorDot.Evaluate(velDot);
             
-            // groundVel = velocity of the object we're standing on / GetPointVelocity()
-            // speedFactor = used for special effects, not needed?
-            
-            var goalVel = _movement.Bulk() * maxSpeed * speedFactor;
+            var goalVel = _movement.Bulk() * (maxSpeed * speedFactor);
 
             _goalVel = Vector3.MoveTowards(_goalVel,
                 goalVel + groundVel,
