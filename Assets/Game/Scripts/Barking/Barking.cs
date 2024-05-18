@@ -7,17 +7,31 @@ namespace Game.Scripts
     public class Barking : MonoBehaviour
     {
         public float barkRadius = 5f;
-        // public GameObject barkEffectPrefab;
+        public AudioClip barkSound; 
+
+        private AudioSource audioSource; 
+
+        private void Awake()
+        {
+            audioSource = GetComponent<AudioSource>();  
+        }
+
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.B))  // Assuming 'B' is the bark key
+            if (Input.GetKeyDown(KeyCode.B))
             {
                 OnBark();
             }
         }
+
         private void OnBark()
         {
             Debug.Log("woof woof");
+            if (barkSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(barkSound); 
+            }
+
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, barkRadius);
             foreach (var hitCollider in hitColliders)
             {
@@ -28,19 +42,6 @@ namespace Game.Scripts
                 }
             }
         }
-
-        //void ShowBarkEffect()
-        //{
-        //    if (barkEffectPrefab != null)
-        //    {
-        //        GameObject effect = Instantiate(barkEffectPrefab, transform.position, Quaternion.identity);
-        //        Destroy(effect, 1.5f);
-        //    }
-        //    else
-        //    {
-        //        Debug.LogWarning("Make sure Bark prefab is assigned in the inspector");
-        //    }
-        //}
 
         void OnDrawGizmosSelected()
         {
