@@ -1,36 +1,31 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-namespace Game.Scripts
+namespace Game.Scripts.Grab
 {
     [RequireComponent(typeof(PlayerController))]
     public class Grabbing : MonoBehaviour
     {
         [SerializeField] private Vector3 objectCheckOffset = Vector3.zero;
-
-        public float grabRange = 2f;
-        private IGrabbable currentGrabbable;
-        private Transform grabPoint;
-        private PlayerController playerController;
-        private Collider playerCollider;
-        private GameObject currentGrabbableObject;
+        [SerializeField] private float grabRange = 2f;
+        
+        private IGrabbable _currentGrabbable;
+        private Transform _grabPoint;
+        private PlayerController _playerController;
+        private GameObject _currentGrabbableObject;
 
         private void Awake()
         {
-            playerController = GetComponent<PlayerController>();
-            playerCollider = GetComponent<Collider>();
-            grabPoint = new GameObject("GrabPoint").transform;
-            grabPoint.SetParent(transform);
-            grabPoint.localPosition = new Vector3(0, 0, 1.4f);
+            _playerController = GetComponent<PlayerController>();
+            _grabPoint = new GameObject("GrabPoint").transform;
+            _grabPoint.SetParent(transform);
+            _grabPoint.localPosition = new Vector3(0, 0, 1.4f);
         }
 
         private void OnGrab()
         {
             Debug.Log("Grab action performed");
 
-            if (currentGrabbable == null)
+            if (_currentGrabbable == null)
             {
                 TryGrab();
             }
@@ -42,46 +37,45 @@ namespace Game.Scripts
 
         private void TryGrab()
         {
-            var actualForward = playerController.TargetRotation * Vector3.forward;
+            var actualForward = _playerController.TargetRotation * Vector3.forward;
 
             if (Physics.Raycast(transform.position + objectCheckOffset, actualForward, out var hit, grabRange))
             {
-                IGrabbable grabbable = hit.collider.GetComponent<IGrabbable>();
-                if (grabbable != null)
+                if (hit.collider.TryGetComponent(out IGrabbable grabbable))
                 {
-                    currentGrabbable = grabbable;
-                    currentGrabbableObject = hit.collider.gameObject;
-                    currentGrabbable.OnGrab(grabPoint);
+                    _currentGrabbable = grabbable;
+                    _currentGrabbableObject = hit.collider.gameObject;
+                    _currentGrabbable.OnGrab(_grabPoint);
 
                     AdjustPlayerSpeed(0.5f);
 
-                    Debug.Log("Object grabbed: " + currentGrabbableObject.name);
+                    Debug.Log("Object grabbed: " + _currentGrabbableObject.name);
                 }
             }
         }
 
         private void Release()
         {
-            if (currentGrabbable != null)
-            {
-                currentGrabbable.OnRelease(grabPoint);
+            if (_currentGrabbable == null) return;
+            
+            _currentGrabbable.OnRelease(_grabPoint);
 
-                ResetPlayerSpeed();
+            ResetPlayerSpeed();
 
-                Debug.Log("Object released: " + currentGrabbableObject.name);
-                currentGrabbable = null;
-                currentGrabbableObject = null;
-            }
+            Debug.Log("Object released: " + _currentGrabbableObject.name);
+            
+            _currentGrabbable = null;
+            _currentGrabbableObject = null;
         }
 
         private void AdjustPlayerSpeed(float factor)
         {
-            playerController.speedFactor = factor;
+            _playerController.speedFactor = factor;
         }
 
         private void ResetPlayerSpeed()
         {
-            playerController.speedFactor = 1.0f;
+            _playerController.speedFactor = 1.0f;
         }
 
         private void OnDrawGizmosSelected()
@@ -90,7 +84,7 @@ namespace Game.Scripts
 
             Gizmos.color = Color.blue;
             var startPos = transform.position + objectCheckOffset;
-            var actualForward = playerController.TargetRotation * Vector3.forward;
+            var actualForward = _playerController.TargetRotation * Vector3.forward;
             Gizmos.DrawLine(startPos, startPos + actualForward);
         }
     }

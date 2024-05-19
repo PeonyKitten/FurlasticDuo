@@ -1,57 +1,60 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DraggableObject : MonoBehaviour, IGrabbable
+namespace Game.Scripts.Grab
 {
-    private Rigidbody rb;
-    private List<Transform> grabPoints = new List<Transform>();
-    private List<FixedJoint> fixedJoints = new List<FixedJoint>();
-
-    private void Awake()
+    public class DraggableObject : MonoBehaviour, IGrabbable
     {
-        rb = GetComponent<Rigidbody>();
-    }
+        private Rigidbody _rb;
+        private readonly List<Transform> _grabPoints = new List<Transform>();
+        private readonly List<FixedJoint> _fixedJoints = new List<FixedJoint>();
 
-    public void OnGrab(Transform grabPoint)
-    {
-        grabPoints.Add(grabPoint);
-
-        FixedJoint fixedJoint = gameObject.AddComponent<FixedJoint>();
-        fixedJoint.connectedBody = grabPoint.GetComponentInParent<Rigidbody>();
-        fixedJoint.breakForce = float.MaxValue;
-        fixedJoint.breakTorque = float.MaxValue;
-        fixedJoint.enableCollision = false;
-        fixedJoint.enablePreprocessing = false;
-
-        fixedJoints.Add(fixedJoint);
-
-        rb.isKinematic = false;
-    }
-
-    public void OnRelease(Transform grabPoint)
-    {
-        int index = grabPoints.IndexOf(grabPoint);
-        if (index != -1)
+        private void Awake()
         {
-            Destroy(fixedJoints[index]);
-            fixedJoints.RemoveAt(index);
-            grabPoints.RemoveAt(index);
+            _rb = GetComponent<Rigidbody>();
         }
-    }
 
-    private void FixedUpdate()
-    {
-        if (grabPoints.Count > 0)
+        public void OnGrab(Transform grabPoint)
         {
-            Vector3 combinedForce = Vector3.zero;
+            _grabPoints.Add(grabPoint);
 
-            foreach (Transform grabPoint in grabPoints)
+            var fixedJoint = gameObject.AddComponent<FixedJoint>();
+            fixedJoint.connectedBody = grabPoint.GetComponentInParent<Rigidbody>();
+            fixedJoint.breakForce = float.MaxValue;
+            fixedJoint.breakTorque = float.MaxValue;
+            fixedJoint.enableCollision = false;
+            fixedJoint.enablePreprocessing = false;
+
+            _fixedJoints.Add(fixedJoint);
+
+            _rb.isKinematic = false;
+        }
+
+        public void OnRelease(Transform grabPoint)
+        {
+            int index = _grabPoints.IndexOf(grabPoint);
+            if (index != -1)
             {
-                Vector3 positionDifference = grabPoint.position - transform.position;
-                combinedForce += positionDifference * 10f;
+                Destroy(_fixedJoints[index]);
+                _fixedJoints.RemoveAt(index);
+                _grabPoints.RemoveAt(index);
             }
+        }
 
-            rb.AddForce(combinedForce);
+        private void FixedUpdate()
+        {
+            if (_grabPoints.Count > 0)
+            {
+                Vector3 combinedForce = Vector3.zero;
+
+                foreach (Transform grabPoint in _grabPoints)
+                {
+                    Vector3 positionDifference = grabPoint.position - transform.position;
+                    combinedForce += positionDifference * 10f;
+                }
+
+                _rb.AddForce(combinedForce);
+            }
         }
     }
 }

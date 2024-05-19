@@ -2,18 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Game.Scripts
+namespace Game.Scripts.Barking
 {
-    public class Barking : MonoBehaviour
+    public class Bark : MonoBehaviour
     {
         public float barkRadius = 5f;
         public AudioClip barkSound; 
 
-        private AudioSource audioSource; 
+        private AudioSource _audioSource; 
 
         private void Awake()
         {
-            audioSource = GetComponent<AudioSource>();  
+            _audioSource = GetComponent<AudioSource>();  
         }
 
         private void Update()
@@ -27,9 +27,9 @@ namespace Game.Scripts
         private void OnBark()
         {
             Debug.Log("woof woof");
-            if (barkSound != null && audioSource != null)
+            if (barkSound != null && _audioSource != null)
             {
-                audioSource.PlayOneShot(barkSound); 
+                _audioSource.PlayOneShot(barkSound); 
             }
 
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, barkRadius);
@@ -43,7 +43,7 @@ namespace Game.Scripts
             }
         }
 
-        void OnDrawGizmosSelected()
+        public void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, barkRadius);

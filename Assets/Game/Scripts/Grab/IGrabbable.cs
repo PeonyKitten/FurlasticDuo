@@ -1,7 +1,10 @@
 using UnityEngine;
 
-public interface IGrabbable
+namespace Game.Scripts.Grab
 {
-    void OnGrab(Transform grabPoint);
-    void OnRelease(Transform grabPoint);
+    public interface IGrabbable
+    {
+        void OnGrab(Transform grabPoint);
+        void OnRelease(Transform grabPoint);
+    }
 }

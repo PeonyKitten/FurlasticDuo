@@ -1,51 +1,55 @@
 using UnityEngine;
 
-public class StaticObject : MonoBehaviour, IGrabbable
+namespace Game.Scripts.Grab
 {
-    private Transform grabPoint;
-    private FixedJoint fixedJoint;
-    private Rigidbody rb;
-
-    private void Awake()
+    public class StaticObject : MonoBehaviour, IGrabbable
     {
-        rb = GetComponent<Rigidbody>();
-        rb.isKinematic = true;
-    }
+        private Transform _grabPoint;
+        private FixedJoint _fixedJoint;
+        private Rigidbody _rb;
 
-    public void OnGrab(Transform grabPoint)
-    {
-        this.grabPoint = grabPoint;
-        fixedJoint = gameObject.AddComponent<FixedJoint>();
-        fixedJoint.connectedBody = grabPoint.GetComponentInParent<Rigidbody>();
-        fixedJoint.breakForce = float.MaxValue;
-        fixedJoint.breakTorque = float.MaxValue;
-        fixedJoint.enableCollision = false;
-        fixedJoint.enablePreprocessing = false;
-
-        Debug.Log("Static object grabbed");
-    }
-
-    public void OnRelease(Transform grabPoint)
-    {
-        if (this.grabPoint == grabPoint)
+        private void Awake()
         {
-            this.grabPoint = null;
+            _rb = GetComponent<Rigidbody>();
+            _rb.isKinematic = true;
+        }
 
-            if (fixedJoint != null)
+        public void OnGrab(Transform grabPoint)
+        {
+            _grabPoint = grabPoint;
+            _fixedJoint = gameObject.AddComponent<FixedJoint>();
+            _fixedJoint.connectedBody = grabPoint.GetComponentInParent<Rigidbody>();
+            _fixedJoint.breakForce = float.MaxValue;
+            _fixedJoint.breakTorque = float.MaxValue;
+            _fixedJoint.enableCollision = false;
+            _fixedJoint.enablePreprocessing = false;
+
+            Debug.Log("Static object grabbed");
+        }
+
+        public void OnRelease(Transform grabPoint)
+        {
+            if (_grabPoint != grabPoint) return;
+            
+            _grabPoint = null;
+
+            if (_fixedJoint)
             {
-                Destroy(fixedJoint);
+                Destroy(_fixedJoint);
             }
 
             Debug.Log("Static object released");
         }
-    }
 
-    private void FixedUpdate()
-    {
-        // Ensure the object remains immovable
-        if (rb.isKinematic == false)
+        private void FixedUpdate()
         {
-            rb.isKinematic = true;
+            // TODO: needs rework
+            
+            // Ensure the object remains immovable
+            if (_rb.isKinematic == false)
+            {
+                _rb.isKinematic = true;
+            }
         }
     }
 }

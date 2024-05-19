@@ -1,34 +1,37 @@
 using UnityEngine;
 
-public class PickableObject : MonoBehaviour, IGrabbable
+namespace Game.Scripts.Grab
 {
-    private Rigidbody rb;
-    private Transform grabPoint;
-
-    private void Awake()
+    public class PickableObject : MonoBehaviour, IGrabbable
     {
-        rb = GetComponent<Rigidbody>();
-    }
-
-    public void OnGrab(Transform grabPoint)
-    {
-        this.grabPoint = grabPoint;
-        rb.useGravity = false;
-    }
-
-    public void OnRelease(Transform grabPoint)
-    {
-        this.grabPoint = null;
-        rb.useGravity = true;
-    }
-
-    private void FixedUpdate()
-    {
-        if (grabPoint != null)
+        [SerializeField] private float lerpSpeed = 10f;
+        
+        private Rigidbody _rb;
+        private Transform _grabPoint;
+        
+        private void Awake()
         {
-            float lerpSpeed = 10f;
-            Vector3 newPosition = Vector3.Lerp(transform.position, grabPoint.position, Time.deltaTime * lerpSpeed);
-            rb.MovePosition(newPosition);
+            _rb = GetComponent<Rigidbody>();
+        }
+
+        public void OnGrab(Transform grabPoint)
+        {
+            _grabPoint = grabPoint;
+            _rb.useGravity = false;
+        }
+
+        public void OnRelease(Transform grabPoint)
+        {
+            this._grabPoint = null;
+            _rb.useGravity = true;
+        }
+
+        private void FixedUpdate()
+        {
+            if (!_grabPoint) return;
+            
+            var newPosition = Vector3.Lerp(transform.position, _grabPoint.position, Time.deltaTime * lerpSpeed);
+            _rb.MovePosition(newPosition);
         }
     }
 }
