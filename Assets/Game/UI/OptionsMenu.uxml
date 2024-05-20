@@ -1,0 +1,20 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/Game/UI/OptionsMenu.uss?fileID=7433441132597879392&amp;guid=948fda881e9a0634a8f253f29e3617e2&amp;type=3#OptionsMenu" />
+    <Style src="project://database/Assets/Game/UI/MainMenu.uss?fileID=7433441132597879392&amp;guid=a4b6357d704177641bf9f52865a00078&amp;type=3#MainMenu" />
+    <ui:VisualElement name="Background" style="background-image: url(&quot;project://database/Assets/Game/Textures/Concept/menu_blur_bg.png?fileID=2800000&amp;guid=2e7e61791c0af0d43b4772a6507ac9cd&amp;type=3#menu_blur_bg&quot;); flex-grow: 1; padding-top: 50px; padding-right: 100px; padding-bottom: 50px; padding-left: 100px;">
+        <ui:VisualElement name="TopBar" style="flex-grow: 0; justify-content: center; align-items: center; background-color: rgb(148, 32, 0); padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px; flex-direction: row;">
+            <ui:Label tabindex="-1" text="Options" parse-escape-sequences="true" display-tooltip-when-elided="true" name="OptionsLabel" style="color: rgb(255, 255, 255); font-size: 64px; -unity-font-style: bold; padding-right: 10px; padding-left: 10px;" />
+            <ui:VisualElement name="CategoryTabs" style="flex-grow: 1; background-color: rgb(255, 210, 107); flex-direction: row; justify-content: space-around;">
+                <ui:VisualElement name="PawIndicator" style="flex-grow: 1; position: absolute; background-image: url(&quot;project://database/Assets/Game/Textures/Concept/menu_options_paw.png?fileID=2800000&amp;guid=737fc6aab041c1248a002b7d7b6e4ad8&amp;type=3#menu_options_paw&quot;); -unity-background-scale-mode: stretch-to-fill; background-color: rgba(255, 255, 255, 0); left: -11px; top: -60px; right: auto; bottom: -20px; width: 320px; height: initial; -unity-background-image-tint-color: rgb(255, 255, 255);" />
+                <ui:Button text="Game" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Game" class="options-tab-button" />
+                <ui:Button text="Display" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Display" class="tab-button options-tab-button" />
+                <ui:Button text="Controls" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Controls" class="tab-button options-tab-button" />
+                <ui:Button text="Audio" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Audio" class="tab-button options-tab-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="Options" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Game/Textures/Concept/menu_options_box.png?fileID=2800000&amp;guid=fde014b78518cf64eba0cedad03a0eef&amp;type=3#menu_options_box&quot;); width: initial; margin-left: 5%; margin-right: 5%; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-bottom: 0; margin-top: 0;" />
+        <ui:VisualElement name="BottomBar" style="flex-grow: 0; max-height: 100px; min-height: 100px; justify-content: center; align-items: flex-start;">
+            <ui:Button text="Back" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BackButton" class="main-button" style="align-self: flex-start;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
