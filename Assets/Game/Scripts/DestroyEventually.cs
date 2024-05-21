@@ -19,7 +19,7 @@ namespace Game.Scripts
 
             if (_destroyTimer < 0)
             {
-                Destroy(this);
+                Destroy(gameObject);
             }
         }
     }
