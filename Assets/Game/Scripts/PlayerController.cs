@@ -35,7 +35,9 @@ namespace Game.Scripts
         [SerializeField] private Spring uprightJointSpring = new() { strength = 100, damping = 10 };
         [SerializeField] private Camera primaryCamera;
 
+        public Vector3 gravityMultiplier = Vector3.one;
         public float speedFactor = 1f;
+        public float angularSpeedFactor = 1f;
 
         private Rigidbody _rb;
         private Vector2 _movement;
@@ -74,7 +76,7 @@ namespace Game.Scripts
 
             var rotRadians = rotDegrees * Mathf.Deg2Rad;
         
-            _rb.AddTorque((rotAxis * (rotRadians * uprightJointSpring.strength) - _rb.angularVelocity * uprightJointSpring.damping) * elapsedTime);
+            _rb.AddTorque((rotAxis * (rotRadians * uprightJointSpring.strength * angularSpeedFactor) - _rb.angularVelocity * (uprightJointSpring.damping / angularSpeedFactor)) * elapsedTime);
         }
 
         private Vector2 CalculateCameraRelativeMovement(Vector2 input)
@@ -176,6 +178,10 @@ namespace Game.Scripts
             neededAccel = Vector3.ClampMagnitude(neededAccel, maxAccel);
 
             _rb.AddForce(Vector3.Scale(neededAccel * _rb.mass, forceScale));
+
+            var effectiveGravity = Vector3.Scale(Physics.gravity, gravityMultiplier);
+            // Apply gravity
+            _rb.AddForce(effectiveGravity, ForceMode.Acceleration);
         }
 
         private void OnDrawGizmos()
