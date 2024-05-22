@@ -13,6 +13,8 @@ namespace Game.Scripts.Game.States
         {
             // EventBus<GameStates>.Publish(GameStates.Running);
             LoadPlayground(state);
+            state.pauseGameAction.Enable();
+            state.pauseGameAction.performed += OpenPauseGameMenu;
         }
 
         private static void LoadPlayground(GameManager state)
@@ -29,16 +31,25 @@ namespace Game.Scripts.Game.States
             };
         }
 
-        public void OnUpdate(GameManager state)
+        public void OnStateResume(GameManager state)
         {
-            if (Input.GetKey(KeyCode.Escape))
-            {
-                state.ChangeState(new PauseState(), true);
-            }
+            state.pauseGameAction.Enable();
+            state.pauseGameAction.performed += OpenPauseGameMenu;
+        }
+
+        private static void OpenPauseGameMenu(InputAction.CallbackContext obj)
+        {
+            var state = GameManager.Instance;
+            
+            state.ChangeState(new PauseState(), true);
+            state.pauseGameAction.performed -= OpenPauseGameMenu;
+            state.pauseGameAction.Disable();
         }
 
         public void OnStateExit(GameManager state)
         {
+            state.pauseGameAction.performed -= OpenPauseGameMenu;
+            state.pauseGameAction.Disable();
             // EventBus<GameStates>.Publish(GameStates.Paused);
         }
     }

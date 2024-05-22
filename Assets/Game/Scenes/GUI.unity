@@ -367,6 +367,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26ccd91fe65c4a99bcea4e0a72dffa5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pauseGameAction:
+    m_Name: Pause Game
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: fb421518-bd6c-4808-9019-5cf4c99ece34
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: b03fcadf-87d9-4ced-a8eb-fafd4fbb7ec4
+      m_Path: <Keyboard>/escape
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Pause Game
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 02a43f1c-3e43-4b7b-b3eb-f893bfeeaced
+      m_Path: <Gamepad>/start
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Pause Game
+      m_Flags: 0
+    m_Flags: 0
   uiCamera: {fileID: 146670509}
 --- !u!1 &748969838
 GameObject:
@@ -720,6 +745,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   style: {fileID: 7433441132597879392, guid: a8389b50762850d4181d8ebecead23e7, type: 3}
+  returnToGameAction:
+    m_Name: Return To Game
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: 88c8947f-d406-4dbb-b919-f1c2263d95cb
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: e49639fc-da7c-4ae7-ab68-c0f55d01252f
+      m_Path: <Keyboard>/escape
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Return To Game
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 5851ba6f-9db7-48f7-b766-b49730bfa8bc
+      m_Path: <Gamepad>/buttonEast
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Return To Game
+      m_Flags: 0
+    m_Flags: 0
 --- !u!1 &1886311367
 GameObject:
   m_ObjectHideFlags: 0
@@ -783,6 +833,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   style: {fileID: 7433441132597879392, guid: a8389b50762850d4181d8ebecead23e7, type: 3}
+  returnToPreviousMenuAction:
+    m_Name: Return To Previous Menu
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: b97db5fb-49b5-4ed6-b78d-684c0aa77d8e
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: dadae28f-0f1e-4af5-8cd7-a15afc2d7fc9
+      m_Path: <Keyboard>/escape
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Return To Previous Menu
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 6c021170-57ae-4ec5-97dc-25299a295517
+      m_Path: <Gamepad>/buttonEast
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Return To Previous Menu
+      m_Flags: 0
+    m_Flags: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
