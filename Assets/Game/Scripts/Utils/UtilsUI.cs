@@ -1,3 +1,4 @@
+using UnityEngine.Events;
 using UnityEngine.UIElements;
 
 namespace Game.Scripts.Utils
@@ -19,6 +20,13 @@ namespace Game.Scripts.Utils
             }
             parent.Add(element);
             return element;
+        }
+        
+        // ReSharper disable Unity.PerformanceAnalysis
+        public static void ApplyClickCallbacks(this Button button, UnityAction callback)
+        {
+            button.RegisterCallback<ClickEvent>(_ => callback());
+            button.RegisterCallback<NavigationSubmitEvent>(_ => callback());
         }
     }
 }
