@@ -23,6 +23,11 @@ namespace Game.Scripts.UI.Menus
             _backButton = root.Q<Button>("BackButton");
             _backButton.RegisterCallback<ClickEvent>(_ => ReturnToPreviousMenu());
             _backButton.RegisterCallback<NavigationSubmitEvent>(_ => ReturnToPreviousMenu());
+            
+            if (preventOverflowNavigation)
+            {
+                _backButton.DisableNavigationInDirections(NavigationMoveEvent.Direction.Down);
+            }
         }
 
         public override void Show()

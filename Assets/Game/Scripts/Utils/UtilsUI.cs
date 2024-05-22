@@ -34,5 +34,20 @@ namespace Game.Scripts.Utils
         {
             return me.focusController.focusedElement == me;
         }
+
+        public static void DisableNavigationInDirections(this Focusable me,
+            params NavigationMoveEvent.Direction[] directions)
+        {
+            me.RegisterCallback<NavigationMoveEvent>(e =>
+            {
+                foreach (var disabledDirection in directions)
+                {
+                    if (e.direction == disabledDirection)
+                    {
+                        e.PreventDefault();
+                    }
+                }
+            });
+        }
     }
 }
