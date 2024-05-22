@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using Game.Scripts.Game.States;
 using Game.Scripts.Patterns;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Game.Scripts.Game
 {
     public class GameManager: Singleton<GameManager>
     {
+        public InputAction pauseGameAction;
+        
         public Camera uiCamera;
         private readonly Stack<IState<GameManager>> _stateHistory = new();
         private IState<GameManager> _currentState;
@@ -27,7 +30,7 @@ namespace Game.Scripts.Game
             {
                 _stateHistory.Push(_currentState);
             }
-            Debug.Log("Changing States!");
+            Debug.Log("Changing States!" + _currentState + " to " + newState);
             _currentState = newState;
             _currentState.OnStateEnter(this);
         }
