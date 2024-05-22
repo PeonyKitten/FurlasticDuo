@@ -39,6 +39,12 @@ namespace Game.Scripts.UI.Menus
             var mainMenuButton = options.Create<Button>("main-button");
             mainMenuButton.text = "Main Menu";
             mainMenuButton.ApplyClickCallbacks(() => GameManager.Instance.ChangeState(new MainMenuState()));
+            
+            if (preventOverflowNavigation)
+            {
+                _resumeButton.DisableNavigationInDirections(NavigationMoveEvent.Direction.Up);
+                mainMenuButton.DisableNavigationInDirections(NavigationMoveEvent.Direction.Down);
+            }
         }
 
         public override void Show()

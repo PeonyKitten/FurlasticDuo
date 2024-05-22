@@ -8,6 +8,8 @@ namespace Game.Scripts.UI
     public abstract class Menu : MonoBehaviour
     {
         [SerializeField] protected StyleSheet style;
+        [SerializeField] protected bool preventOverflowNavigation;
+
         
         protected UIDocument Document;
         
@@ -33,7 +35,7 @@ namespace Game.Scripts.UI
         
         private void Update()
         {
-            if (!RefreshUI && !Input.GetKey(KeyCode.R)) return;
+            if (!RefreshUI) return;
             RefreshUI = false;
             StartCoroutine(Generate());
         }

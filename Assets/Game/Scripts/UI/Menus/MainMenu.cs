@@ -37,6 +37,12 @@ namespace Game.Scripts.UI.Menus
             var quitButton = options.Create<Button>("main-button");
             quitButton.text = "Quit";
             quitButton.ApplyClickCallbacks(Application.Quit);
+            
+            if (preventOverflowNavigation)
+            {
+                playButton.DisableNavigationInDirections(NavigationMoveEvent.Direction.Up);
+                quitButton.DisableNavigationInDirections(NavigationMoveEvent.Direction.Down);
+            }
         }
 
         protected override void Awake()
