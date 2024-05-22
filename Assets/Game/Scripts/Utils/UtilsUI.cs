@@ -22,11 +22,17 @@ namespace Game.Scripts.Utils
             return element;
         }
         
+        // TODO: Potential issues, should test to make sure callbacks work properly
         // ReSharper disable Unity.PerformanceAnalysis
         public static void ApplyClickCallbacks(this Button button, UnityAction callback)
         {
             button.RegisterCallback<ClickEvent>(_ => callback());
             button.RegisterCallback<NavigationSubmitEvent>(_ => callback());
+        }
+
+        public static bool HasFocus(this Focusable me)
+        {
+            return me.focusController.focusedElement == me;
         }
     }
 }
