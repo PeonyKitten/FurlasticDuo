@@ -5,6 +5,7 @@ using Game.Scripts.Game.States;
 using Game.Scripts.Grab;
 using Game.Scripts.Patterns;
 using Game.Scripts.Utils;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -35,6 +36,10 @@ namespace Game.Scripts
         [SerializeField] private float rideHeight = 0.5f;
         [SerializeField] private float groundCheckLength = 1f;
         [SerializeField] private LayerMask groundLayerMask;
+        [Range(0, 45)]
+        [SerializeField] private float minSlopeAngleDeg = 5;
+        [Range(0, 90)]
+        [SerializeField] private float maxSlopeAngleDeg = 45;
         [SerializeField] private Spring rideSpring = new() { strength = 100, damping = 10 };
         [SerializeField] private Spring uprightJointSpring = new() { strength = 100, damping = 10 };
         [SerializeField] private Camera primaryCamera;
@@ -60,6 +65,9 @@ namespace Game.Scripts
         public float GroundCheckLength => groundCheckLength;
         public Vector3 Movement => _movement.Bulk();
         public bool IsGrabbing => _grabbing.IsGrabbing;
+        
+        // TODO: clean up debug stuff
+        private RaycastHit _debugGroundHitInfo;
 
         private void Start()
         {
@@ -151,11 +159,12 @@ namespace Game.Scripts
             
             if (hitGround && _groundCheckDisabledTimer < 0)
             {
+                _debugGroundHitInfo = hitInfo;
                 var velocity = _rb.velocity;
-                var rayDir = -hitInfo.normal;
+                var rayDir = -_debugGroundHitInfo.normal;
 
                 var otherVelocity = Vector3.zero;
-                var hitBody = hitInfo.rigidbody;
+                var hitBody = _debugGroundHitInfo.rigidbody;
 
                 if (hitBody)
                 {
@@ -167,7 +176,7 @@ namespace Game.Scripts
 
                 var relativeVelocity = rayDirVelocity - otherDirVelocity;
 
-                var displacement = hitInfo.distance - rideHeight;
+                var displacement = _debugGroundHitInfo.distance - rideHeight;
 
                 var springForce = displacement * rideSpring.strength - relativeVelocity * rideSpring.damping;
 
@@ -178,6 +187,8 @@ namespace Game.Scripts
                     hitBody.AddForceAtPosition(rayDir * -springForce, hitInfo.point);
                     groundVel = hitBody.GetPointVelocity(hitInfo.point);
                     Debug.DrawRay(transform.position, groundVel, Color.yellow);
+                    hitBody.AddForceAtPosition(rayDir * -springForce, _debugGroundHitInfo.point);
+                    hitBody.GetPointVelocity(_debugGroundHitInfo.point);
                 }
             }
 
@@ -208,7 +219,22 @@ namespace Game.Scripts
 
             var neededAccel = (_goalVel - _rb.velocity) / Time.deltaTime * accelerationFactor;
             var maxAccel = maxAcceleration * maxAccelerationFactorDot.Evaluate(velDot);
-            neededAccel = Vector3.ClampMagnitude(neededAccel, maxAccel);
+            
+            var dot = Vector3.Dot(Vector3.up, _debugGroundHitInfo.normal);
+            var angle = Mathf.Acos(dot) * Mathf.Rad2Deg;
+
+            var slopeUpForce = Vector3.zero;
+            if (angle > minSlopeAngleDeg)
+            {
+                slopeUpForce = Vector3.Cross(transform.right, _debugGroundHitInfo.normal) * maxAccel;
+                if (angle > maxSlopeAngleDeg)
+                {
+                    slopeUpForce = -slopeUpForce;
+                }
+                Debug.DrawRay(transform.position, slopeUpForce);
+            }
+            
+            neededAccel = Vector3.ClampMagnitude(neededAccel + slopeUpForce, maxAccel);
 
             _rb.AddForce(Vector3.Scale(neededAccel * _rb.mass, forceScale));
 
@@ -219,7 +245,15 @@ namespace Game.Scripts
 
         private void OnDrawGizmos()
         {
-            Gizmos.DrawRay(transform.position, _movement.Bulk());
+            Gizmos.color = Color.white;
+            Gizmos.DrawRay(_debugGroundHitInfo.point, Vector3.up);
+            var dot = Vector3.Dot(Vector3.up, _debugGroundHitInfo.normal);
+            if (dot != 0)
+            {
+                Debug.Log(Mathf.Acos(dot) * Mathf.Rad2Deg);
+            }
+            Gizmos.color = Color.Lerp(Color.green, Color.red, dot);
+            Gizmos.DrawRay(_debugGroundHitInfo.point, _debugGroundHitInfo.normal);
         }
     }
 }
