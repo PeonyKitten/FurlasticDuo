@@ -1825,6 +1825,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2871023284957261607, guid: 83eee0c01a0135c45b3461e0bf3397c3,
+        type: 3}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3201854692464208914, guid: 83eee0c01a0135c45b3461e0bf3397c3,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3674,6 +3679,21 @@ MonoBehaviour:
   jumpSpeed: 7
   jumpInputBuffer: 0.33
   coyoteTime: 0.33
+  jumpSpeedMultiplier: 0.5
+  jumpAngularSpeedMultiplier: 0.5
+  fallGravityMultiplier: 2
+  jumpStartEffect: {fileID: 0}
+  fallStartEffect: {fileID: 0}
+  jumpEndEffect: {fileID: 0}
+  onPlayerJump:
+    m_PersistentCalls:
+      m_Calls: []
+  onPlayerFall:
+    m_PersistentCalls:
+      m_Calls: []
+  onPlayerLand:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &1113374473
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5149,6 +5169,11 @@ PrefabInstance:
     - target: {fileID: 1032210558660864382, guid: 83eee0c01a0135c45b3461e0bf3397c3,
         type: 3}
       propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2871023284957261607, guid: 83eee0c01a0135c45b3461e0bf3397c3,
+        type: 3}
+      propertyPath: m_UseGravity
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3201854692464208914, guid: 83eee0c01a0135c45b3461e0bf3397c3,
