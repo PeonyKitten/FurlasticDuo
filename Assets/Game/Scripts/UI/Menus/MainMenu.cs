@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Game.Scripts.Game;
 using Game.Scripts.Game.States;
@@ -23,11 +24,11 @@ namespace Game.Scripts.UI.Menus
             var playButton = options.Create<Button>("main-button");
             playButton.text = "Start";
             playButton.Focus();
-            playButton.RegisterCallback<ClickEvent>((e) => GameManager.Instance.ChangeState(new PlayState()));
+            playButton.ApplyClickCallbacks(() => GameManager.Instance.ChangeState(new PlayState()));
             
             var optionsButton = options.Create<Button>("main-button");
             optionsButton.text = "Options";
-            optionsButton.RegisterCallback<ClickEvent>(_ => MenuManager.Instance.PushMenu(MenuManager.Instance.optionsMenu));
+            optionsButton.ApplyClickCallbacks(() => MenuManager.Instance.PushMenu(MenuManager.Instance.optionsMenu));
             
             var creditsButton = options.Create<Button>("main-button");
             creditsButton.text = "Credits";
@@ -35,7 +36,7 @@ namespace Game.Scripts.UI.Menus
 
             var quitButton = options.Create<Button>("main-button");
             quitButton.text = "Quit";
-            quitButton.RegisterCallback<ClickEvent>(_ => Application.Quit());
+            quitButton.ApplyClickCallbacks(Application.Quit);
         }
 
         protected override void Awake()

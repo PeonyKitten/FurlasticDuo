@@ -56,12 +56,12 @@ namespace Game.Scripts.UI
             return element;
         }
 
-        public void Show()
+        public virtual void Show()
         {
             gameObject.SetActive(true);
         }
 
-        public void Hide()
+        public virtual void Hide()
         {
             gameObject.SetActive(false);
         }
