@@ -22,6 +22,8 @@ namespace Game.Scripts
         [SerializeField] private GameObject jumpStartEffect;
         [SerializeField] private GameObject fallStartEffect;
         [SerializeField] private GameObject jumpEndEffect;
+        [SerializeField] private bool ignoreGroundEffectSpawnRotation;
+        [SerializeField] private bool globalFallEffect;
         
         [Header("Callbacks")]
         public UnityEvent onPlayerJump;
@@ -119,7 +121,8 @@ namespace Game.Scripts
         {
             if (jumpStartEffect)
             {
-                Instantiate(jumpStartEffect);
+                var rotation = ignoreGroundEffectSpawnRotation ? Quaternion.identity : Quaternion.FromToRotation(Vector3.up, _hitInfo.normal);
+                Instantiate(jumpStartEffect, _hitInfo.point, rotation);
             }
             _playerController.speedFactor *= jumpSpeedMultiplier;
             _playerController.angularSpeedFactor *= jumpAngularSpeedMultiplier;
@@ -131,7 +134,14 @@ namespace Game.Scripts
         {
             if (fallStartEffect)
             {
-                Instantiate(fallStartEffect);
+                if (globalFallEffect)
+                {
+                    Instantiate(fallStartEffect, transform.position, Quaternion.identity);
+                }
+                else
+                {
+                    Instantiate(fallStartEffect, transform);
+                }
             }
             _playerController.gravityMultiplier = Vector3.one * fallGravityMultiplier;
             onPlayerFall.Invoke();
@@ -142,7 +152,8 @@ namespace Game.Scripts
         {
             if (jumpEndEffect)
             {
-                Instantiate(jumpEndEffect);
+                var rotation = ignoreGroundEffectSpawnRotation ? Quaternion.identity : Quaternion.FromToRotation(Vector3.up, _hitInfo.normal);
+                Instantiate(jumpEndEffect, _hitInfo.point, rotation);
             }
             _playerController.gravityMultiplier = Vector3.one;
             _playerController.speedFactor /= jumpSpeedMultiplier;
