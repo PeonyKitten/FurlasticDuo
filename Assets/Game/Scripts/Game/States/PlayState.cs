@@ -35,6 +35,7 @@ namespace Game.Scripts.Game.States
         {
             state.pauseGameAction.Enable();
             state.pauseGameAction.performed += OpenPauseGameMenu;
+            EventBus<GameEvents>.Publish(GameEvents.Unpaused);
         }
 
         private static void OpenPauseGameMenu(InputAction.CallbackContext obj)
@@ -44,6 +45,7 @@ namespace Game.Scripts.Game.States
             state.ChangeState(new PauseState(), true);
             state.pauseGameAction.performed -= OpenPauseGameMenu;
             state.pauseGameAction.Disable();
+            EventBus<GameEvents>.Publish(GameEvents.Paused);
         }
 
         public void OnStateExit(GameManager state)
