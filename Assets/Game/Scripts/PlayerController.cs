@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Game.Scripts.Game.States;
+using Game.Scripts.Patterns;
 using Game.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -58,6 +60,12 @@ namespace Game.Scripts
             if (!primaryCamera)
             {
                 primaryCamera = Camera.main;
+            }
+            
+            if (gameObject.TryGetComponent(out PlayerInput playerInput))
+            {
+                EventBus<GameEvents>.Subscribe(GameEvents.Paused, () => playerInput.DeactivateInput());
+                EventBus<GameEvents>.Subscribe(GameEvents.Unpaused, () => playerInput.ActivateInput());
             }
         }
 
