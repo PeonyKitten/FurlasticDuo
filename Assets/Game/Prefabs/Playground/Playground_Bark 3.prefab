@@ -49,8 +49,8 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 832960064934081835}
-  m_Enabled: 0
-  m_CastShadows: 1
+  m_Enabled: 1
+  m_CastShadows: 3
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -222,7 +222,7 @@ GameObject:
   - component: {fileID: 5084840725028422358}
   - component: {fileID: 3586443354135043191}
   - component: {fileID: 6002076634791777451}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GlassWall (top)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -238,11 +238,11 @@ Transform:
   m_GameObject: {fileID: 2168737024332128097}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 4.999999, z: -1.0550005}
-  m_LocalScale: {x: 15, y: 0.20000003, z: 0.2}
+  m_LocalPosition: {x: 0, y: 5, z: -1.0550005}
+  m_LocalScale: {x: 15, y: 0.20000005, z: 0.20000002}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 9035751752773655108}
+  m_Father: {fileID: 5800236747498585848}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!33 &5084840725028422358
 MeshFilter:
@@ -354,6 +354,11 @@ Transform:
   - {fileID: 5885332648691389093}
   - {fileID: 2122396521087548097}
   - {fileID: 7791621813918846250}
+  - {fileID: 4091474677782431276}
+  - {fileID: 4511965970786916549}
+  - {fileID: 96521875862176343}
+  - {fileID: 2190656366160630768}
+  - {fileID: 3544251834868721104}
   m_Father: {fileID: 2814061109808278572}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2579276328587626984
@@ -405,8 +410,8 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2579276328587626984}
-  m_Enabled: 0
-  m_CastShadows: 1
+  m_Enabled: 1
+  m_CastShadows: 3
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -578,7 +583,7 @@ GameObject:
   - component: {fileID: 713933817408101274}
   - component: {fileID: 1388189130633050979}
   - component: {fileID: 498322568001772976}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GlassWall (top) (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -595,10 +600,10 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0.24999905, z: -1.055}
-  m_LocalScale: {x: 15, y: 0.20000003, z: 0.2}
+  m_LocalScale: {x: 15, y: 0.20000005, z: 0.20000002}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 9035751752773655108}
+  m_Father: {fileID: 5800236747498585848}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!33 &713933817408101274
 MeshFilter:
@@ -720,8 +725,8 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5038818850947170887}
-  m_Enabled: 0
-  m_CastShadows: 1
+  m_Enabled: 1
+  m_CastShadows: 3
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -893,7 +898,7 @@ GameObject:
   - component: {fileID: 6072096136029342335}
   - component: {fileID: 7087588651158866733}
   - component: {fileID: 7855251162253739133}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GlassWall (top) (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -910,10 +915,10 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0.24999905, z: -1.055}
-  m_LocalScale: {x: 15, y: 0.20000003, z: 0.2}
+  m_LocalScale: {x: 15, y: 0.20000005, z: 0.20000002}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 9035751752773655108}
+  m_Father: {fileID: 5800236747498585848}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!33 &6072096136029342335
 MeshFilter:
@@ -1325,7 +1330,7 @@ GameObject:
   - component: {fileID: 1026888113077211988}
   - component: {fileID: 5979703718849649548}
   - component: {fileID: 3979066190083497310}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GlassWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1342,10 +1347,10 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 2.4999993, z: -1}
-  m_LocalScale: {x: 15, y: 0.20000003, z: 5}
+  m_LocalScale: {x: 15, y: 0.20000005, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 9035751752773655108}
+  m_Father: {fileID: 5800236747498585848}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!33 &1026888113077211988
 MeshFilter:
@@ -1430,7 +1435,7 @@ GameObject:
   - component: {fileID: 4938037035211105527}
   - component: {fileID: 9064286173483792084}
   - component: {fileID: 8606592231374982285}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GlassWall (top) (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1447,10 +1452,10 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: -7.5, y: 2.499999, z: -1.0550003}
-  m_LocalScale: {x: 0.2, y: 0.20000003, z: 5}
+  m_LocalScale: {x: 0.2, y: 0.20000005, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 9035751752773655108}
+  m_Father: {fileID: 5800236747498585848}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!33 &4938037035211105527
 MeshFilter:
@@ -1847,11 +1852,6 @@ Transform:
   m_Children:
   - {fileID: 1966742832914161482}
   - {fileID: 5248337985104039696}
-  - {fileID: 4091474677782431276}
-  - {fileID: 4511965970786916549}
-  - {fileID: 96521875862176343}
-  - {fileID: 2190656366160630768}
-  - {fileID: 3544251834868721104}
   - {fileID: 4144510105118956137}
   - {fileID: 8023730845101058859}
   m_Father: {fileID: 2814061109808278572}
