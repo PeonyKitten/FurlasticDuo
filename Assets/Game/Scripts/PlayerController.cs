@@ -33,6 +33,7 @@ namespace Game.Scripts
         [Header("Character Controller")]
         [SerializeField] private float rideHeight = 0.5f;
         [SerializeField] private float groundCheckLength = 1f;
+        [SerializeField] private LayerMask groundLayerMask;
         [SerializeField] private Spring rideSpring = new() { strength = 100, damping = 10 };
         [SerializeField] private Spring uprightJointSpring = new() { strength = 100, damping = 10 };
         [SerializeField] private Camera primaryCamera;
@@ -135,8 +136,10 @@ namespace Game.Scripts
             _groundCheckDisabledTimer -= Time.deltaTime;
             
             var groundVel = Vector3.zero;
+
+            var groundRay = new Ray(transform.position, Vector3.down);
             
-            var hitGround = Physics.Raycast(transform.position, Vector3.down, out var hitInfo, groundCheckLength);
+            var hitGround = Physics.Raycast(groundRay, out var hitInfo, groundCheckLength, groundLayerMask.value, QueryTriggerInteraction.Ignore);
             
             if (hitGround && _groundCheckDisabledTimer < 0)
             {

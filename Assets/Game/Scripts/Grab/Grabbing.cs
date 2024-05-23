@@ -7,6 +7,7 @@ namespace Game.Scripts.Grab
     {
         [SerializeField] private Vector3 objectCheckOffset = Vector3.zero;
         [SerializeField] private float grabRange = 2f;
+        [SerializeField] private float playerSpeedModifier = 0.5f;
         
         private IGrabbable _currentGrabbable;
         private Transform _grabPoint;
@@ -47,7 +48,7 @@ namespace Game.Scripts.Grab
                     _currentGrabbableObject = hit.collider.gameObject;
                     _currentGrabbable.OnGrab(_grabPoint);
 
-                    AdjustPlayerSpeed(0.5f);
+                    AdjustPlayerSpeed();
 
                     Debug.Log("Object grabbed: " + _currentGrabbableObject.name);
                 }
@@ -68,14 +69,14 @@ namespace Game.Scripts.Grab
             _currentGrabbableObject = null;
         }
 
-        private void AdjustPlayerSpeed(float factor)
+        private void AdjustPlayerSpeed()
         {
-            _playerController.speedFactor = factor;
+            _playerController.speedFactor *= playerSpeedModifier;
         }
 
         private void ResetPlayerSpeed()
         {
-            _playerController.speedFactor = 1.0f;
+            _playerController.speedFactor /= playerSpeedModifier;
         }
 
         private void OnDrawGizmosSelected()
