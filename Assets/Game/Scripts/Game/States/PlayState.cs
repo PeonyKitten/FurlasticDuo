@@ -19,7 +19,7 @@ namespace Game.Scripts.Game.States
 
         private static void LoadPlayground(GameManager state)
         {
-            var asyncLoad = SceneManager.LoadSceneAsync("Playground-scene", LoadSceneMode.Additive);
+            var asyncLoad = SceneManager.LoadSceneAsync("Playground-core", LoadSceneMode.Additive);
 
             Debug.Assert(asyncLoad != null, nameof(asyncLoad) + " != null");
             
