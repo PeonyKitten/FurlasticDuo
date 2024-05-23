@@ -1,10 +1,11 @@
 using UnityEngine;
 
-namespace Game.Scripts
+namespace Game.Scripts.Misc
 {
     public class DestroyEventually: MonoBehaviour
     {
         [SerializeField] private float destroyDelay = 1f;
+        [SerializeField] private bool timeScaleIndependent;
         
         private float _destroyTimer;
 
@@ -15,7 +16,7 @@ namespace Game.Scripts
         
         private void Update()
         {
-            _destroyTimer -= Time.deltaTime;
+            _destroyTimer -= timeScaleIndependent ? Time.unscaledDeltaTime : Time.deltaTime;
 
             if (_destroyTimer < 0)
             {
