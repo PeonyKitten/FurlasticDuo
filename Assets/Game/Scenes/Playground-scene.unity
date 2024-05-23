@@ -1336,7 +1336,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3272309110039544631, guid: 146ea979b3b64654da75463ea8a21aef,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1424503441}
   m_SourcePrefab: {fileID: 100100000, guid: 146ea979b3b64654da75463ea8a21aef, type: 3}
 --- !u!4 &352594049 stripped
 Transform:
@@ -2402,7 +2406,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onPress.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 904928492}
+      objectReference: {fileID: 1424503441}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onRelease.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -2412,7 +2416,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onRelease.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 904928492}
+      objectReference: {fileID: 1424503441}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onPress.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -2421,7 +2425,7 @@ PrefabInstance:
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onPress.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OpenDoor
+      value: AddActivation
       objectReference: {fileID: 0}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
@@ -2431,17 +2435,17 @@ PrefabInstance:
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onRelease.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: CloseDoor
+      value: RemoveActivation
       objectReference: {fileID: 0}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onPress.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Game.Scripts.Toys.Door, Assembly-CSharp
+      value: Game.Scripts.Misc.MultipleActivation, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onRelease.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Game.Scripts.Toys.Door, Assembly-CSharp
+      value: Game.Scripts.Misc.MultipleActivation, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
@@ -2828,7 +2832,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 352594048}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1424503440}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a0ff42442937b264ebf3c4491ca91777, type: 3}
@@ -4710,6 +4714,56 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1391846615}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1424503440 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3272309110039544631, guid: 146ea979b3b64654da75463ea8a21aef,
+    type: 3}
+  m_PrefabInstance: {fileID: 352594048}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1424503441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1424503440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06a08b008ad9e284ab3cfead758e796c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  requiredActivations: 2
+  disallowAdditionalActivations: 0
+  onActivated:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 904928492}
+        m_TargetAssemblyTypeName: Game.Scripts.Toys.Door, Assembly-CSharp
+        m_MethodName: OpenDoor
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onDeactivated:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 904928492}
+        m_TargetAssemblyTypeName: Game.Scripts.Toys.Door, Assembly-CSharp
+        m_MethodName: CloseDoor
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1463864377
 GameObject:
   m_ObjectHideFlags: 0
@@ -6496,7 +6550,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onPress.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 3599178992524191786}
+      objectReference: {fileID: 1424503441}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onRelease.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -6506,7 +6560,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onRelease.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 3599178992524191786}
+      objectReference: {fileID: 1424503441}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onPress.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -6515,7 +6569,7 @@ PrefabInstance:
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onPress.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OpenDoor
+      value: AddActivation
       objectReference: {fileID: 0}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
@@ -6525,17 +6579,17 @@ PrefabInstance:
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onRelease.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: CloseDoor
+      value: RemoveActivation
       objectReference: {fileID: 0}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onPress.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Game.Scripts.Toys.Door, Assembly-CSharp
+      value: Game.Scripts.Misc.MultipleActivation, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onRelease.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Game.Scripts.Toys.Door, Assembly-CSharp
+      value: Game.Scripts.Misc.MultipleActivation, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
@@ -6607,18 +6661,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8ea0b95a009fd2542b3bf98ee684fb10, type: 3}
---- !u!114 &3599178992524191786 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6515105924996815120, guid: 146ea979b3b64654da75463ea8a21aef,
-    type: 3}
-  m_PrefabInstance: {fileID: 5676246914734264176}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0ff42442937b264ebf3c4491ca91777, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &4984003156141724824
 PrefabInstance:
   m_ObjectHideFlags: 0
