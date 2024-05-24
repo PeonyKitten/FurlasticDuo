@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,6 +11,10 @@ namespace Game.Scripts
         [SerializeField] private float jumpSpeed = 15f;
         [SerializeField] private float jumpInputBuffer = 0.33f;
         [SerializeField] private float coyoteTime = 0.33f;
+        
+        [Header("Ground Forces")]
+        [SerializeField] private float jumpGroundForce = 10f;
+        [SerializeField] private float landGroundForce = 100f;
         
         [Header("Character Controller Modifiers")]
         [SerializeField] private float jumpSpeedMultiplier = 1f;
@@ -92,7 +95,10 @@ namespace Game.Scripts
             if (_jumpInputBufferTimer > 0 && _coyoteTimeTimer > 0)
             {
                 _rb.velocity = new Vector3(_rb.velocity.x, jumpSpeed, _rb.velocity.z);
-                
+                if (_hitInfo.rigidbody)
+                {
+                    _hitInfo.rigidbody.AddForceAtPosition(Vector3.down * jumpGroundForce, _hitInfo.point, ForceMode.Impulse);
+                }
                 _playerController.DisableGroundCheckForSeconds(jumpTime);
                 
                 // Reset Timers
@@ -154,6 +160,11 @@ namespace Game.Scripts
             {
                 var rotation = ignoreGroundEffectSpawnRotation ? Quaternion.identity : Quaternion.FromToRotation(Vector3.up, _hitInfo.normal);
                 Instantiate(jumpEndEffect, _hitInfo.point, rotation);
+            }
+
+            if (_hitInfo.rigidbody)
+            {
+                _hitInfo.rigidbody.AddForceAtPosition(Vector3.down * landGroundForce, _hitInfo.point, ForceMode.Impulse);
             }
             _playerController.gravityMultiplier = Vector3.one;
             _playerController.speedFactor /= jumpSpeedMultiplier;
