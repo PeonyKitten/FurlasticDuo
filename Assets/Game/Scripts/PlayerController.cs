@@ -41,6 +41,7 @@ namespace Game.Scripts
         public Vector3 gravityMultiplier = Vector3.one;
         public float speedFactor = 1f;
         public float angularSpeedFactor = 1f;
+        public bool ignoreGroundVelocity;
 
         private Rigidbody _rb;
         private Vector2 _movement;
@@ -53,6 +54,7 @@ namespace Game.Scripts
         public float Mass => _rb.mass;
         public Quaternion TargetRotation { get; private set; } = Quaternion.identity;
         public float GroundCheckLength => groundCheckLength;
+        public Vector3 Movement => _movement.Bulk();
 
         private void Start()
         {
@@ -168,7 +170,8 @@ namespace Game.Scripts
                 if (hitBody)
                 {
                     hitBody.AddForceAtPosition(rayDir * -springForce, hitInfo.point);
-                    hitBody.GetPointVelocity(hitInfo.point);
+                    groundVel = hitBody.GetPointVelocity(hitInfo.point);
+                    Debug.DrawRay(transform.position, groundVel, Color.yellow);
                 }
             }
 
@@ -180,8 +183,14 @@ namespace Game.Scripts
             
             var goalVel = _movement.Bulk() * (maxSpeed * speedFactor);
 
+            var totalVel = goalVel;
+            if (!ignoreGroundVelocity)
+            {
+                totalVel += groundVel;
+            }
+
             _goalVel = Vector3.MoveTowards(_goalVel,
-                goalVel + groundVel,
+                totalVel,
                 accel * Time.deltaTime);
 
             var neededAccel = (_goalVel - _rb.velocity) / Time.deltaTime;
