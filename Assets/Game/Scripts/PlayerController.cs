@@ -79,6 +79,8 @@ namespace Game.Scripts
 
         private void UpdateUprightForce(float elapsedTime)
         {
+            if (angularSpeedFactor == 0) return;
+            
             var currentRotation = transform.rotation;
             var goalRotation = TargetRotation.ShortestRotation(currentRotation);
 
