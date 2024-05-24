@@ -1,4 +1,3 @@
-using System;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
@@ -58,6 +57,7 @@ namespace Game.Scripts.Misc
 
         public void OnDrawGizmosSelected()
         {
+            #if UNITY_EDITOR
             Handles.color = Color.white;
             Handles.DrawSolidArc(transform.position, transform.forward, transform.right, 360f, 0.2f);
             var percentActivated = Mathf.Min((float) ActivationCount, requiredActivations) / requiredActivations;
@@ -67,6 +67,7 @@ namespace Game.Scripts.Misc
                 Handles.color = disallowAdditionalActivations ? Color.yellow : Color.blue;
             }
             Handles.DrawSolidArc(transform.position, transform.forward, transform.right, percentActivated * 360f, 0.2f);
+            #endif
         }
     }
 }
