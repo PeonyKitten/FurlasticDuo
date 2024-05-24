@@ -32,7 +32,8 @@ namespace Game.Scripts.Barking
 
             if (barkEffect)
             {
-                Instantiate(barkEffect);
+                var effect = Instantiate(barkEffect, transform.position, Quaternion.identity);
+                effect.transform.localScale = Vector3.one * barkRadius * 2;
             }
 
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, barkRadius);
