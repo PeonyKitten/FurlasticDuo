@@ -1,14 +1,13 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.Scripts.Elastic
 {
     public class ElasticVisual : MonoBehaviour
     {
-        public Transform player1;
-        public Transform player2;
+        public Transform anchor;
+        public Transform player;
+        [SerializeField] private float maxDistance = 5f;
+
         private LineRenderer lineRenderer;
 
         void Start()
@@ -17,13 +16,34 @@ namespace Game.Scripts.Elastic
             lineRenderer.positionCount = 2;
             lineRenderer.startWidth = 0.1f;
             lineRenderer.endWidth = 0.1f;
-            lineRenderer.material = new Material(Shader.Find("Sprites/Default")) { color = Color.red };
+            lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
         }
 
         void Update()
         {
-            lineRenderer.SetPosition(0, player1.position);
-            lineRenderer.SetPosition(1, player2.position);
+            if (anchor == null || player == null) return;
+
+            lineRenderer.SetPosition(0, anchor.position);
+            lineRenderer.SetPosition(1, player.position);
+
+            Vector3 direction = player.position - anchor.position;
+            float distance = direction.magnitude;
+
+            if (distance <= maxDistance * 0.5f)
+            {
+                lineRenderer.startColor = Color.green;
+                lineRenderer.endColor = Color.green;
+            }
+            else if (distance <= maxDistance * 0.8f)
+            {
+                lineRenderer.startColor = Color.yellow;
+                lineRenderer.endColor = Color.yellow;
+            }
+            else
+            {
+                lineRenderer.startColor = Color.red;
+                lineRenderer.endColor = Color.red;
+            }
         }
     }
 }
