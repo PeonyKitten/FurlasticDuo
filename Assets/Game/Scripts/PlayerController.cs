@@ -181,6 +181,13 @@ namespace Game.Scripts
             var velDot = Vector3.Dot(_goalVel, unitVel);
             var accel = acceleration * accelerationFactorDot.Evaluate(velDot);
             
+            // TODO: speed factor bad. fix @alvin
+            if (speedFactor > 1)
+            {
+                Debug.LogWarning("SpeedFactor > 1. Clamping to 1");
+                speedFactor = 1;
+            }
+
             var goalVel = _movement.Bulk() * (maxSpeed * speedFactor);
 
             var totalVel = goalVel;
