@@ -40,6 +40,7 @@ namespace Game.Scripts
 
         public Vector3 gravityMultiplier = Vector3.one;
         public float speedFactor = 1f;
+        public float accelerationFactor = 1f;
         public float angularSpeedFactor = 1f;
         public bool ignoreGroundVelocity;
 
@@ -200,7 +201,7 @@ namespace Game.Scripts
                 totalVel,
                 accel * Time.deltaTime);
 
-            var neededAccel = (_goalVel - _rb.velocity) / Time.deltaTime;
+            var neededAccel = (_goalVel - _rb.velocity) / Time.deltaTime * accelerationFactor;
             var maxAccel = maxAcceleration * maxAccelerationFactorDot.Evaluate(velDot);
             neededAccel = Vector3.ClampMagnitude(neededAccel, maxAccel);
 
