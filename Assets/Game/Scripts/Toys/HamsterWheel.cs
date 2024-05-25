@@ -5,37 +5,68 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UIElements;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace Game.Scripts.Toys
 {
     public class HamsterWheel : MonoBehaviour
     {
-        [SerializeField] private float speed;
+        public struct PlayerData
+        {
+            public float speedFactor;
+            public Jump jump;
+        }
+
+        [SerializeField] private Transform wheel;
+        [SerializeField] private float turnSpeed;
 
         private float _currentRotation = 0f;
-        private List<Transform> enteredTransforms = new List<Transform>();
+        private Dictionary<PlayerController, PlayerData> enteredPlayers = new();
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out Transform t))
+            if (other.TryGetComponent(out PlayerController player))
             {
-                enteredTransforms.Add(t);
+                PlayerData playerData = new PlayerData();
+                playerData.speedFactor = player.speedFactor;
+                playerData.jump = player.GetComponent<Jump>();
+
+                enteredPlayers.Add(player, playerData);
+
+                player.ignoreGroundVelocity = true;
             }
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
-            foreach (Transform t in enteredTransforms) 
+            _currentRotation = 0;
+
+            foreach (var player in enteredPlayers) 
             {
-                Vector3 _movement = t.GetComponent<PlayerController>().Movement;
+                if (player.Value.jump && player.Value.jump.IsJumping) continue;
+
+                Vector3 _movement = player.Key.Movement;
+                float turnSpeedFactor = Vector3.Dot(_movement, transform.forward);
+
+                float moveSpeedFactor = Vector3.Dot(_movement, transform.right);
+                float absMoveSpeedFactor = Mathf.Abs(moveSpeedFactor);
+                player.Key.speedFactor = player.Value.speedFactor * absMoveSpeedFactor;
+
+                _currentRotation += turnSpeedFactor;
             }
+
+            wheel.Rotate(transform.right, _currentRotation * turnSpeed * Time.deltaTime);
         }
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.TryGetComponent(out Transform t))
+            if (other.TryGetComponent(out PlayerController player))
             {
-                enteredTransforms.Remove(t);
+                if (enteredPlayers.Remove(player, out var playerData))
+                {
+                    player.ignoreGroundVelocity = false;
+                    player.speedFactor = playerData.speedFactor;
+                }
             }
         }
     }
