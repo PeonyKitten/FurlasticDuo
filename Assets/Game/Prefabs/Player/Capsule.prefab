@@ -136,7 +136,7 @@ Transform:
   m_GameObject: {fileID: 1032210558660864382}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.93, y: 1, z: 15.43}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -326,12 +326,11 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   forceScale: {x: 1, y: 0, z: 1}
-  canJump: 1
-  jumpForce: 70
-  jumpInputBuffer: 0.33
-  coyoteTime: 0.33
   rideHeight: 0.6
   groundCheckLength: 1
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
   rideSpring:
     strength: 2000
     damping: 100
@@ -339,7 +338,10 @@ MonoBehaviour:
     strength: 2000
     damping: 80
   primaryCamera: {fileID: 0}
+  gravityMultiplier: {x: 1, y: 1, z: 1}
   speedFactor: 1
+  angularSpeedFactor: 1
+  ignoreGroundVelocity: 0
 --- !u!114 &7201404244798059983
 MonoBehaviour:
   m_ObjectHideFlags: 0
