@@ -20,7 +20,6 @@ namespace Game.Scripts.Toys
         [SerializeField] private Transform wheel;
         [SerializeField] private float turnSpeed;
 
-        private float _currentRotation = 0f;
         private Dictionary<PlayerController, PlayerData> enteredPlayers = new();
 
         private void OnTriggerEnter(Collider other)
@@ -39,7 +38,7 @@ namespace Game.Scripts.Toys
 
         private void FixedUpdate()
         {
-            _currentRotation = 0;
+            float currentRotation = 0;
 
             foreach (var player in enteredPlayers) 
             {
@@ -52,10 +51,10 @@ namespace Game.Scripts.Toys
                 float absMoveSpeedFactor = Mathf.Abs(moveSpeedFactor);
                 player.Key.speedFactor = player.Value.speedFactor * absMoveSpeedFactor;
 
-                _currentRotation += turnSpeedFactor;
+                currentRotation += turnSpeedFactor;
             }
 
-            wheel.Rotate(transform.right, _currentRotation * turnSpeed * Time.deltaTime);
+            wheel.Rotate(transform.right, currentRotation * turnSpeed * Time.deltaTime);
         }
 
         private void OnTriggerExit(Collider other)
