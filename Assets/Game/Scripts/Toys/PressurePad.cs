@@ -32,7 +32,7 @@ namespace Game.Scripts.Toys
                 _currentMass += rb.mass;
             } else if (other.TryGetComponent(out DummyRigidbody dummyRb))
             {
-                _currentMass += dummyRb.rb.mass;
+                _currentMass += dummyRb.Mass;
             }
 
             CheckPressStatus();
@@ -45,7 +45,7 @@ namespace Game.Scripts.Toys
                 _currentMass -= rb.mass;
             } else if (other.TryGetComponent(out DummyRigidbody dummyRb))
             {
-                _currentMass -= dummyRb.rb.mass;
+                _currentMass -= dummyRb.Mass;
             }
             
             CheckPressStatus();
