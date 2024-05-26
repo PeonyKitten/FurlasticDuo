@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7808578619714624838}
   - component: {fileID: 8639575992656015425}
   - component: {fileID: 350926570653146633}
+  - component: {fileID: 661405436116984712}
   m_Layer: 0
   m_Name: Toy_NoiseBall_small
   m_TagString: Untagged
@@ -73,6 +74,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d06a671098e6bd74a8bddb4725a39222, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!135 &661405436116984712
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 70850293701704310}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.45
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8999883714427929048
 GameObject:
   m_ObjectHideFlags: 0
@@ -84,7 +106,6 @@ GameObject:
   - component: {fileID: 664105344501622400}
   - component: {fileID: 2074959255188139058}
   - component: {fileID: 4783657695365994686}
-  - component: {fileID: 8841581515397168275}
   m_Layer: 0
   m_Name: Toy_NoiseBall
   m_TagString: Untagged
@@ -157,24 +178,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &8841581515397168275
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8999883714427929048}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.44928664
-  m_Center: {x: 0.00000010430813, y: -0.00000008940699, z: -0.000000044703494}
