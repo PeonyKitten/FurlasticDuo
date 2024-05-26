@@ -1,4 +1,5 @@
 using System;
+using Game.Scripts.Misc;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -29,6 +30,9 @@ namespace Game.Scripts.Toys
             if (other.TryGetComponent(out Rigidbody rb))
             {
                 _currentMass += rb.mass;
+            } else if (other.TryGetComponent(out DummyRigidbody dummyRb))
+            {
+                _currentMass += dummyRb.rb.mass;
             }
 
             CheckPressStatus();
@@ -39,6 +43,9 @@ namespace Game.Scripts.Toys
             if (other.TryGetComponent(out Rigidbody rb))
             {
                 _currentMass -= rb.mass;
+            } else if (other.TryGetComponent(out DummyRigidbody dummyRb))
+            {
+                _currentMass -= dummyRb.rb.mass;
             }
             
             CheckPressStatus();
