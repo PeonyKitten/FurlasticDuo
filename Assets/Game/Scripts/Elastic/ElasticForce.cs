@@ -11,8 +11,8 @@ public class DynamicElasticForce : MonoBehaviour
     [SerializeField] private AnimationCurve forceCurve;
     [SerializeField] private float forceApplied;
     [SerializeField] private float snapbackThreshold;
-    [SerializeField] private float snapbackForceMultiplier = 10f;
-    [Range(0, 1)][SerializeField] private float midpointAdjustment = 0.5f;
+    [SerializeField] private float snapbackForceMultiplier = 0.03f;
+    [SerializeField, Range(0, 1)] private float midpointAdjustment = 0.5f;
 
     private Rigidbody rb1;
     private Rigidbody rb2;
@@ -32,7 +32,7 @@ public class DynamicElasticForce : MonoBehaviour
         lineRenderer.positionCount = 3; 
         lineRenderer.startWidth = 0.1f;
         lineRenderer.endWidth = 0.1f;
-        lineRenderer.material = new Material(Shader.Find("Sprites/Default")) { color = Color.red };
+        lineRenderer.material = new Material(Shader.Find("Sprites/Default")) { color = Color.blue };
     }
 
     private void FixedUpdate()
@@ -42,6 +42,7 @@ public class DynamicElasticForce : MonoBehaviour
         Vector3 direction = player2.position - player1.position;
         float totalDistance = direction.magnitude;
 
+        // TODO: find a better way to keep the players at maxlength
         if (totalDistance > maxDistance)
         {
             direction = direction.normalized * maxDistance;
@@ -89,7 +90,7 @@ public class DynamicElasticForce : MonoBehaviour
 
     private void ApplySnapbackForce(Transform player, Rigidbody rb, PlayerController controller, float normalizedDistance, Vector3 midpoint)
     {
-        if (normalizedDistance >= snapbackThreshold && normalizedDistance <= 1f)
+        if (normalizedDistance >= snapbackThreshold)
         {
             Debug.Log($"{player.name} is in the snapback range");
             if (controller.Movement == Vector3.zero)
