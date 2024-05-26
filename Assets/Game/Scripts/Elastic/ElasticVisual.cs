@@ -4,8 +4,8 @@ namespace Game.Scripts.Elastic
 {
     public class ElasticVisual : MonoBehaviour
     {
-        public Transform anchor;
-        public Transform player;
+        public Transform player1;
+        public Transform player2;
         [SerializeField] private float maxDistance = 5f;
 
         private LineRenderer lineRenderer;
@@ -21,12 +21,12 @@ namespace Game.Scripts.Elastic
 
         void Update()
         {
-            if (anchor == null || player == null) return;
+            if (player1 is null || player2 is null) return;
 
-            lineRenderer.SetPosition(0, anchor.position);
-            lineRenderer.SetPosition(1, player.position);
+            lineRenderer.SetPosition(0, player1.position);
+            lineRenderer.SetPosition(1, player2.position);
 
-            Vector3 direction = player.position - anchor.position;
+            Vector3 direction = player2.position - player1.position;
             float distance = direction.magnitude;
 
             if (distance <= maxDistance * 0.5f)
