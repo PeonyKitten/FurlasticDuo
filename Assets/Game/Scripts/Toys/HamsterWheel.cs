@@ -48,7 +48,7 @@ namespace Game.Scripts.Toys
                 currentRotation += turnSpeedFactor;
             }
 
-            wheel.Rotate(transform.right, currentRotation * turnSpeed * Time.deltaTime);
+            wheel.Rotate(currentRotation * turnSpeed * Time.deltaTime, 0f, 0f);
         }
 
         private void OnTriggerExit(Collider other)
