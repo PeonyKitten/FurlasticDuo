@@ -2,47 +2,59 @@ using UnityEngine;
 
 namespace Game.Scripts.Elastic
 {
+    [RequireComponent(typeof(ElasticForce), typeof(LineRenderer))]
     public class ElasticVisual : MonoBehaviour
     {
-        public Transform player1;
-        public Transform player2;
-        [SerializeField] private float maxDistance = 5f;
+        [SerializeField] private Material ghostMaterial;
+        [SerializeField] private float lineWidth = 0.1f;
+        [SerializeField] private bool useDebugColors = true;
 
-        private LineRenderer lineRenderer;
+        private ElasticForce _elasticForce;
+        private LineRenderer _lineRenderer;
 
-        void Start()
+        private void Start()
         {
-            lineRenderer = GetComponent<LineRenderer>();
-            lineRenderer.positionCount = 2;
-            lineRenderer.startWidth = 0.1f;
-            lineRenderer.endWidth = 0.1f;
-            lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+            _elasticForce = GetComponent<ElasticForce>();
+            _lineRenderer = GetComponent<LineRenderer>();
+            _lineRenderer.positionCount = 2;
+            _lineRenderer.startWidth = lineWidth;
+            _lineRenderer.endWidth = lineWidth;
+
+            if (ghostMaterial)
+            {
+                _lineRenderer.material = ghostMaterial;
+            }
         }
 
-        void Update()
+        private void Update()
         {
+            var player1 = _elasticForce.Player1;
+            var player2 = _elasticForce.Player2;
+
             if (player1 is null || player2 is null) return;
 
-            lineRenderer.SetPosition(0, player1.position);
-            lineRenderer.SetPosition(1, player2.position);
+            _lineRenderer.SetPosition(0, player1.position);
+            _lineRenderer.SetPosition(1, player2.position);
+
+            if (!useDebugColors) return;
 
             Vector3 direction = player2.position - player1.position;
             float distance = direction.magnitude;
 
-            if (distance <= maxDistance * 0.5f)
+            if (distance <= _elasticForce.ForceAppliedDistance)
             {
-                lineRenderer.startColor = Color.green;
-                lineRenderer.endColor = Color.green;
+                _lineRenderer.startColor = Color.green;
+                _lineRenderer.endColor = Color.green;
             }
-            else if (distance <= maxDistance * 0.8f)
+            else if (distance <= _elasticForce.SnapbackDistance)
             {
-                lineRenderer.startColor = Color.yellow;
-                lineRenderer.endColor = Color.yellow;
+                _lineRenderer.startColor = Color.yellow;
+                _lineRenderer.endColor = Color.yellow;
             }
             else
             {
-                lineRenderer.startColor = Color.red;
-                lineRenderer.endColor = Color.red;
+                _lineRenderer.startColor = Color.red;
+                _lineRenderer.endColor = Color.red;
             }
         }
     }
