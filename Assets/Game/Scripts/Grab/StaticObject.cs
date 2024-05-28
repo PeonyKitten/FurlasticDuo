@@ -7,6 +7,10 @@ namespace Game.Scripts.Grab
     {
         public GrabbableType Type => GrabbableType.Static;
 
+<<<<<<< HEAD
+=======
+        private Transform _grabPoint;
+>>>>>>> 559594f (changed grabbing for objects, fixed some bugs)
         private Rigidbody _rb;
         private GameObject _configurableJointObject;
         private static Dictionary<GameObject, ConfigurableJoint> playerJoints = new Dictionary<GameObject, ConfigurableJoint>();
@@ -23,11 +27,23 @@ namespace Game.Scripts.Grab
 
         public void OnGrab(Transform playerGrabPoint)
         {
+<<<<<<< HEAD
             var player = playerGrabPoint.GetComponentInParent<PlayerController>().gameObject;
             if (playerJoints.ContainsKey(player))
             {
                 return;
             }
+=======
+            _grabPoint = grabPoint;
+            Debug.Log("Static object grabbed");
+        }
+
+        public void OnRelease(Transform grabPoint)
+        {
+            if (_grabPoint != grabPoint) return;
+
+            _grabPoint = null;
+>>>>>>> 559594f (changed grabbing for objects, fixed some bugs)
 
             _configurableJointObject = new GameObject("ConfigurableJointObject");
             _configurableJointObject.transform.position = playerGrabPoint.position;
@@ -39,6 +55,7 @@ namespace Game.Scripts.Grab
             AttachConfigurableJoint(player, jointRb);
 
         }
+<<<<<<< HEAD
 
         private void AttachConfigurableJoint(GameObject player, Rigidbody connectedBody)
         {
@@ -75,5 +92,7 @@ namespace Game.Scripts.Grab
                 _configurableJointObject = null;
             }
         }
+=======
+>>>>>>> 559594f (changed grabbing for objects, fixed some bugs)
     }
 }

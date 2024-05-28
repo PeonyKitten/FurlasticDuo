@@ -19,7 +19,6 @@ namespace Game.Scripts.Grab
         {
             _grabPoint = grabPoint;
             _rb.useGravity = false;
-            Debug.Log($"OnGrab called. Grab point set to: {_grabPoint.position}");
         }
 
         public void OnRelease(Transform grabPoint)
@@ -32,7 +31,7 @@ namespace Game.Scripts.Grab
         {
             if (!_grabPoint) return;
 
-            var newPosition = Vector3.Lerp(transform.position, _grabPoint.position, Time.fixedDeltaTime * lerpSpeed);
+            var newPosition = Vector3.Lerp(transform.position, _grabPoint.position, Time.deltaTime * lerpSpeed);
             _rb.MovePosition(newPosition);
         }
     }
