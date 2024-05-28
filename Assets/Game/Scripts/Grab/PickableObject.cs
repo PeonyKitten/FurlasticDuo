@@ -4,11 +4,12 @@ namespace Game.Scripts.Grab
 {
     public class PickableObject : MonoBehaviour, IGrabbable
     {
+        public GrabbableType Type => GrabbableType.Pickable;
+
         [SerializeField] private float lerpSpeed = 10f;
-        
         private Rigidbody _rb;
         private Transform _grabPoint;
-        
+
         private void Awake()
         {
             _rb = GetComponent<Rigidbody>();
@@ -29,7 +30,7 @@ namespace Game.Scripts.Grab
         private void FixedUpdate()
         {
             if (!_grabPoint) return;
-            
+
             var newPosition = Vector3.Lerp(transform.position, _grabPoint.position, Time.deltaTime * lerpSpeed);
             _rb.MovePosition(newPosition);
         }
