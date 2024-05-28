@@ -31,8 +31,6 @@ namespace Game.Scripts.Game.States
             {
                 al.enabled = false;
             }
-            
-            MenuManager.Instance.PopMenu();
         }
     }
 }
