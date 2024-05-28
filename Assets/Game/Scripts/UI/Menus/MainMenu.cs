@@ -24,7 +24,11 @@ namespace Game.Scripts.UI.Menus
             var playButton = options.Create<Button>("main-button");
             playButton.text = "Start";
             playButton.Focus();
-            playButton.ApplyClickCallbacks(() => GameManager.Instance.ChangeState(new PlayState()));
+            playButton.ApplyClickCallbacks(() =>
+            {
+                GameManager.Instance.ChangeState(new PlayState());
+                playButton.SetEnabled(false);
+            });
             
             var optionsButton = options.Create<Button>("main-button");
             optionsButton.text = "Options";
