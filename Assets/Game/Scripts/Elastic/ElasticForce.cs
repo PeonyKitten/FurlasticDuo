@@ -68,11 +68,7 @@ namespace Game.Scripts.Elastic
                 Vector3 force2 = Vector3.Scale((midpoint - player2.position).normalized * forceMagnitude2, forceMultiplier);
                 _rb2.AddForce(force2);
             }
-
-            // Debug log for verification
-            Debug.Log($"Player1 - Distance: {distance1}, Normalized Distance: {normalizedDistance1}, Force Magnitude: {forceMagnitude1}");
-            Debug.Log($"Player2 - Distance: {distance2}, Normalized Distance: {normalizedDistance2}, Force Magnitude: {forceMagnitude2}");
-
+            
             AdjustAccelerationFactor(_controller1, normalizedDistance1);
             AdjustAccelerationFactor(_controller2, normalizedDistance2);
 
@@ -84,12 +80,12 @@ namespace Game.Scripts.Elastic
         {
             if (normalizedDistance >= snapbackThreshold)
             {
-                Debug.Log($"{player.name} is in the snapback range");
+                // Debug.Log($"{player.name} is in the snapback range");
                 if (controller.Movement == Vector3.zero)
                 {
                     Vector3 snapbackForce = (midpoint - player.position).normalized * snapbackForceMagnitude;
                     rb.AddForce(snapbackForce, ForceMode.Impulse);
-                    Debug.Log($"Snapback Force Applied to {player.name}: {snapbackForce}");
+                    // Debug.Log($"Snapback Force Applied to {player.name}: {snapbackForce}");
                 }
             }
         }
