@@ -57,7 +57,6 @@ namespace Game.Scripts.UI.Menus
         public override void Hide()
         {
             returnToGameAction.performed -= SelectResumeOrReturnToGame;
-            returnToGameAction.Disable();
             base.Hide();
         }
 

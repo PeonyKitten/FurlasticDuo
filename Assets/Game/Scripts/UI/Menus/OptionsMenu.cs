@@ -40,7 +40,6 @@ namespace Game.Scripts.UI.Menus
         public override void Hide()
         {
             returnToPreviousMenuAction.performed -= SelectBackOrReturnToPrevious;
-            returnToPreviousMenuAction.Disable();
             base.Hide();
         }
 
