@@ -8,6 +8,9 @@ namespace Game.Scripts.Grab
         [SerializeField] private Vector3 objectCheckOffset = Vector3.zero;
         [SerializeField] private float grabRange = 2f;
         [SerializeField] private float playerSpeedModifier = 0.5f;
+
+        [SerializeField] private Material selectedMaterial;
+        [SerializeField] private Material defaultMaterial;
         
         private IGrabbable _currentGrabbable;
         private Transform _grabPoint;
@@ -50,6 +53,12 @@ namespace Game.Scripts.Grab
 
                     AdjustPlayerSpeed();
 
+                    var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
+                    foreach (var mRenderer in renderers)
+                    {
+                        mRenderer.material = selectedMaterial;
+                    }
+
                     Debug.Log("Object grabbed: " + _currentGrabbableObject.name);
                 }
             }
@@ -60,6 +69,12 @@ namespace Game.Scripts.Grab
             if (_currentGrabbable == null) return;
             
             _currentGrabbable.OnRelease(_grabPoint);
+            
+            var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
+            foreach (var mRenderer in renderers)
+            {
+                mRenderer.material = defaultMaterial;
+            }
 
             ResetPlayerSpeed();
 
