@@ -12,23 +12,27 @@ namespace Game.Scripts.Game.States
         public void OnStateEnter(GameManager state)
         {
             // EventBus<GameStates>.Publish(GameStates.Running);
-            LoadPlayground(state);
-            state.pauseGameAction.Enable();
-            state.pauseGameAction.performed += OpenPauseGameMenu;
+            GameManager.Instance.StartCoroutine(LoadPlaygroundScene(state));
         }
 
-        private static void LoadPlayground(GameManager state)
+        private static IEnumerator LoadPlaygroundScene(GameManager state)
         {
+            
             var asyncLoad = SceneManager.LoadSceneAsync("Playground-core", LoadSceneMode.Additive);
 
-            Debug.Assert(asyncLoad != null, nameof(asyncLoad) + " != null");
+            if (asyncLoad == null) yield break;
             
-            asyncLoad.completed += _ =>
+            while (!asyncLoad.isDone)
             {
-                state.uiCamera.enabled = false;
-                MenuManager.Instance.PopMenu();
-                MenuManager.Instance.HideDummy();
-            };
+                yield return null;
+            }
+            
+            state.uiCamera.enabled = false;
+            MenuManager.Instance.PopMenu();
+            MenuManager.Instance.HideDummy();
+            
+            state.pauseGameAction.Enable();
+            state.pauseGameAction.performed += OpenPauseGameMenu;
         }
 
         public void OnStateResume(GameManager state)
