@@ -56,7 +56,12 @@ namespace Game.Scripts.Grab
                     var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
                     foreach (var mRenderer in renderers)
                     {
-                        mRenderer.material = selectedMaterial;
+                        foreach (var rendererMaterial in mRenderer.sharedMaterials)
+                        {
+                            if (rendererMaterial != defaultMaterial) continue;
+                        
+                            mRenderer.material = selectedMaterial;
+                        }
                     }
 
                     Debug.Log("Object grabbed: " + _currentGrabbableObject.name);
@@ -71,11 +76,16 @@ namespace Game.Scripts.Grab
             _currentGrabbable.OnRelease(_grabPoint);
             
             var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
+            
             foreach (var mRenderer in renderers)
             {
-                mRenderer.material = defaultMaterial;
+                foreach (var rendererMaterial in mRenderer.sharedMaterials)
+                {
+                    if (rendererMaterial != selectedMaterial) continue;
+                        
+                    mRenderer.material = defaultMaterial;
+                }
             }
-
             ResetPlayerSpeed();
 
             Debug.Log("Object released: " + _currentGrabbableObject.name);
