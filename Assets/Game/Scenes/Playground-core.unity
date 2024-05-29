@@ -310,7 +310,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 189340059}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.33133164, y: 0.2579817, z: -0.09470084, w: 0.9026054}
+  m_LocalRotation: {x: 0.33133164, y: 0.25798175, z: -0.09470087, w: 0.9026054}
   m_LocalPosition: {x: -9.979933, y: 10.24, z: -4.9415197}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -650,8 +650,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player1: {fileID: 1979650791}
   player2: {fileID: 1853662120}
-  baseForce: 1510
+  midpointAdjustment: 0.5
   maxDistance: 8
+  baseForce: 1510
   maxForce: 100000
   forceCurve:
     serializedVersion: 2
@@ -678,10 +679,33 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   forceApplied: 0.65
+  yAxisForceFactorDot:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   snapbackThreshold: 0.9
-  snapbackForceMagnitude: 200
-  midpointAdjustment: 0.5
-  forceMultiplier: {x: 1, y: 0.1, z: 1}
+  snapbackForceMagnitude: 500
+  snapbackDelay: 0.5
 --- !u!1 &709405150
 GameObject:
   m_ObjectHideFlags: 0
@@ -886,7 +910,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1070034884}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.33133164, y: 0.2579817, z: -0.09470084, w: 0.9026054}
+  m_LocalRotation: {x: 0.33133164, y: 0.25798175, z: -0.09470087, w: 0.9026054}
   m_LocalPosition: {x: -9.979933, y: 10.24, z: -4.9415197}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

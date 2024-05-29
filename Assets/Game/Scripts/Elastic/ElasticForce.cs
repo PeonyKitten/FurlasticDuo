@@ -6,22 +6,29 @@ namespace Game.Scripts.Elastic
 {
     public class ElasticForce : MonoBehaviour
     {
+        [Header("Anchor settings")]
         [SerializeField] private Transform player1;
         [SerializeField] private Transform player2;
-        [SerializeField] private float baseForce = 1500;
+        [SerializeField, Range(0, 1)] private float midpointAdjustment = 0.5f;
         [SerializeField] private float maxDistance = 10;
+        
+        [Header("Force Settings")]
+        [SerializeField] private float baseForce = 1500;
         [SerializeField] private float maxForce = 100000;
         [SerializeField] private AnimationCurve forceCurve;
         [SerializeField, Range(0, 1)] private float forceApplied = 0.5f;
+        [SerializeField] private AnimationCurve yAxisForceFactorDot;
+        
+        [Header("Snapback Settings")]
         [SerializeField, Range(0, 1)] private float snapbackThreshold = 0.9f;
         [SerializeField] private float snapbackForceMagnitude = 150;
-        [SerializeField, Range(0, 1)] private float midpointAdjustment = 0.5f;
-        [SerializeField] private Vector3 forceMultiplier = new(1, 0.1f, 1);
+        [SerializeField] private float snapbackDelay = 0.5f;
 
         private Rigidbody _rb1;
         private Rigidbody _rb2;
         private PlayerController _controller1;
         private PlayerController _controller2;
+        private float _snapbackTimer;
 
         public Transform Player1 => player1;
         public Transform Player2 => player2;
@@ -40,6 +47,8 @@ namespace Game.Scripts.Elastic
 
         private void FixedUpdate()
         {
+            _snapbackTimer -= Time.deltaTime;
+            
             if (player1 is null || player2 is null || _controller1 is null || _controller2 is null) return;
 
             Vector3 midpoint = Vector3.Lerp(player1.position, player2.position, midpointAdjustment);
@@ -55,40 +64,58 @@ namespace Game.Scripts.Elastic
 
             float forceMagnitude1 = Mathf.Min(forceMultiplier1 * baseForce, maxForce);
             float forceMagnitude2 = Mathf.Min(forceMultiplier2 * baseForce, maxForce);
-
-
-            if (normalizedDistance1 > forceApplied)
+            
+            if (CalculateBindingForce(normalizedDistance1, player1, midpoint, forceMagnitude1, out var force1))
             {
-                Vector3 force1 = Vector3.Scale((midpoint - player1.position).normalized * forceMagnitude1, forceMultiplier);
                 _rb1.AddForce(force1);
             }
 
-            if (normalizedDistance2 > forceApplied)
+            if (CalculateBindingForce(normalizedDistance2, player2, midpoint, forceMagnitude2, out var force2))
             {
-                Vector3 force2 = Vector3.Scale((midpoint - player2.position).normalized * forceMagnitude2, forceMultiplier);
                 _rb2.AddForce(force2);
             }
             
             AdjustAccelerationFactor(_controller1, normalizedDistance1);
             AdjustAccelerationFactor(_controller2, normalizedDistance2);
 
-            ApplySnapbackForce(player1, _rb1, _controller1, normalizedDistance1, midpoint);
-            ApplySnapbackForce(player2, _rb2, _controller2, normalizedDistance2, midpoint);
-        }
-
-        private void ApplySnapbackForce(Transform player, Rigidbody rb, PlayerController controller, float normalizedDistance, Vector3 midpoint)
-        {
-            if (normalizedDistance >= snapbackThreshold)
+            if (_snapbackTimer > 0) return;
+            
+            if (ApplySnapbackForce(player1, _rb1, _controller1, normalizedDistance1, midpoint) ||
+                ApplySnapbackForce(player2, _rb2, _controller2, normalizedDistance2, midpoint))
             {
-                // Debug.Log($"{player.name} is in the snapback range");
-                if (controller.Movement == Vector3.zero)
-                {
-                    Vector3 snapbackForce = (midpoint - player.position).normalized * snapbackForceMagnitude;
-                    rb.AddForce(snapbackForce, ForceMode.Impulse);
-                    // Debug.Log($"Snapback Force Applied to {player.name}: {snapbackForce}");
-                }
+                _snapbackTimer = snapbackDelay;
             }
         }
+
+        private bool CalculateBindingForce(float normalizedDistance, Transform player, Vector3 midpoint, float forceMagnitude, out Vector3 force)
+        {
+            if (normalizedDistance <= forceApplied)
+            {
+                force = Vector3.zero;
+                return false;
+            }
+            
+            force = (midpoint - player.position).normalized * forceMagnitude;
+            var yFactor = Mathf.Abs(Vector3.Dot(force.normalized, Vector3.up));
+            force.y *= yAxisForceFactorDot.Evaluate(yFactor);
+            
+            return true;
+        }
+
+        private bool ApplySnapbackForce(Transform player, Rigidbody rb, PlayerController controller, float normalizedDistance, Vector3 midpoint)
+        {
+            if (normalizedDistance < snapbackThreshold) return false;
+            
+            // Debug.Log($"{player.name} is in the snapback range");
+            if (controller.Movement != Vector3.zero) return false;
+            
+            Vector3 snapbackForce = (midpoint - player.position).normalized * snapbackForceMagnitude;
+            rb.AddForce(snapbackForce, ForceMode.Impulse);
+
+            return true;
+            // Debug.Log($"Snapback Force Applied to {player.name}: {snapbackForce}");
+        }
+        
         private void AdjustAccelerationFactor(PlayerController controller, float normalizedDistance)
         {
             if (normalizedDistance > 0.99)
