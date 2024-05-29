@@ -97,6 +97,12 @@ namespace Game.Scripts.Toys
             _isOpening = false;
         }
 
+        public void ToggleDoor()
+        {
+             _isClosing = IsOpen;
+             _isOpening = !IsOpen;
+        }
+
         private void Update()
         {
             if (Time.timeScale == 0) return;
