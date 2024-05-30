@@ -43,6 +43,7 @@ namespace Game.Scripts.Toys
 
                 float moveSpeedFactor = Vector3.Dot(_movement, transform.right);
                 float absMoveSpeedFactor = Mathf.Abs(moveSpeedFactor);
+                absMoveSpeedFactor = absMoveSpeedFactor * absMoveSpeedFactor;
                 player.Key.speedFactor = player.Value.speedFactor * absMoveSpeedFactor;
 
                 currentRotation += turnSpeedFactor;
