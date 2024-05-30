@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Game.Scripts.Toys
 {
@@ -13,6 +14,9 @@ namespace Game.Scripts.Toys
 
         [SerializeField] private Transform wheel;
         [SerializeField] private float turnSpeed;
+
+        [SerializeField] public Door door;
+        [SerializeField] private float doorSpeedMultiplier;
 
         private Dictionary<PlayerController, PlayerData> enteredPlayers = new();
 
@@ -50,6 +54,12 @@ namespace Game.Scripts.Toys
             }
 
             wheel.Rotate(currentRotation * turnSpeed * Time.deltaTime, 0f, 0f);
+
+            // Affect the door if it's not null
+            if (door != null)
+            {
+                door.IncrementOpenness(currentRotation * doorSpeedMultiplier);
+            }
         }
 
         private void OnTriggerExit(Collider other)

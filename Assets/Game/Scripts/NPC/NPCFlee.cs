@@ -22,7 +22,10 @@ namespace Game.Scripts.Barking
 
             var fleeDirection = (transform.position - barkOrigin).normalized;
             var fleePosition = transform.position + fleeDirection * fleeSpeedMultiplier;
-            _agent.SetDestination(fleePosition);
+            if (!_agent.SetDestination(fleePosition))
+            {
+                Debug.Log("Couldn't get NavMesh destination");
+            }
 
             // TODO: clean up
             Invoke("StopReacting", 3f); // Assuming reaction lasts 3 seconds
