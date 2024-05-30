@@ -80,7 +80,7 @@ namespace Game.Scripts.Elastic
 
             if (_snapbackTimer > 0) return;
             
-            if (ApplySnapbackForce(player1, _rb1, _controller1, normalizedDistance1, midpoint) &&
+            if (ApplySnapbackForce(player1, _rb1, _controller1, normalizedDistance1, midpoint) ||
                 ApplySnapbackForce(player2, _rb2, _controller2, normalizedDistance2, midpoint))
             {
                 _snapbackTimer = snapbackDelay;
