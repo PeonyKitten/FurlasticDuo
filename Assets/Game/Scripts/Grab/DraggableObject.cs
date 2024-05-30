@@ -20,30 +20,38 @@ namespace Game.Scripts.Grab
         {
             _grabPoints.Add(grabPoint);
 
-            var fixedJoint = gameObject.AddComponent<FixedJoint>();
-            fixedJoint.connectedBody = grabPoint.GetComponentInParent<Rigidbody>();
-            fixedJoint.breakForce = float.MaxValue;
-            fixedJoint.breakTorque = float.MaxValue;
-            fixedJoint.enableCollision = false;
-            fixedJoint.enablePreprocessing = false;
+            var player = grabPoint.GetComponentInParent<PlayerController>();
+            if (player != null)
+            {
+                var fixedJoint = player.gameObject.AddComponent<FixedJoint>();
+                fixedJoint.connectedBody = _rb;
+                fixedJoint.breakForce = float.MaxValue;
+                fixedJoint.breakTorque = float.MaxValue;
+                fixedJoint.enableCollision = false;
+                fixedJoint.enablePreprocessing = false;
 
-            _fixedJoints.Add(fixedJoint);
-            _rb.isKinematic = false;
-
-            Debug.Log("Object grabbed by " + grabPoint.name);
+                Debug.Log("Object grabbed by " + grabPoint.name);
+            }
+            else
+            {
+                Debug.LogError("PlayerController not found in parent hierarchy.");
+            }
         }
 
         public void OnRelease(Transform grabPoint)
         {
-            int index = _grabPoints.IndexOf(grabPoint);
-            if (index != -1)
+            var player = grabPoint.GetComponentInParent<PlayerController>();
+            if (player != null)
             {
-                Destroy(_fixedJoints[index]);
-                _fixedJoints.RemoveAt(index);
-                _grabPoints.RemoveAt(index);
-
-                Debug.Log("Object released by " + grabPoint.name);
+                var joint = player.GetComponent<FixedJoint>();
+                if (joint != null)
+                {
+                    Destroy(joint);
+                    Debug.Log("Object released by " + grabPoint.name);
+                }
             }
+
+            _grabPoints.Remove(grabPoint);
         }
 
         private void FixedUpdate()
