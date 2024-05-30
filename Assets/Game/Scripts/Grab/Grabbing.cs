@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace Game.Scripts.Grab
 {
@@ -9,15 +10,15 @@ namespace Game.Scripts.Grab
         [SerializeField] private float grabRange = 2f;
         [SerializeField] private float playerSpeedModifier = 0.5f;
         [SerializeField] private float sphereCastRadius = 0.5f;
-
         [SerializeField] private Material selectedMaterial;
         [SerializeField] private Material defaultMaterial;
-        
+
         private IGrabbable _currentGrabbable;
-        private Transform _grabPoint;
         private PlayerController _playerController;
         private GameObject _currentGrabbableObject;
+        private Transform _grabPoint;
         public LayerMask layerMask;
+        public static HashSet<Transform> ActiveGrabPoints = new HashSet<Transform>();
 
         private void Awake()
         {
@@ -29,8 +30,6 @@ namespace Game.Scripts.Grab
 
         private void OnGrab()
         {
-            Debug.Log("Grab action performed");
-
             if (_currentGrabbable == null)
             {
                 TryGrab();
@@ -51,9 +50,10 @@ namespace Game.Scripts.Grab
                 {
                     _currentGrabbable = grabbable;
                     _currentGrabbableObject = hit.collider.gameObject;
-                    _currentGrabbable.OnGrab(_grabPoint);
+                    _currentGrabbable.OnGrab(this.transform);
 
                     AdjustPlayerSpeed();
+                    IgnoreCollisions(true);
 
                     var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
                     foreach (var mRenderer in renderers)
@@ -61,7 +61,6 @@ namespace Game.Scripts.Grab
                         foreach (var rendererMaterial in mRenderer.sharedMaterials)
                         {
                             if (rendererMaterial != defaultMaterial) continue;
-                        
                             mRenderer.material = selectedMaterial;
                         }
                     }
@@ -74,24 +73,23 @@ namespace Game.Scripts.Grab
         private void Release()
         {
             if (_currentGrabbable == null) return;
-            
-            _currentGrabbable.OnRelease(_grabPoint);
-            
+
+            _currentGrabbable.OnRelease(this.transform);
+            IgnoreCollisions(false);
+
             var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
-            
             foreach (var mRenderer in renderers)
             {
                 foreach (var rendererMaterial in mRenderer.sharedMaterials)
                 {
                     if (rendererMaterial != selectedMaterial) continue;
-                        
                     mRenderer.material = defaultMaterial;
                 }
             }
             ResetPlayerSpeed();
 
             Debug.Log("Object released: " + _currentGrabbableObject.name);
-            
+
             _currentGrabbable = null;
             _currentGrabbableObject = null;
         }
@@ -104,6 +102,20 @@ namespace Game.Scripts.Grab
         private void ResetPlayerSpeed()
         {
             _playerController.speedFactor /= playerSpeedModifier;
+        }
+
+        private void IgnoreCollisions(bool ignore)
+        {
+            var playerColliders = GetComponentsInChildren<Collider>();
+            var objectColliders = _currentGrabbableObject.GetComponentsInChildren<Collider>();
+
+            foreach (var playerCollider in playerColliders)
+            {
+                foreach (var objectCollider in objectColliders)
+                {
+                    Physics.IgnoreCollision(playerCollider, objectCollider, ignore);
+                }
+            }
         }
 
         private void OnDrawGizmosSelected()

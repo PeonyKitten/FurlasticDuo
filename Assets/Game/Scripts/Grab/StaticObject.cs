@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 namespace Game.Scripts.Grab
 {
@@ -7,13 +6,10 @@ namespace Game.Scripts.Grab
     {
         public GrabbableType Type => GrabbableType.Static;
 
-<<<<<<< HEAD
-=======
         private Transform _grabPoint;
->>>>>>> 559594f (changed grabbing for objects, fixed some bugs)
         private Rigidbody _rb;
-        private GameObject _configurableJointObject;
-        private static Dictionary<GameObject, ConfigurableJoint> playerJoints = new Dictionary<GameObject, ConfigurableJoint>();
+        private GameObject _fixedJointObject;
+        private ConfigurableJoint _configurableJoint;
 
         private void Awake()
         {
@@ -27,72 +23,54 @@ namespace Game.Scripts.Grab
 
         public void OnGrab(Transform playerGrabPoint)
         {
-<<<<<<< HEAD
-            var player = playerGrabPoint.GetComponentInParent<PlayerController>().gameObject;
-            if (playerJoints.ContainsKey(player))
+            _fixedJointObject = new GameObject("FixedJointObject");
+            _fixedJointObject.transform.position = playerGrabPoint.position;
+            _fixedJointObject.transform.SetParent(transform);
+
+            var fixedJointRb = _fixedJointObject.AddComponent<Rigidbody>();
+            fixedJointRb.isKinematic = true;
+
+            AttachConfigurableJoint(playerGrabPoint, fixedJointRb);
+
+            Debug.Log("Static object grabbed at " + playerGrabPoint.position);
+        }
+
+        private void AttachConfigurableJoint(Transform playerGrabPoint, Rigidbody connectedBody)
+        {
+            var player = playerGrabPoint.GetComponentInParent<PlayerController>();
+            if (player != null)
             {
-                return;
+                _configurableJoint = player.gameObject.AddComponent<ConfigurableJoint>();
+                _configurableJoint.connectedBody = connectedBody;
+
+                _configurableJoint.xMotion = ConfigurableJointMotion.Locked;
+                _configurableJoint.yMotion = ConfigurableJointMotion.Locked;
+                _configurableJoint.zMotion = ConfigurableJointMotion.Locked;
+                _configurableJoint.angularXMotion = ConfigurableJointMotion.Locked;
+                _configurableJoint.angularYMotion = ConfigurableJointMotion.Locked;
+                _configurableJoint.angularZMotion = ConfigurableJointMotion.Locked;
+
+                Debug.Log("Configurable joint created on player connected to fixed joint object.");
             }
-=======
-            _grabPoint = grabPoint;
-            Debug.Log("Static object grabbed");
-        }
-
-        public void OnRelease(Transform grabPoint)
-        {
-            if (_grabPoint != grabPoint) return;
-
-            _grabPoint = null;
->>>>>>> 559594f (changed grabbing for objects, fixed some bugs)
-
-            _configurableJointObject = new GameObject("ConfigurableJointObject");
-            _configurableJointObject.transform.position = playerGrabPoint.position;
-            _configurableJointObject.transform.SetParent(transform);
-
-            var jointRb = _configurableJointObject.AddComponent<Rigidbody>();
-            jointRb.isKinematic = true;
-
-            AttachConfigurableJoint(player, jointRb);
-
-        }
-<<<<<<< HEAD
-
-        private void AttachConfigurableJoint(GameObject player, Rigidbody connectedBody)
-        {
-            var playerController = player.GetComponent<PlayerController>();
-            if (playerController != null)
+            else
             {
-                var configurableJoint = player.AddComponent<ConfigurableJoint>();
-                configurableJoint.connectedBody = connectedBody;
-
-                configurableJoint.xMotion = ConfigurableJointMotion.Locked;
-                configurableJoint.yMotion = ConfigurableJointMotion.Locked;
-                configurableJoint.zMotion = ConfigurableJointMotion.Locked;
-                configurableJoint.angularXMotion = ConfigurableJointMotion.Locked;
-                configurableJoint.angularYMotion = ConfigurableJointMotion.Locked;
-                configurableJoint.angularZMotion = ConfigurableJointMotion.Locked;
-
-                playerJoints[player] = configurableJoint;
-
+                Debug.LogError("PlayerController not found in parent hierarchy.");
             }
         }
 
         public void OnRelease(Transform playerGrabPoint)
         {
-            var player = playerGrabPoint.GetComponentInParent<PlayerController>().gameObject;
-            if (playerJoints.TryGetValue(player, out var joint))
+            if (_configurableJoint != null)
             {
-                Destroy(joint);
-                playerJoints.Remove(player);
+                Destroy(_configurableJoint);
             }
 
-            if (_configurableJointObject != null)
+            if (_fixedJointObject != null)
             {
-                Destroy(_configurableJointObject);
-                _configurableJointObject = null;
+                Destroy(_fixedJointObject);
             }
+
+            Debug.Log("Static object released");
         }
-=======
->>>>>>> 559594f (changed grabbing for objects, fixed some bugs)
     }
 }
