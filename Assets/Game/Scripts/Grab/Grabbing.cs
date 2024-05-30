@@ -50,7 +50,7 @@ namespace Game.Scripts.Grab
                 {
                     _currentGrabbable = grabbable;
                     _currentGrabbableObject = hit.collider.gameObject;
-                    _currentGrabbable.OnGrab(this.transform);
+                    _currentGrabbable.OnGrab(_grabPoint);
 
                     AdjustPlayerSpeed();
                     IgnoreCollisions(true);
@@ -74,7 +74,7 @@ namespace Game.Scripts.Grab
         {
             if (_currentGrabbable == null) return;
 
-            _currentGrabbable.OnRelease(this.transform);
+            _currentGrabbable.OnRelease(_grabPoint);
             IgnoreCollisions(false);
 
             var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
