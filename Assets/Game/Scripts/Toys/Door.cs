@@ -33,7 +33,10 @@ namespace Game.Scripts.Toys
         [SerializeField, Range(0, 1)] private float openThreshold = 0.5f;
         [SerializeField] private StartState startState = StartState.None;
 
+        [SerializeField] private bool scriptOverride;
+
         public bool IsOpen => _openness > openThreshold;
+        public float Openness => _openness;
         
         private float _openness;
         private bool _isOpening;
@@ -42,6 +45,8 @@ namespace Game.Scripts.Toys
         // Start is called before the first frame update
         private void Start()
         {
+            if (scriptOverride) return;
+
             switch (startState)
             {
                 case StartState.Open:
@@ -103,9 +108,24 @@ namespace Game.Scripts.Toys
              _isOpening = !IsOpen;
         }
 
+        public void ApplyOpenness(float openness)
+        {
+            _openness = Mathf.Clamp01(openness);
+
+
+            ApplyPosition(Vector3.LerpUnclamped(closePosition, openPosition, _openness));
+            ApplyRotation(Mathf.LerpUnclamped(closeRotationDeg, openRotationDeg, _openness));
+        }
+
+        public void IncrementOpenness(float increment)
+        {
+            ApplyOpenness(_openness + increment);
+        }
+
         private void Update()
         {
-            if (Time.timeScale == 0) return;
+            if (scriptOverride || Time.timeScale == 0) return;
+
             
             if (_isOpening)
             {
