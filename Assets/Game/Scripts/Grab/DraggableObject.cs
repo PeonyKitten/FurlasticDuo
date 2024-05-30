@@ -9,28 +9,76 @@ namespace Game.Scripts.Grab
 
         private Rigidbody _rb;
         private readonly List<Transform> _grabPoints = new List<Transform>();
-        private readonly List<FixedJoint> _fixedJoints = new List<FixedJoint>();
 
         private void Awake()
         {
             _rb = GetComponent<Rigidbody>();
+            foreach (Transform child in transform)
+            {
+                if (child.CompareTag("GrabPoint")) 
+                {
+                    _grabPoints.Add(child);
+                }
+            }
+            if (_grabPoints.Count == 0)
+            {
+                Debug.LogError("No grab points found on DraggableObject.");
+            }
         }
 
-        public void OnGrab(Transform grabPoint)
+        public Transform GetClosestGrabPoint(Vector3 position)
         {
-            _grabPoints.Add(grabPoint);
+            Transform closestPoint = null;
+            float closestDistance = float.MaxValue;
 
-            var player = grabPoint.GetComponentInParent<PlayerController>();
+            foreach (var grabPoint in _grabPoints)
+            {
+                float distance = Vector3.Distance(position, grabPoint.position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestPoint = grabPoint;
+                }
+            }
+
+            return closestPoint;
+        }
+
+        public void OnGrab(Transform playerGrabPoint)
+        {
+            Transform closestGrabPoint = GetClosestGrabPoint(playerGrabPoint.position);
+            if (closestGrabPoint != null && !Grabbing.ActiveGrabPoints.Contains(closestGrabPoint))
+            {
+                Grabbing.ActiveGrabPoints.Add(closestGrabPoint);
+                AttachConfigurableJoint(playerGrabPoint, closestGrabPoint);
+                MovePlayerToGrabPoint(playerGrabPoint, closestGrabPoint.position);
+                Debug.Log($"Object grabbed by {playerGrabPoint.name} at {playerGrabPoint.position}. Closest grab point: {closestGrabPoint.name} at {closestGrabPoint.position}");
+            }
+            else
+            {
+                Debug.LogWarning($"Grab point {closestGrabPoint?.name} is already in use or no valid grab point found.");
+            }
+        }
+
+        private void AttachConfigurableJoint(Transform playerGrabPoint, Transform objectGrabPoint)
+        {
+            var player = playerGrabPoint.GetComponentInParent<PlayerController>();
             if (player != null)
             {
-                var fixedJoint = player.gameObject.AddComponent<FixedJoint>();
-                fixedJoint.connectedBody = _rb;
-                fixedJoint.breakForce = float.MaxValue;
-                fixedJoint.breakTorque = float.MaxValue;
-                fixedJoint.enableCollision = false;
-                fixedJoint.enablePreprocessing = false;
+                var configurableJoint = player.gameObject.AddComponent<ConfigurableJoint>();
+                configurableJoint.connectedBody = _rb;
+                configurableJoint.anchor = playerGrabPoint.InverseTransformPoint(objectGrabPoint.position);
+                configurableJoint.autoConfigureConnectedAnchor = false;
+                configurableJoint.connectedAnchor = objectGrabPoint.localPosition;
 
-                Debug.Log("Object grabbed by " + grabPoint.name);
+                configurableJoint.xMotion = ConfigurableJointMotion.Locked;
+                configurableJoint.yMotion = ConfigurableJointMotion.Locked;
+                configurableJoint.zMotion = ConfigurableJointMotion.Locked;
+                configurableJoint.angularXMotion = ConfigurableJointMotion.Locked;
+                configurableJoint.angularYMotion = ConfigurableJointMotion.Locked;
+                configurableJoint.angularZMotion = ConfigurableJointMotion.Locked;
+
+                Debug.Log($"Configurable joint created at: {objectGrabPoint.position} (Grab point: {objectGrabPoint.name})");
             }
             else
             {
@@ -38,34 +86,28 @@ namespace Game.Scripts.Grab
             }
         }
 
-        public void OnRelease(Transform grabPoint)
+        private void MovePlayerToGrabPoint(Transform player, Vector3 grabPointPosition)
         {
-            var player = grabPoint.GetComponentInParent<PlayerController>();
+            player.position = Vector3.Lerp(player.position, grabPointPosition, Time.deltaTime * 10f);
+        }
+
+        public void OnRelease(Transform playerGrabPoint)
+        {
+            var player = playerGrabPoint.GetComponentInParent<PlayerController>();
             if (player != null)
             {
-                var joint = player.GetComponent<FixedJoint>();
+                var joint = player.GetComponent<ConfigurableJoint>();
                 if (joint != null)
                 {
                     Destroy(joint);
-                    Debug.Log("Object released by " + grabPoint.name);
+                    Debug.Log("Object released by " + playerGrabPoint.name);
                 }
             }
 
-            _grabPoints.Remove(grabPoint);
-        }
-
-        private void FixedUpdate()
-        {
-            if (_grabPoints.Count > 0)
+            Transform closestGrabPoint = GetClosestGrabPoint(playerGrabPoint.position);
+            if (closestGrabPoint != null)
             {
-                Vector3 combinedForce = Vector3.zero;
-
-                foreach (Transform grabPoint in _grabPoints)
-                {
-                    Vector3 positionDifference = grabPoint.position - transform.position;
-                    combinedForce += positionDifference * 10f;
-                }
-                _rb.AddForce(combinedForce);
+                Grabbing.ActiveGrabPoints.Remove(closestGrabPoint);
             }
         }
     }
