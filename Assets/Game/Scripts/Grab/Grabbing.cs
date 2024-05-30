@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 namespace Game.Scripts.Grab
 {
@@ -7,18 +6,18 @@ namespace Game.Scripts.Grab
     public class Grabbing : MonoBehaviour
     {
         [SerializeField] private Vector3 objectCheckOffset = Vector3.zero;
-        // [SerializeField] private float grabRange = 2f; // dont need at the moment as we have sphereradius to play with
+        [SerializeField] private float grabRange = 2f;
         [SerializeField] private float playerSpeedModifier = 0.5f;
-        [SerializeField] private float sphereRadius = 2f;
+        [SerializeField] private float sphereCastRadius = 0.5f;
+
         [SerializeField] private Material selectedMaterial;
         [SerializeField] private Material defaultMaterial;
-
+        
         private IGrabbable _currentGrabbable;
+        private Transform _grabPoint;
         private PlayerController _playerController;
         private GameObject _currentGrabbableObject;
-        private Transform _grabPoint;
         public LayerMask layerMask;
-        public static HashSet<Transform> ActiveGrabPoints = new HashSet<Transform>();
 
         private void Awake()
         {
@@ -30,6 +29,8 @@ namespace Game.Scripts.Grab
 
         private void OnGrab()
         {
+            Debug.Log("Grab action performed");
+
             if (_currentGrabbable == null)
             {
                 TryGrab();
@@ -42,16 +43,14 @@ namespace Game.Scripts.Grab
 
         private void TryGrab()
         {
-            var startPos = transform.position + objectCheckOffset;
+            var actualForward = _playerController.TargetRotation * Vector3.forward;
 
-            var colliders = Physics.OverlapSphere(startPos, sphereRadius, layerMask);
-
-            foreach (var collider in colliders)
+            if (Physics.SphereCast(transform.position + objectCheckOffset, sphereCastRadius, actualForward, out var hit, grabRange, layerMask))
             {
-                if (collider.TryGetComponent(out IGrabbable grabbable))
+                if (hit.collider.TryGetComponent(out IGrabbable grabbable))
                 {
                     _currentGrabbable = grabbable;
-                    _currentGrabbableObject = collider.gameObject;
+                    _currentGrabbableObject = hit.collider.gameObject;
                     _currentGrabbable.OnGrab(_grabPoint);
 
                     AdjustPlayerSpeed();
@@ -62,10 +61,12 @@ namespace Game.Scripts.Grab
                         foreach (var rendererMaterial in mRenderer.sharedMaterials)
                         {
                             if (rendererMaterial != defaultMaterial) continue;
+                        
                             mRenderer.material = selectedMaterial;
                         }
                     }
-                    return;
+
+                    Debug.Log("Object grabbed: " + _currentGrabbableObject.name);
                 }
             }
         }
@@ -73,20 +74,24 @@ namespace Game.Scripts.Grab
         private void Release()
         {
             if (_currentGrabbable == null) return;
-
+            
             _currentGrabbable.OnRelease(_grabPoint);
-
+            
             var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
+            
             foreach (var mRenderer in renderers)
             {
                 foreach (var rendererMaterial in mRenderer.sharedMaterials)
                 {
                     if (rendererMaterial != selectedMaterial) continue;
+                        
                     mRenderer.material = defaultMaterial;
                 }
             }
             ResetPlayerSpeed();
 
+            Debug.Log("Object released: " + _currentGrabbableObject.name);
+            
             _currentGrabbable = null;
             _currentGrabbableObject = null;
         }
@@ -107,8 +112,9 @@ namespace Game.Scripts.Grab
 
             Gizmos.color = Color.blue;
             var startPos = transform.position + objectCheckOffset;
-
-            Gizmos.DrawWireSphere(startPos, sphereRadius);
+            var actualForward = _playerController.TargetRotation * Vector3.forward;
+            Gizmos.DrawLine(startPos, startPos + actualForward * grabRange);
+            Gizmos.DrawWireSphere(startPos + actualForward * grabRange, sphereCastRadius);
         }
     }
 }
