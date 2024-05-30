@@ -1,62 +1,73 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.Scripts.Toys
 {
+    [Serializable]
     public enum PlatformType
     {
-        Pingpong,
+        OneShot,
+        PingPong,
         Loop
     }
 
     public class MovingPlatform : MonoBehaviour
     {
-        public Transform waypoint1;
-        public Transform waypoint2;
-        public float speed = 2f;
-        public PlatformType platformType;
+        [SerializeField] private List<Transform> waypoints = new();
+        [SerializeField] private float speed = 2f;
+        [SerializeField] private PlatformType platformType = PlatformType.PingPong;
+        [SerializeField] private float closeEnoughDistance = 0.1f;
 
-        private Vector3 targetPosition;
-
-        void Start()
-        {
-            // Set the initial target position to the first waypoint
-            targetPosition = waypoint1.position;
-        }
-
-        void Update()
+        public Vector3 CurrentWaypoint => waypoints[_currentWaypointIndex].position;
+        
+        private int _currentWaypointIndex;
+        private bool _reverse;
+        
+        private void Update()
         {
             // Move the platform towards the target position
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, CurrentWaypoint, speed * Time.deltaTime);
 
             // Check if the platform has reached the target position
-            if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
+            if (!(Vector3.Distance(transform.position, CurrentWaypoint) < closeEnoughDistance)) return;
+            
+            // Switch target position to the other waypoint
+            SetNextWaypoint();
+        }
+
+        private void SetNextWaypoint()
+        {
+            if (platformType == PlatformType.OneShot && _currentWaypointIndex == waypoints.Count - 1) return;
+            
+            if (platformType == PlatformType.PingPong && (_currentWaypointIndex == 0 || _currentWaypointIndex == waypoints.Count - 1))
             {
-                // Switch target position to the other waypoint
-                if (targetPosition == waypoint1.position)
-                {
-                    targetPosition = waypoint2.position;
-                }
-                else
-                {
-                    if (platformType == PlatformType.Loop)
-                    {
-                        transform.position = waypoint1.position;
-                        targetPosition = waypoint2.position;
-                    }
-                    else targetPosition = waypoint1.position;
-                }
+                _reverse = !_reverse;
+            }
+
+            if (_reverse)
+            {
+                _currentWaypointIndex = Math.Max(_currentWaypointIndex - 1, 0);
+            }
+            else
+            {
+                _currentWaypointIndex = (_currentWaypointIndex + 1) % waypoints.Count;
             }
         }
 
-        // Visualize the waypoints and path in the editor
-        void OnDrawGizmos()
+        private void OnDrawGizmosSelected()
         {
-            if (waypoint1 != null && waypoint2 != null)
+            Gizmos.color = Color.green;
+            
+            Transform previousWaypoint = null;
+            foreach (var waypoint in waypoints)
             {
-                Gizmos.color = Color.green;
-                Gizmos.DrawLine(waypoint1.position, waypoint2.position);
-                Gizmos.DrawSphere(waypoint1.position, 0.2f);
-                Gizmos.DrawSphere(waypoint2.position, 0.2f);
+                if (previousWaypoint)
+                {
+                    Gizmos.DrawLine(waypoint.position, previousWaypoint.position);
+                }
+                Gizmos.DrawSphere(waypoint.position, 0.2f);
+                previousWaypoint = waypoint;
             }
         }
     }
