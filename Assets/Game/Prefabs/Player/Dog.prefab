@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   useCameraRelativeMovement: 1
-  maxSpeed: 5
+  maxSpeed: 7
   acceleration: 200
   accelerationFactorDot:
     serializedVersion: 2
@@ -285,7 +285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ab1646e4cb0b3a4797bbd946cea5af1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  barkRadius: 6
+  barkRadius: 8
   barkSound: {fileID: 8300000, guid: a809aae36e0a71a4da51e9cacf5beaf2, type: 3}
   barkDelay: 0.5
   barkEffect: {fileID: 676789718690479089, guid: d8a1778683d59864d8f0a2c29aab3473,
@@ -305,9 +305,12 @@ MonoBehaviour:
   objectCheckOffset: {x: 0, y: 0, z: 0}
   grabRange: 2
   playerSpeedModifier: 0.5
-  holdToGrab: 1
-  selectedMaterial: {fileID: 2100000, guid: b467894b8d12b554aa46d913716c9ffe, type: 2}
-  defaultMaterial: {fileID: 2100000, guid: 9a5f22af76595a741bbb8ea7ab9781c1, type: 2}
+  sphereCastRadius: 0.5
+  selectedMaterial: {fileID: 0}
+  defaultMaterial: {fileID: 0}
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!82 &6505845640361679730
 AudioSource:
   m_ObjectHideFlags: 0

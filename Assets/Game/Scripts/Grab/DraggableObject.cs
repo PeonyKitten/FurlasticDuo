@@ -87,7 +87,7 @@ namespace Game.Scripts.Grab
         }
 
         private void MovePlayerToGrabPoint(Transform player, Vector3 grabPointPosition)
-        {
+        { 
             player.position = Vector3.Lerp(player.position, grabPointPosition, Time.deltaTime * 10f);
         }
 

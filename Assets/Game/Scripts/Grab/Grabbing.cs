@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 namespace Game.Scripts.Grab
 {
@@ -9,38 +9,27 @@ namespace Game.Scripts.Grab
         [SerializeField] private Vector3 objectCheckOffset = Vector3.zero;
         [SerializeField] private float grabRange = 2f;
         [SerializeField] private float playerSpeedModifier = 0.5f;
-        [SerializeField] private bool holdToGrab = true;
-
+        [SerializeField] private float sphereCastRadius = 0.5f;
         [SerializeField] private Material selectedMaterial;
         [SerializeField] private Material defaultMaterial;
-        
+
         private IGrabbable _currentGrabbable;
-        private Transform _grabPoint;
         private PlayerController _playerController;
         private GameObject _currentGrabbableObject;
+        private Transform _grabPoint;
+        public LayerMask layerMask;
+        public static HashSet<Transform> ActiveGrabPoints = new HashSet<Transform>();
 
-        private PlayerInput _playerInput;
-        private InputAction _grabAction;
-
-        private void Start()
+        private void Awake()
         {
             _playerController = GetComponent<PlayerController>();
-            _playerInput = GetComponent<PlayerInput>();
             _grabPoint = new GameObject("GrabPoint").transform;
             _grabPoint.SetParent(transform);
             _grabPoint.localPosition = new Vector3(0, 0, 1.4f);
-            _grabAction = _playerInput.actions["Grab"];
-            
-            _grabAction.performed += OnGrabPerformed;
-            _grabAction.canceled += OnGrabReleased;
         }
 
         private void OnGrab()
         {
-            if (holdToGrab) return;
-            
-            Debug.Log("Grab action performed");
-
             if (_currentGrabbable == null)
             {
                 TryGrab();
@@ -51,31 +40,11 @@ namespace Game.Scripts.Grab
             }
         }
 
-        private void OnGrabPerformed(InputAction.CallbackContext callbackContext)
-        {
-            if (!holdToGrab) return;
-            
-            Debug.Log("start uwu");
-            if (_currentGrabbable != null) return;
-            
-            TryGrab();
-        }
-
-        private void OnGrabReleased(InputAction.CallbackContext callbackContext)
-        {
-            if (!holdToGrab) return;
-            
-            Debug.Log("stop all uwu");
-            if (_currentGrabbable == null) return;
-            
-            Release();
-        }
-
         private void TryGrab()
         {
             var actualForward = _playerController.TargetRotation * Vector3.forward;
 
-            if (Physics.Raycast(transform.position + objectCheckOffset, actualForward, out var hit, grabRange))
+            if (Physics.SphereCast(transform.position + objectCheckOffset, sphereCastRadius, actualForward, out var hit, grabRange, layerMask))
             {
                 if (hit.collider.TryGetComponent(out IGrabbable grabbable))
                 {
@@ -84,6 +53,7 @@ namespace Game.Scripts.Grab
                     _currentGrabbable.OnGrab(_grabPoint);
 
                     AdjustPlayerSpeed();
+                    IgnoreCollisions(true);
 
                     var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
                     foreach (var mRenderer in renderers)
@@ -91,7 +61,6 @@ namespace Game.Scripts.Grab
                         foreach (var rendererMaterial in mRenderer.sharedMaterials)
                         {
                             if (rendererMaterial != defaultMaterial) continue;
-                        
                             mRenderer.material = selectedMaterial;
                         }
                     }
@@ -104,24 +73,23 @@ namespace Game.Scripts.Grab
         private void Release()
         {
             if (_currentGrabbable == null) return;
-            
+
             _currentGrabbable.OnRelease(_grabPoint);
-            
+            IgnoreCollisions(false);
+
             var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
-            
             foreach (var mRenderer in renderers)
             {
                 foreach (var rendererMaterial in mRenderer.sharedMaterials)
                 {
                     if (rendererMaterial != selectedMaterial) continue;
-                        
                     mRenderer.material = defaultMaterial;
                 }
             }
             ResetPlayerSpeed();
 
             Debug.Log("Object released: " + _currentGrabbableObject.name);
-            
+
             _currentGrabbable = null;
             _currentGrabbableObject = null;
         }
@@ -136,6 +104,20 @@ namespace Game.Scripts.Grab
             _playerController.speedFactor /= playerSpeedModifier;
         }
 
+        private void IgnoreCollisions(bool ignore)
+        {
+            var playerColliders = GetComponentsInChildren<Collider>();
+            var objectColliders = _currentGrabbableObject.GetComponentsInChildren<Collider>();
+
+            foreach (var playerCollider in playerColliders)
+            {
+                foreach (var objectCollider in objectColliders)
+                {
+                    Physics.IgnoreCollision(playerCollider, objectCollider, ignore);
+                }
+            }
+        }
+
         private void OnDrawGizmosSelected()
         {
             if (!Application.isPlaying) return;
@@ -143,7 +125,8 @@ namespace Game.Scripts.Grab
             Gizmos.color = Color.blue;
             var startPos = transform.position + objectCheckOffset;
             var actualForward = _playerController.TargetRotation * Vector3.forward;
-            Gizmos.DrawLine(startPos, startPos + actualForward);
+            Gizmos.DrawLine(startPos, startPos + actualForward * grabRange);
+            Gizmos.DrawWireSphere(startPos + actualForward * grabRange, sphereCastRadius);
         }
     }
 }
