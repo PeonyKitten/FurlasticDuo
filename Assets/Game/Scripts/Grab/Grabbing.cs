@@ -7,9 +7,9 @@ namespace Game.Scripts.Grab
     public class Grabbing : MonoBehaviour
     {
         [SerializeField] private Vector3 objectCheckOffset = Vector3.zero;
-        [SerializeField] private float grabRange = 2f;
+        // [SerializeField] private float grabRange = 2f; // dont need at the moment as we have sphereradius to play with
         [SerializeField] private float playerSpeedModifier = 0.5f;
-        [SerializeField] private float sphereCastRadius = 0.5f;
+        [SerializeField] private float sphereRadius = 2f;
         [SerializeField] private Material selectedMaterial;
         [SerializeField] private Material defaultMaterial;
 
@@ -42,18 +42,19 @@ namespace Game.Scripts.Grab
 
         private void TryGrab()
         {
-            var actualForward = _playerController.TargetRotation * Vector3.forward;
+            var startPos = transform.position + objectCheckOffset;
 
-            if (Physics.SphereCast(transform.position + objectCheckOffset, sphereCastRadius, actualForward, out var hit, grabRange, layerMask))
+            var colliders = Physics.OverlapSphere(startPos, sphereRadius, layerMask);
+
+            foreach (var collider in colliders)
             {
-                if (hit.collider.TryGetComponent(out IGrabbable grabbable))
+                if (collider.TryGetComponent(out IGrabbable grabbable))
                 {
                     _currentGrabbable = grabbable;
-                    _currentGrabbableObject = hit.collider.gameObject;
+                    _currentGrabbableObject = collider.gameObject;
                     _currentGrabbable.OnGrab(_grabPoint);
 
                     AdjustPlayerSpeed();
-                    IgnoreCollisions(true);
 
                     var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
                     foreach (var mRenderer in renderers)
@@ -64,8 +65,7 @@ namespace Game.Scripts.Grab
                             mRenderer.material = selectedMaterial;
                         }
                     }
-
-                    Debug.Log("Object grabbed: " + _currentGrabbableObject.name);
+                    return;
                 }
             }
         }
@@ -75,7 +75,6 @@ namespace Game.Scripts.Grab
             if (_currentGrabbable == null) return;
 
             _currentGrabbable.OnRelease(_grabPoint);
-            IgnoreCollisions(false);
 
             var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
             foreach (var mRenderer in renderers)
@@ -87,8 +86,6 @@ namespace Game.Scripts.Grab
                 }
             }
             ResetPlayerSpeed();
-
-            Debug.Log("Object released: " + _currentGrabbableObject.name);
 
             _currentGrabbable = null;
             _currentGrabbableObject = null;
@@ -104,29 +101,14 @@ namespace Game.Scripts.Grab
             _playerController.speedFactor /= playerSpeedModifier;
         }
 
-        private void IgnoreCollisions(bool ignore)
-        {
-            var playerColliders = GetComponentsInChildren<Collider>();
-            var objectColliders = _currentGrabbableObject.GetComponentsInChildren<Collider>();
-
-            foreach (var playerCollider in playerColliders)
-            {
-                foreach (var objectCollider in objectColliders)
-                {
-                    Physics.IgnoreCollision(playerCollider, objectCollider, ignore);
-                }
-            }
-        }
-
         private void OnDrawGizmosSelected()
         {
             if (!Application.isPlaying) return;
 
             Gizmos.color = Color.blue;
             var startPos = transform.position + objectCheckOffset;
-            var actualForward = _playerController.TargetRotation * Vector3.forward;
-            Gizmos.DrawLine(startPos, startPos + actualForward * grabRange);
-            Gizmos.DrawWireSphere(startPos + actualForward * grabRange, sphereCastRadius);
+
+            Gizmos.DrawWireSphere(startPos, sphereRadius);
         }
     }
 }
