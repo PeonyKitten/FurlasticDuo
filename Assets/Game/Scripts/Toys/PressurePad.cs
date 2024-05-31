@@ -68,6 +68,13 @@ namespace Game.Scripts.Toys
             }
         }
 
+        //Kai added this function to set the value of isPressed from outside, temporary use
+        public void ForceRelease()
+        {
+            IsPressed = false;
+            OnRelease();
+        }
+
         private void OnPress()
         {
             _targetPistonPosition = _initialPistonPosition + pistonMoveAxis * pistonMoveDistance;
