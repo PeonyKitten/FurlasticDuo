@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Game.Scripts.Grab
 {
@@ -8,6 +9,7 @@ namespace Game.Scripts.Grab
         [SerializeField] private Vector3 objectCheckOffset = Vector3.zero;
         [SerializeField] private float grabRange = 2f;
         [SerializeField] private float playerSpeedModifier = 0.5f;
+        [SerializeField] private bool holdToGrab = true;
 
         [SerializeField] private Material selectedMaterial;
         [SerializeField] private Material defaultMaterial;
@@ -17,16 +19,26 @@ namespace Game.Scripts.Grab
         private PlayerController _playerController;
         private GameObject _currentGrabbableObject;
 
-        private void Awake()
+        private PlayerInput _playerInput;
+        private InputAction _grabAction;
+
+        private void Start()
         {
             _playerController = GetComponent<PlayerController>();
+            _playerInput = GetComponent<PlayerInput>();
             _grabPoint = new GameObject("GrabPoint").transform;
             _grabPoint.SetParent(transform);
             _grabPoint.localPosition = new Vector3(0, 0, 1.4f);
+            _grabAction = _playerInput.actions["Grab"];
+            
+            _grabAction.performed += OnGrabPerformed;
+            _grabAction.canceled += OnGrabReleased;
         }
 
         private void OnGrab()
         {
+            if (holdToGrab) return;
+            
             Debug.Log("Grab action performed");
 
             if (_currentGrabbable == null)
@@ -37,6 +49,26 @@ namespace Game.Scripts.Grab
             {
                 Release();
             }
+        }
+
+        private void OnGrabPerformed(InputAction.CallbackContext callbackContext)
+        {
+            if (!holdToGrab) return;
+            
+            Debug.Log("start uwu");
+            if (_currentGrabbable != null) return;
+            
+            TryGrab();
+        }
+
+        private void OnGrabReleased(InputAction.CallbackContext callbackContext)
+        {
+            if (!holdToGrab) return;
+            
+            Debug.Log("stop all uwu");
+            if (_currentGrabbable == null) return;
+            
+            Release();
         }
 
         private void TryGrab()
