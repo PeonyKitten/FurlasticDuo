@@ -30,7 +30,7 @@ namespace Game.Scripts.UI.Menus
             _resumeButton.ApplyClickCallbacks(() => GameManager.Instance.RollbackState());
             
             var restartButton = options.Create<Button>("main-button");
-            restartButton.text = "Restart";
+            restartButton.text = "Restart from Checkpoint";
             restartButton.ApplyClickCallbacks(() =>
             {
                 CheckpointSystem.Instance.Respawn();
