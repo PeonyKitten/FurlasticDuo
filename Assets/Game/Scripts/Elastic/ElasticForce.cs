@@ -79,9 +79,11 @@ namespace Game.Scripts.Elastic
             AdjustAccelerationFactor(_controller2, normalizedDistance2);
 
             if (_snapbackTimer > 0) return;
-            
-            if (ApplySnapbackForce(player1, _rb1, _controller1, normalizedDistance1, midpoint) ||
-                ApplySnapbackForce(player2, _rb2, _controller2, normalizedDistance2, midpoint))
+
+            var snapbackPlayer1 = ApplySnapbackForce(player1, _rb1, _controller1, normalizedDistance1, midpoint);
+            var snapbackPlayer2 = ApplySnapbackForce(player2, _rb2, _controller2, normalizedDistance2, midpoint);
+
+            if (snapbackPlayer1 || snapbackPlayer2)
             {
                 _snapbackTimer = snapbackDelay;
             }
