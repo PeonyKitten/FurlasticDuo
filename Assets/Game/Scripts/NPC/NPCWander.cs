@@ -19,28 +19,28 @@ namespace Game.Scripts.Barking
             _reactionComponent = GetComponent<INPCReaction>();
         }
 
-        private void Update()
-        {
-            if (_reactionComponent.IsReacting) return;
+        //private void Update()
+        //{
+        //    if (_reactionComponent.IsReacting) return;
             
-            _timer += Time.deltaTime;
+        //    _timer += Time.deltaTime;
 
-            if (_timer >= wanderTimer)
-            {
-                var newPos = RandomNavSphere(transform.position, wanderRadius, -1);
-                _agent.SetDestination(newPos);
-                _timer = 0;
-            }
-        }
+        //    if (_timer >= wanderTimer)
+        //    {
+        //        var newPos = RandomNavSphere(transform.position, wanderRadius, -1);
+        //        _agent.SetDestination(newPos);
+        //        _timer = 0;
+        //    }
+        //}
 
-        private static Vector3 RandomNavSphere(Vector3 origin, float dist, int layermask)
-        {
-            var randDirection = Random.insideUnitSphere * dist;
-            randDirection += origin;
+        //private static Vector3 RandomNavSphere(Vector3 origin, float dist, int layermask)
+        //{
+        //    var randDirection = Random.insideUnitSphere * dist;
+        //    randDirection += origin;
 
-            NavMesh.SamplePosition(randDirection, out var navHit, dist, layermask);
+        //    NavMesh.SamplePosition(randDirection, out var navHit, dist, layermask);
 
-            return navHit.position;
-        }
+        //    return navHit.position;
+        //}
     }
 }
