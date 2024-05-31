@@ -17,7 +17,6 @@ namespace Game.Scripts.Grab
         {
             _grabPoint = grabPoint;
             _rb.useGravity = false;
-            Debug.Log($"OnGrab called. Grab point set to: {_grabPoint.position}");
         }
 
         public void OnRelease(Transform grabPoint)
