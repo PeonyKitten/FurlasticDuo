@@ -3,7 +3,7 @@ using UnityEngine.AI;
 
 namespace Game.Scripts.Barking
 {
-    public class NPCFlee : MonoBehaviour, INPCReaction
+    public class BarkFlee : MonoBehaviour, IBarkReaction
     {
         public float fleeSpeedMultiplier = 2f;
         public bool IsReacting { get; set; }
@@ -15,7 +15,7 @@ namespace Game.Scripts.Barking
             _agent = GetComponent<NavMeshAgent>();
         }
 
-        public void ReactToBark(Vector3 barkOrigin)
+        void IBarkReaction.React(Bark bark)
         {
             IsReacting = true;
             _agent.speed *= fleeSpeedMultiplier;
