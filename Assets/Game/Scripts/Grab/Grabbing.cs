@@ -7,13 +7,15 @@ namespace Game.Scripts.Grab
     public class Grabbing : MonoBehaviour
     {
         [SerializeField] private Vector3 objectCheckOffset = Vector3.zero;
-        [SerializeField] private float grabRange = 2f;
+        //[SerializeField] private float grabRange = 2f; not  needed as we have sphereradius and object offset
         [SerializeField] private float playerSpeedModifier = 0.5f;
         [SerializeField] private bool holdToGrab = true;
 
         [SerializeField] private Material selectedMaterial;
         [SerializeField] private Material defaultMaterial;
-        
+        [SerializeField] private float sphereRadius = 0.6f;
+        [SerializeField] private LayerMask layerMask = ~0;
+
         private IGrabbable _currentGrabbable;
         private Transform _grabPoint;
         private PlayerController _playerController;
@@ -30,7 +32,7 @@ namespace Game.Scripts.Grab
             _grabPoint.SetParent(transform);
             _grabPoint.localPosition = new Vector3(0, 0, 1.4f);
             _grabAction = _playerInput.actions["Grab"];
-            
+
             _grabAction.performed += OnGrabPerformed;
             _grabAction.canceled += OnGrabReleased;
         }
@@ -38,8 +40,6 @@ namespace Game.Scripts.Grab
         private void OnGrab()
         {
             if (holdToGrab) return;
-            
-            Debug.Log("Grab action performed");
 
             if (_currentGrabbable == null)
             {
@@ -54,33 +54,32 @@ namespace Game.Scripts.Grab
         private void OnGrabPerformed(InputAction.CallbackContext callbackContext)
         {
             if (!holdToGrab) return;
-            
-            Debug.Log("start uwu");
+
             if (_currentGrabbable != null) return;
-            
+
             TryGrab();
         }
 
         private void OnGrabReleased(InputAction.CallbackContext callbackContext)
         {
             if (!holdToGrab) return;
-            
-            Debug.Log("stop all uwu");
+
             if (_currentGrabbable == null) return;
-            
+
             Release();
         }
 
         private void TryGrab()
         {
-            var actualForward = _playerController.TargetRotation * Vector3.forward;
+            var startPos = transform.position + objectCheckOffset;
 
-            if (Physics.Raycast(transform.position + objectCheckOffset, actualForward, out var hit, grabRange))
+            var colliders = Physics.OverlapSphere(startPos, sphereRadius, layerMask, QueryTriggerInteraction.Ignore);
+            foreach (var collider in colliders)
             {
-                if (hit.collider.TryGetComponent(out IGrabbable grabbable))
+                if (collider.TryGetComponent(out IGrabbable grabbable))
                 {
                     _currentGrabbable = grabbable;
-                    _currentGrabbableObject = hit.collider.gameObject;
+                    _currentGrabbableObject = collider.gameObject;
                     _currentGrabbable.OnGrab(_grabPoint);
 
                     AdjustPlayerSpeed();
@@ -91,12 +90,10 @@ namespace Game.Scripts.Grab
                         foreach (var rendererMaterial in mRenderer.sharedMaterials)
                         {
                             if (rendererMaterial != defaultMaterial) continue;
-                        
                             mRenderer.material = selectedMaterial;
                         }
                     }
-
-                    Debug.Log("Object grabbed: " + _currentGrabbableObject.name);
+                    return;
                 }
             }
         }
@@ -104,24 +101,21 @@ namespace Game.Scripts.Grab
         private void Release()
         {
             if (_currentGrabbable == null) return;
-            
+
             _currentGrabbable.OnRelease(_grabPoint);
-            
+
             var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
-            
+
             foreach (var mRenderer in renderers)
             {
                 foreach (var rendererMaterial in mRenderer.sharedMaterials)
                 {
                     if (rendererMaterial != selectedMaterial) continue;
-                        
+
                     mRenderer.material = defaultMaterial;
                 }
             }
             ResetPlayerSpeed();
-
-            Debug.Log("Object released: " + _currentGrabbableObject.name);
-            
             _currentGrabbable = null;
             _currentGrabbableObject = null;
         }
@@ -136,14 +130,19 @@ namespace Game.Scripts.Grab
             _playerController.speedFactor /= playerSpeedModifier;
         }
 
+        private void OnDestroy()
+        {
+            _grabAction.performed -= OnGrabPerformed;
+            _grabAction.canceled -= OnGrabReleased;
+        }
+
         private void OnDrawGizmosSelected()
         {
             if (!Application.isPlaying) return;
 
             Gizmos.color = Color.blue;
             var startPos = transform.position + objectCheckOffset;
-            var actualForward = _playerController.TargetRotation * Vector3.forward;
-            Gizmos.DrawLine(startPos, startPos + actualForward);
+            Gizmos.DrawWireSphere(startPos, sphereRadius);
         }
     }
 }

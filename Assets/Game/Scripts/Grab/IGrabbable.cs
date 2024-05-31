@@ -6,5 +6,6 @@ namespace Game.Scripts.Grab
     {
         void OnGrab(Transform grabPoint);
         void OnRelease(Transform grabPoint);
+        void ReleaseAll();
     }
 }
