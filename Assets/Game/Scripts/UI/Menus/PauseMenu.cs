@@ -1,6 +1,7 @@
 using System.Collections;
 using Game.Scripts.Game;
 using Game.Scripts.Game.States;
+using Game.Scripts.Levels.Checkpoints;
 using Game.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -29,8 +30,12 @@ namespace Game.Scripts.UI.Menus
             _resumeButton.ApplyClickCallbacks(() => GameManager.Instance.RollbackState());
             
             var restartButton = options.Create<Button>("main-button");
-            restartButton.SetEnabled(false);
-            restartButton.text = "Restart";
+            restartButton.text = "Restart from Checkpoint";
+            restartButton.ApplyClickCallbacks(() =>
+            {
+                CheckpointSystem.Instance.Respawn();
+                GameManager.Instance.RollbackState();
+            });
             
             var optionsButton = options.Create<Button>("main-button");
             optionsButton.text = "Options";
