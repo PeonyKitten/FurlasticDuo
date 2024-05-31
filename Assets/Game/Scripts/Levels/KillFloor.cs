@@ -8,7 +8,10 @@ namespace Game.Scripts.Levels
     {
         private void OnTriggerEnter(Collider other)
         {
-            CheckpointSystem.Instance.Respawn();
+            if (other.TryGetComponent(out PlayerController _))
+            {
+                CheckpointSystem.Instance.Respawn();
+            }
         }
     }
 }
