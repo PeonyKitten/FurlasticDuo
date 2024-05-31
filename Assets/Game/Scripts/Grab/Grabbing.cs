@@ -24,8 +24,6 @@ namespace Game.Scripts.Grab
         private PlayerInput _playerInput;
         private InputAction _grabAction;
 
-
-
         private void Start()
         {
             _playerController = GetComponent<PlayerController>();
@@ -130,6 +128,12 @@ namespace Game.Scripts.Grab
         private void ResetPlayerSpeed()
         {
             _playerController.speedFactor /= playerSpeedModifier;
+        }
+
+        private void OnDestroy()
+        {
+            _grabAction.performed -= OnGrabPerformed;
+            _grabAction.canceled -= OnGrabReleased;
         }
 
         private void OnDrawGizmosSelected()

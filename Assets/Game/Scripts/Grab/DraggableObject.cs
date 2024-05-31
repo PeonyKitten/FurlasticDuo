@@ -5,8 +5,6 @@ namespace Game.Scripts.Grab
 {
     public class DraggableObject : MonoBehaviour, IGrabbable
     {
-        public GrabbableType Type => GrabbableType.Draggable;
-
         private Rigidbody _rb;
 
         private void Awake()
@@ -20,7 +18,7 @@ namespace Game.Scripts.Grab
             if (player != null)
             {
                 var hitPoint = playerGrabPoint.position;
-
+                    
                 var fixedJoint = player.gameObject.AddComponent<FixedJoint>();
                 fixedJoint.connectedBody = _rb;
                 fixedJoint.breakForce = float.MaxValue;
@@ -39,6 +37,20 @@ namespace Game.Scripts.Grab
             {
                 var joint = player.GetComponent<FixedJoint>();
                 if (joint != null)
+                {
+                    Destroy(joint);
+                }
+            }
+        }
+
+        //TODO: maybe change?
+        public void ReleaseAll()
+        {
+            var allPlayers = FindObjectsOfType<PlayerController>();
+            foreach (var player in allPlayers)
+            {
+                var joint = player.GetComponent<FixedJoint>();
+                if (joint != null && joint.connectedBody == _rb)
                 {
                     Destroy(joint);
                 }

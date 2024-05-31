@@ -5,8 +5,6 @@ namespace Game.Scripts.Grab
 {
     public class StaticObject : MonoBehaviour, IGrabbable
     {
-        public GrabbableType Type => GrabbableType.Static;
-
         private Rigidbody _rb;
         private GameObject _configurableJointObject;
         private static Dictionary<GameObject, ConfigurableJoint> playerJoints = new Dictionary<GameObject, ConfigurableJoint>();
@@ -68,6 +66,21 @@ namespace Game.Scripts.Grab
                 Destroy(joint);
                 playerJoints.Remove(player);
             }
+
+            if (_configurableJointObject != null)
+            {
+                Destroy(_configurableJointObject);
+                _configurableJointObject = null;
+            }
+        }
+
+        public void ReleaseAll()
+        {
+            foreach (var joint in playerJoints.Values)
+            {
+                Destroy(joint);
+            }
+            playerJoints.Clear();
 
             if (_configurableJointObject != null)
             {
