@@ -16,7 +16,6 @@ namespace Game.Scripts.Grab
 
         public void OnGrab(Transform playerGrabPoint)
         {
-<<<<<<< HEAD
             var player = playerGrabPoint.GetComponentInParent<PlayerController>();
             if (player != null)
             {
@@ -30,34 +29,6 @@ namespace Game.Scripts.Grab
                 fixedJoint.enablePreprocessing = false;
 
                 fixedJoint.anchor = playerGrabPoint.InverseTransformPoint(hitPoint);
-
-=======
-            _grabPoints.Add(grabPoint);
-
-            var fixedJoint = gameObject.AddComponent<FixedJoint>();
-            fixedJoint.connectedBody = grabPoint.GetComponentInParent<Rigidbody>();
-            fixedJoint.breakForce = float.MaxValue;
-            fixedJoint.breakTorque = float.MaxValue;
-            fixedJoint.enableCollision = false;
-            fixedJoint.enablePreprocessing = false;
-
-            _fixedJoints.Add(fixedJoint);
-            _rb.isKinematic = false;
-
-            Debug.Log("Object grabbed by " + grabPoint.name);
-        }
-
-        public void OnRelease(Transform grabPoint)
-        {
-            int index = _grabPoints.IndexOf(grabPoint);
-            if (index != -1)
-            {
-                Destroy(_fixedJoints[index]);
-                _fixedJoints.RemoveAt(index);
-                _grabPoints.RemoveAt(index);
-
-                Debug.Log("Object released by " + grabPoint.name);
->>>>>>> 559594f (changed grabbing for objects, fixed some bugs)
             }
         }
 
@@ -71,10 +42,6 @@ namespace Game.Scripts.Grab
                 {
                     Destroy(joint);
                 }
-<<<<<<< HEAD
-=======
-                _rb.AddForce(combinedForce);
->>>>>>> 559594f (changed grabbing for objects, fixed some bugs)
             }
         }
     }

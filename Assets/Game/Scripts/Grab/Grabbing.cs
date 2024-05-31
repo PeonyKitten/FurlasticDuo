@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections.Generic;
+using UnityEngine.InputSystem;
 
 namespace Game.Scripts.Grab
 {
@@ -7,29 +7,42 @@ namespace Game.Scripts.Grab
     public class Grabbing : MonoBehaviour
     {
         [SerializeField] private Vector3 objectCheckOffset = Vector3.zero;
-        // [SerializeField] private float grabRange = 2f; // dont need at the moment as we have sphereradius to play with
+        //[SerializeField] private float grabRange = 2f; not  needed as we have sphereradius and object offset
         [SerializeField] private float playerSpeedModifier = 0.5f;
-        [SerializeField] private float sphereRadius = 2f;
+        [SerializeField] private bool holdToGrab = true;
+
         [SerializeField] private Material selectedMaterial;
         [SerializeField] private Material defaultMaterial;
+        [SerializeField] private float sphereRadius = 0.6f;
+        [SerializeField] private LayerMask layerMask = ~0;
 
         private IGrabbable _currentGrabbable;
+        private Transform _grabPoint;
         private PlayerController _playerController;
         private GameObject _currentGrabbableObject;
-        private Transform _grabPoint;
-        public LayerMask layerMask;
-        public static HashSet<Transform> ActiveGrabPoints = new HashSet<Transform>();
 
-        private void Awake()
+        private PlayerInput _playerInput;
+        private InputAction _grabAction;
+
+
+
+        private void Start()
         {
             _playerController = GetComponent<PlayerController>();
+            _playerInput = GetComponent<PlayerInput>();
             _grabPoint = new GameObject("GrabPoint").transform;
             _grabPoint.SetParent(transform);
             _grabPoint.localPosition = new Vector3(0, 0, 1.4f);
+            _grabAction = _playerInput.actions["Grab"];
+
+            _grabAction.performed += OnGrabPerformed;
+            _grabAction.canceled += OnGrabReleased;
         }
 
         private void OnGrab()
         {
+            if (holdToGrab) return;
+
             if (_currentGrabbable == null)
             {
                 TryGrab();
@@ -40,12 +53,29 @@ namespace Game.Scripts.Grab
             }
         }
 
+        private void OnGrabPerformed(InputAction.CallbackContext callbackContext)
+        {
+            if (!holdToGrab) return;
+
+            if (_currentGrabbable != null) return;
+
+            TryGrab();
+        }
+
+        private void OnGrabReleased(InputAction.CallbackContext callbackContext)
+        {
+            if (!holdToGrab) return;
+
+            if (_currentGrabbable == null) return;
+
+            Release();
+        }
+
         private void TryGrab()
         {
             var startPos = transform.position + objectCheckOffset;
 
-            var colliders = Physics.OverlapSphere(startPos, sphereRadius, layerMask);
-
+            var colliders = Physics.OverlapSphere(startPos, sphereRadius, layerMask, QueryTriggerInteraction.Ignore);
             foreach (var collider in colliders)
             {
                 if (collider.TryGetComponent(out IGrabbable grabbable))
@@ -77,16 +107,17 @@ namespace Game.Scripts.Grab
             _currentGrabbable.OnRelease(_grabPoint);
 
             var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
+
             foreach (var mRenderer in renderers)
             {
                 foreach (var rendererMaterial in mRenderer.sharedMaterials)
                 {
                     if (rendererMaterial != selectedMaterial) continue;
+
                     mRenderer.material = defaultMaterial;
                 }
             }
             ResetPlayerSpeed();
-
             _currentGrabbable = null;
             _currentGrabbableObject = null;
         }
@@ -107,7 +138,6 @@ namespace Game.Scripts.Grab
 
             Gizmos.color = Color.blue;
             var startPos = transform.position + objectCheckOffset;
-
             Gizmos.DrawWireSphere(startPos, sphereRadius);
         }
     }
