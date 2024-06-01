@@ -53,16 +53,24 @@ namespace Game.Scripts.Grab
 
         private void OnGrabPerformed(InputAction.CallbackContext callbackContext)
         {
+            // Leave as toggle for Keyboard Input
+            if (_currentGrabbable != null)
+            {
+                if (callbackContext.control.device is Keyboard)
+                {
+                    Release();
+                }
+                return;
+            }
+            
             if (!holdToGrab) return;
-
-            if (_currentGrabbable != null) return;
 
             TryGrab();
         }
 
         private void OnGrabReleased(InputAction.CallbackContext callbackContext)
         {
-            if (!holdToGrab) return;
+            if (!holdToGrab || callbackContext.control.device is Keyboard) return;
 
             if (_currentGrabbable == null) return;
 
