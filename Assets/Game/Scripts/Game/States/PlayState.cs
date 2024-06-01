@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Game.Scripts.Levels.Checkpoints;
 using Game.Scripts.Patterns;
 using Game.Scripts.UI;
 using UnityEngine;
@@ -33,6 +34,8 @@ namespace Game.Scripts.Game.States
             
             state.pauseGameAction.Enable();
             state.pauseGameAction.performed += OpenPauseGameMenu;
+
+            CheckpointSystem.Instance.ForceGrabValues();
         }
 
         public void OnStateResume(GameManager state)

@@ -109,7 +109,7 @@ namespace Game.Scripts.Elastic
             if (normalizedDistance < snapbackThreshold) return false;
             
             // Debug.Log($"{player.name} is in the snapback range");
-            if (controller.Movement != Vector3.zero) return false;
+            if (controller.IsGrabbing || controller.Movement != Vector3.zero) return false;
             
             Vector3 snapbackForce = (midpoint - player.position).normalized * snapbackForceMagnitude;
             rb.AddForce(snapbackForce, ForceMode.Impulse);

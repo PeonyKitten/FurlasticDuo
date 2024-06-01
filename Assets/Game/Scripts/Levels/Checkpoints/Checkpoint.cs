@@ -9,6 +9,7 @@ namespace Game.Scripts.Levels.Checkpoints
     public class Checkpoint: MonoBehaviour
     {
         [SerializeField] private List<Transform> spawnPositions = new();
+        [SerializeField] private bool initialSavePoint = false;
 
         private BoxCollider _trigger;
         
@@ -17,6 +18,11 @@ namespace Game.Scripts.Levels.Checkpoints
             if (TryGetComponent(out _trigger))
             {
                 _trigger.isTrigger = true;
+            }
+
+            if (initialSavePoint)
+            {
+                CheckpointSystem.Instance.SaveCheckpoint(this);
             }
         }
 
