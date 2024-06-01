@@ -24,6 +24,8 @@ namespace Game.Scripts.Grab
         private PlayerInput _playerInput;
         private InputAction _grabAction;
 
+        public bool IsGrabbing { get; private set; } 
+
         private void Start()
         {
             _playerController = GetComponent<PlayerController>();
@@ -101,6 +103,9 @@ namespace Game.Scripts.Grab
                             mRenderer.material = selectedMaterial;
                         }
                     }
+                    
+                    IsGrabbing = grabbable.ShouldAffectElastcForce();
+
                     return;
                 }
             }
@@ -126,6 +131,7 @@ namespace Game.Scripts.Grab
             ResetPlayerSpeed();
             _currentGrabbable = null;
             _currentGrabbableObject = null;
+            IsGrabbing = false;
         }
 
         private void AdjustPlayerSpeed()

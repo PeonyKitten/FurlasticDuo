@@ -98,14 +98,14 @@ namespace Game.Scripts.Toys
             if (!piston) return;
             
             var delta = pistonMoveDistance / pistonDownTime * Time.deltaTime;
-            piston.position = Vector3.MoveTowards(piston.position, _targetPistonPosition, delta);
+            piston.localPosition = Vector3.MoveTowards(piston.localPosition, _targetPistonPosition, delta);
         }
 
         private void Start()
         {
             if (piston)
             {
-                _initialPistonPosition = piston.position;
+                _initialPistonPosition = piston.localPosition;
                 _targetPistonPosition = _initialPistonPosition;
             }
         }

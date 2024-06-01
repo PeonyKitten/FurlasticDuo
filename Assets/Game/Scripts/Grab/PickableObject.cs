@@ -37,5 +37,10 @@ namespace Game.Scripts.Grab
             var newPosition = Vector3.Lerp(transform.position, _grabPoint.position, Time.fixedDeltaTime * lerpSpeed);
             _rb.MovePosition(newPosition);
         }
+
+        bool IGrabbable.ShouldAffectElastcForce()
+        {
+            return false;
+        }
     }
 }

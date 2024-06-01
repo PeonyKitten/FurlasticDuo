@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Game.Scripts.Game.States;
+using Game.Scripts.Grab;
 using Game.Scripts.Patterns;
 using Game.Scripts.Utils;
 using UnityEngine;
@@ -50,16 +51,20 @@ namespace Game.Scripts
         private float _movementControlDisabledTimer;
         private float _groundCheckDisabledTimer;
 
+        private Grabbing _grabbing;
+
         /// Camera to be used for camera-relative movement
         public Camera PrimaryCamera { get => primaryCamera; set => primaryCamera = value; }
         public float Mass => _rb.mass;
         public Quaternion TargetRotation { get; private set; } = Quaternion.identity;
         public float GroundCheckLength => groundCheckLength;
         public Vector3 Movement => _movement.Bulk();
+        public bool IsGrabbing => _grabbing.IsGrabbing;
 
         private void Start()
         {
             _rb = GetComponent<Rigidbody>();
+            _grabbing = GetComponent<Grabbing>();
 
             if (!primaryCamera)
             {
