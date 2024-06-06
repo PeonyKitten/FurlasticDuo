@@ -58,9 +58,13 @@ namespace Game.Scripts.Elastic
 
             float normalizedDistance1 = distance1 / (maxDistance * midpointAdjustment);
             float normalizedDistance2 = distance2 / (maxDistance * (1 - midpointAdjustment));
+            
+            // Use Force Applied factor to calculate forceCurve contribution
+            var forceAppliedDistance1 = (normalizedDistance1 - forceApplied) / (1f - forceApplied);
+            var forceAppliedDistance2 = (normalizedDistance2 - forceApplied) / (1f - forceApplied);
 
-            float forceMultiplier1 = forceCurve.Evaluate(normalizedDistance1);
-            float forceMultiplier2 = forceCurve.Evaluate(normalizedDistance2);
+            float forceMultiplier1 = forceCurve.Evaluate(forceAppliedDistance1);
+            float forceMultiplier2 = forceCurve.Evaluate(forceAppliedDistance2);
 
             float forceMagnitude1 = Mathf.Min(forceMultiplier1 * baseForce, maxForce);
             float forceMagnitude2 = Mathf.Min(forceMultiplier2 * baseForce, maxForce);
