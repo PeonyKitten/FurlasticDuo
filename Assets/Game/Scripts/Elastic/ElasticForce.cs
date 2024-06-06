@@ -1,5 +1,6 @@
 using Game.Scripts;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 
 namespace Game.Scripts.Elastic
@@ -23,6 +24,11 @@ namespace Game.Scripts.Elastic
         [SerializeField, Range(0, 1)] private float snapbackThreshold = 0.9f;
         [SerializeField] private float snapbackForceMagnitude = 150;
         [SerializeField] private float snapbackDelay = 0.5f;
+        
+        [Header("Rumble Settings")]
+        [SerializeField] private bool useRumble = true;
+        [SerializeField, Range(0, 1)] private float rumbleAmount = 0.5f;
+        [SerializeField] private AnimationCurve rumbleForceCurve;
 
         private Rigidbody _rb1;
         private Rigidbody _rb2;
@@ -60,8 +66,11 @@ namespace Game.Scripts.Elastic
             float normalizedDistance2 = distance2 / (maxDistance * (1 - midpointAdjustment));
             
             // Use Force Applied factor to calculate forceCurve contribution
-            var forceAppliedDistance1 = (normalizedDistance1 - forceApplied) / (1f - forceApplied);
-            var forceAppliedDistance2 = (normalizedDistance2 - forceApplied) / (1f - forceApplied);
+            const float forceAppliedAdjustmentFactor = 0.05f;
+            var adjustedForceApplied = forceApplied - forceAppliedAdjustmentFactor;
+            
+            var forceAppliedDistance1 = (normalizedDistance1 - adjustedForceApplied) / (1f - adjustedForceApplied);
+            var forceAppliedDistance2 = (normalizedDistance2 - adjustedForceApplied) / (1f - adjustedForceApplied);
 
             float forceMultiplier1 = forceCurve.Evaluate(forceAppliedDistance1);
             float forceMultiplier2 = forceCurve.Evaluate(forceAppliedDistance2);
@@ -69,12 +78,12 @@ namespace Game.Scripts.Elastic
             float forceMagnitude1 = Mathf.Min(forceMultiplier1 * baseForce, maxForce);
             float forceMagnitude2 = Mathf.Min(forceMultiplier2 * baseForce, maxForce);
             
-            if (CalculateBindingForce(normalizedDistance1, player1, midpoint, forceMagnitude1, out var force1))
+            if (CalculateBindingForce(normalizedDistance1, player1, midpoint, forceMagnitude1, out var force1, forceAppliedDistance1))
             {
                 _rb1.AddForce(force1);
             }
 
-            if (CalculateBindingForce(normalizedDistance2, player2, midpoint, forceMagnitude2, out var force2))
+            if (CalculateBindingForce(normalizedDistance2, player2, midpoint, forceMagnitude2, out var force2, forceAppliedDistance2))
             {
                 _rb2.AddForce(force2);
             }
@@ -93,12 +102,19 @@ namespace Game.Scripts.Elastic
             }
         }
 
-        private bool CalculateBindingForce(float normalizedDistance, Transform player, Vector3 midpoint, float forceMagnitude, out Vector3 force)
+        private bool CalculateBindingForce(float normalizedDistance, Transform player, Vector3 midpoint, float forceMagnitude, out Vector3 force, float forceAppliedNormalizedDistance)
         {
             if (normalizedDistance <= forceApplied)
             {
                 force = Vector3.zero;
+                Gamepad.current.ResetHaptics();
                 return false;
+            }
+
+            if (useRumble)
+            {
+                var rumble = rumbleForceCurve.Evaluate(forceAppliedNormalizedDistance) * rumbleAmount;
+                Gamepad.current.SetMotorSpeeds(rumble, rumble);
             }
             
             force = (midpoint - player.position).normalized * forceMagnitude;
