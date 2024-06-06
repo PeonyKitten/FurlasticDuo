@@ -8,11 +8,11 @@ namespace Game.Scripts.Barking
         public float speed = 2f;
         public int waypointIndex = 0;
         public float stopDistance = 1f;
-        private INPCReaction _reactionComponent;
+        private IBarkReaction _reactionComponent;
 
         private void Awake()
         {
-            _reactionComponent = GetComponent<INPCReaction>();
+            _reactionComponent = GetComponent<IBarkReaction>();
         }
 
         private void Update()

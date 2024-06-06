@@ -10,13 +10,13 @@ namespace Game.Scripts.Barking
 
         private NavMeshAgent _agent;
         private float _timer;
-        private INPCReaction _reactionComponent;
+        private IBarkReaction _reactionComponent;
 
         private void Awake()
         {
             _agent = GetComponent<NavMeshAgent>();
             _timer = wanderTimer;
-            _reactionComponent = GetComponent<INPCReaction>();
+            _reactionComponent = GetComponent<IBarkReaction>();
         }
 
         //private void Update()

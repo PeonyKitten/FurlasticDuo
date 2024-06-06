@@ -20,7 +20,7 @@ namespace Game.Scripts.Barking
             IsReacting = true;
             _agent.speed *= fleeSpeedMultiplier;
 
-            var fleeDirection = (transform.position - barkOrigin).normalized;
+            var fleeDirection = (transform.position - bark.transform.position).normalized;
             var fleePosition = transform.position + fleeDirection * fleeSpeedMultiplier;
             if (!_agent.SetDestination(fleePosition))
             {
