@@ -1,14 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Game.Scripts.Game.States;
 using Game.Scripts.Grab;
 using Game.Scripts.Patterns;
 using Game.Scripts.Utils;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
 namespace Game.Scripts
 {
@@ -63,9 +59,6 @@ namespace Game.Scripts
         public float GroundCheckLength => groundCheckLength;
         public Vector3 Movement => _movement.Bulk();
         public bool IsGrabbing => _grabbing.IsGrabbing;
-        
-        // TODO: clean up debug stuff
-        private RaycastHit _debugGroundHitInfo;
 
         private void Start()
         {
@@ -157,7 +150,6 @@ namespace Game.Scripts
             
             if (hitGround && _groundCheckDisabledTimer < 0)
             {
-                _debugGroundHitInfo = hitInfo;
                 var velocity = _rb.velocity;
                 var rayDir = -hitInfo.normal;
 
@@ -216,7 +208,7 @@ namespace Game.Scripts
             var neededAccel = (_goalVel - _rb.velocity) / Time.deltaTime * accelerationFactor;
             var maxAccel = maxAcceleration * maxAccelerationFactorDot.Evaluate(velDot);
             
-            var angle = Vector3.Angle(Vector3.up, _debugGroundHitInfo.normal);
+            var angle = Vector3.Angle(Vector3.up, hitInfo.normal);
 
             if (!(disableSteepSlopeMovement && angle > maxSlopeAngleDeg))
             {
