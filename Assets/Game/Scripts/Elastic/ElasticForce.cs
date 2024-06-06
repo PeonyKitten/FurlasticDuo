@@ -107,11 +107,14 @@ namespace Game.Scripts.Elastic
             if (normalizedDistance <= forceApplied)
             {
                 force = Vector3.zero;
-                Gamepad.current.ResetHaptics();
+                if (Gamepad.current is not null)
+                {
+                    Gamepad.current.ResetHaptics();
+                }
                 return false;
             }
 
-            if (useRumble)
+            if (useRumble && Gamepad.current is not null)
             {
                 var rumble = rumbleForceCurve.Evaluate(forceAppliedNormalizedDistance) * rumbleAmount;
                 Gamepad.current.SetMotorSpeeds(rumble, rumble);
