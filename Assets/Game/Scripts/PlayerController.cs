@@ -36,13 +36,11 @@ namespace Game.Scripts
         [SerializeField] private float rideHeight = 0.5f;
         [SerializeField] private float groundCheckLength = 1f;
         [SerializeField] private LayerMask groundLayerMask;
-        [Range(0, 45)]
-        [SerializeField] private float minSlopeAngleDeg = 5;
-        [Range(0, 90)]
-        [SerializeField] private float maxSlopeAngleDeg = 45;
+        [SerializeField, Range(0, 90)] private float maxSlopeAngleDeg = 45;
         [SerializeField] private Spring rideSpring = new() { strength = 100, damping = 10 };
         [SerializeField] private Spring uprightJointSpring = new() { strength = 100, damping = 10 };
         [SerializeField] private Camera primaryCamera;
+        [SerializeField] private bool disableSteepSlopeMovement = true;
 
         public Vector3 gravityMultiplier = Vector3.one;
         public float speedFactor = 1f;
@@ -161,10 +159,10 @@ namespace Game.Scripts
             {
                 _debugGroundHitInfo = hitInfo;
                 var velocity = _rb.velocity;
-                var rayDir = -_debugGroundHitInfo.normal;
+                var rayDir = -hitInfo.normal;
 
                 var otherVelocity = Vector3.zero;
-                var hitBody = _debugGroundHitInfo.rigidbody;
+                var hitBody = hitInfo.rigidbody;
 
                 if (hitBody)
                 {
@@ -176,7 +174,7 @@ namespace Game.Scripts
 
                 var relativeVelocity = rayDirVelocity - otherDirVelocity;
 
-                var displacement = _debugGroundHitInfo.distance - rideHeight;
+                var displacement = hitInfo.distance - rideHeight;
 
                 var springForce = displacement * rideSpring.strength - relativeVelocity * rideSpring.damping;
 
@@ -187,8 +185,6 @@ namespace Game.Scripts
                     hitBody.AddForceAtPosition(rayDir * -springForce, hitInfo.point);
                     groundVel = hitBody.GetPointVelocity(hitInfo.point);
                     Debug.DrawRay(transform.position, groundVel, Color.yellow);
-                    hitBody.AddForceAtPosition(rayDir * -springForce, _debugGroundHitInfo.point);
-                    hitBody.GetPointVelocity(_debugGroundHitInfo.point);
                 }
             }
 
@@ -220,40 +216,32 @@ namespace Game.Scripts
             var neededAccel = (_goalVel - _rb.velocity) / Time.deltaTime * accelerationFactor;
             var maxAccel = maxAcceleration * maxAccelerationFactorDot.Evaluate(velDot);
             
-            var dot = Vector3.Dot(Vector3.up, _debugGroundHitInfo.normal);
-            var angle = Mathf.Acos(dot) * Mathf.Rad2Deg;
+            var angle = Vector3.Angle(Vector3.up, _debugGroundHitInfo.normal);
 
-            var slopeUpForce = Vector3.zero;
-            if (angle > minSlopeAngleDeg)
+            if (!(disableSteepSlopeMovement && angle > maxSlopeAngleDeg))
             {
-                slopeUpForce = Vector3.Cross(transform.right, _debugGroundHitInfo.normal) * maxAccel;
-                if (angle > maxSlopeAngleDeg)
-                {
-                    slopeUpForce = -slopeUpForce;
-                }
-                Debug.DrawRay(transform.position, slopeUpForce);
+                neededAccel = Vector3.ClampMagnitude(neededAccel, maxAccel);
+                _rb.AddForce(Vector3.Scale(neededAccel * _rb.mass, forceScale));
             }
-            
-            neededAccel = Vector3.ClampMagnitude(neededAccel + slopeUpForce, maxAccel);
-
-            _rb.AddForce(Vector3.Scale(neededAccel * _rb.mass, forceScale));
 
             var effectiveGravity = Vector3.Scale(Physics.gravity, gravityMultiplier);
+            
+            // Handle slopes
+            if (hitGround && angle <= maxSlopeAngleDeg)
+            {
+                var gravityComponent = Vector3.ProjectOnPlane(effectiveGravity, hitInfo.normal);
+                var counterForce = -gravityComponent * _rb.mass;
+                _rb.AddForce(counterForce);
+                Debug.DrawRay(transform.position, counterForce.normalized);
+            }
+            
             // Apply gravity
             _rb.AddForce(effectiveGravity, ForceMode.Acceleration);
         }
 
         private void OnDrawGizmos()
         {
-            Gizmos.color = Color.white;
-            Gizmos.DrawRay(_debugGroundHitInfo.point, Vector3.up);
-            var dot = Vector3.Dot(Vector3.up, _debugGroundHitInfo.normal);
-            if (dot != 0)
-            {
-                Debug.Log(Mathf.Acos(dot) * Mathf.Rad2Deg);
-            }
-            Gizmos.color = Color.Lerp(Color.green, Color.red, dot);
-            Gizmos.DrawRay(_debugGroundHitInfo.point, _debugGroundHitInfo.normal);
+            Gizmos.DrawRay(transform.position, _movement.Bulk());
         }
     }
 }
