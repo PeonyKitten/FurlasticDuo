@@ -1,13 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Game.Scripts.Game.States;
 using Game.Scripts.Grab;
 using Game.Scripts.Patterns;
 using Game.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
 namespace Game.Scripts
 {
@@ -35,9 +32,11 @@ namespace Game.Scripts
         [SerializeField] private float rideHeight = 0.5f;
         [SerializeField] private float groundCheckLength = 1f;
         [SerializeField] private LayerMask groundLayerMask;
+        [SerializeField, Range(0, 90)] private float maxSlopeAngleDeg = 45;
         [SerializeField] private Spring rideSpring = new() { strength = 100, damping = 10 };
         [SerializeField] private Spring uprightJointSpring = new() { strength = 100, damping = 10 };
         [SerializeField] private Camera primaryCamera;
+        [SerializeField] private bool disableSteepSlopeMovement = true;
 
         public Vector3 gravityMultiplier = Vector3.one;
         public float speedFactor = 1f;
@@ -208,11 +207,26 @@ namespace Game.Scripts
 
             var neededAccel = (_goalVel - _rb.velocity) / Time.deltaTime * accelerationFactor;
             var maxAccel = maxAcceleration * maxAccelerationFactorDot.Evaluate(velDot);
-            neededAccel = Vector3.ClampMagnitude(neededAccel, maxAccel);
+            
+            var angle = Vector3.Angle(Vector3.up, hitInfo.normal);
 
-            _rb.AddForce(Vector3.Scale(neededAccel * _rb.mass, forceScale));
+            if (!(disableSteepSlopeMovement && angle > maxSlopeAngleDeg))
+            {
+                neededAccel = Vector3.ClampMagnitude(neededAccel, maxAccel);
+                _rb.AddForce(Vector3.Scale(neededAccel * _rb.mass, forceScale));
+            }
 
             var effectiveGravity = Vector3.Scale(Physics.gravity, gravityMultiplier);
+            
+            // Handle slopes
+            if (hitGround && angle <= maxSlopeAngleDeg)
+            {
+                var gravityComponent = Vector3.ProjectOnPlane(effectiveGravity, hitInfo.normal);
+                var counterForce = -gravityComponent * _rb.mass;
+                _rb.AddForce(counterForce);
+                Debug.DrawRay(transform.position, counterForce.normalized);
+            }
+            
             // Apply gravity
             _rb.AddForce(effectiveGravity, ForceMode.Acceleration);
         }
