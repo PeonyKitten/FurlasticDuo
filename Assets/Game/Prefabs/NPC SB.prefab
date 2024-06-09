@@ -117,10 +117,8 @@ GameObject:
   - component: {fileID: 7122006078668547754}
   - component: {fileID: 4328937515994102839}
   - component: {fileID: 9124806457247967528}
-  - component: {fileID: 2951723618779291013}
-  - component: {fileID: 3452527617346407596}
   m_Layer: 0
-  m_Name: NPCSB
+  m_Name: NPC SB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -217,41 +215,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2951723618779291013
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3926928167889902870}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 451feabfb1fdd034dad4c7bbbaf0b8ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attractSpeedMultiplier: 1
---- !u!195 &3452527617346407596
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3926928167889902870}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 1
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
 --- !u!1 &4556465207556937742
 GameObject:
   m_ObjectHideFlags: 0

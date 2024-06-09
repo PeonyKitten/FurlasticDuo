@@ -36,6 +36,7 @@ namespace Game.Scripts.SteeringBehaviours
             
             return (DesiredVelocity - steeringAgent.Velocity);
         }
+
         protected override void OnDrawGizmos()
         {
             if (!_showGizmoArrows) return;

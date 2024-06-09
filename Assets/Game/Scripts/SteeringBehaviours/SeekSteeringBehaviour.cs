@@ -5,9 +5,11 @@ namespace Game.Scripts.SteeringBehaviours
     public class SeekSteeringBehaviour: SteeringBehaviour
     {
         protected Vector3 DesiredVelocity = Vector3.zero;
+        
         public override Vector3 CalculateForce()
         {
-            //CheckMouseInput();
+            CheckMouseInput();
+
             return CalculateSeekForce();
         }
 
@@ -17,6 +19,7 @@ namespace Game.Scripts.SteeringBehaviours
 
             return (DesiredVelocity - steeringAgent.Velocity);
         }
+
         protected virtual void OnDrawGizmos()
         {
             DebugExtension.DrawCircle(Target, Vector3.up, Color.green);

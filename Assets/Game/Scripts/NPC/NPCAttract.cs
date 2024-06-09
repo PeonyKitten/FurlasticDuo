@@ -1,35 +1,27 @@
 using UnityEngine;
-using Game.Scripts.Barking;
-using Game.Scripts.SteeringBehaviours;
 using UnityEngine.AI;
-using System.Collections;
 
-namespace Game.Scripts.NPC
+namespace Game.Scripts.Barking
 {
     public class NPCAttract : MonoBehaviour, IBarkReaction
     {
-        [SerializeField] private float attractSpeedMultiplier = 1f;
+        [SerializeField] private float attractSpeedMultiplier = 0.5f;
         public bool IsReacting { get; set; }
 
         private NavMeshAgent _agent;
-        private SteeringAgent _steeringAgent;
+        private Vector3 _barkOrigin;
 
         private void Awake()
         {
             _agent = GetComponent<NavMeshAgent>();
-            _steeringAgent = GetComponent<SteeringAgent>();
         }
 
         public void React(Bark bark)
         {
-            Debug.Log("React Triggered");
             IsReacting = true;
+            _barkOrigin = bark.transform.position;
             _agent.speed *= attractSpeedMultiplier;
-            Vector3 targetPosition = bark.transform.position;
-
-            Debug.Log($"Running to {targetPosition}");
-            _steeringAgent.OverrideSteering(targetPosition);
-            StartCoroutine(StopReactingAfterTime(3f));
+            _agent.SetDestination(bark.transform.position);
         }
 
         private void Update()
@@ -44,13 +36,6 @@ namespace Game.Scripts.NPC
         {
             IsReacting = false;
             _agent.speed /= attractSpeedMultiplier;
-            _steeringAgent.ClearOverride();
-        }
-
-        private IEnumerator StopReactingAfterTime(float time)
-        {
-            yield return new WaitForSeconds(time);
-            StopReacting();
         }
     }
 }

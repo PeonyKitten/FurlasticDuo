@@ -17,23 +17,23 @@ namespace Game.Scripts.SteeringBehaviours
         private void Awake()
         {
             // TODO: Perhaps basing all our logic on the position of the SteeringBehaviour should be a conscious choice?
-            //transform.localPosition = Vector3.zero;
+            transform.localPosition = Vector3.zero;
         }
 
-        //protected bool CheckMouseInput()
-        //{
-        //    if (Input.GetMouseButton(0) && useMouseInput)
-        //    {
-        //        var ray = CameraUtils.Main.ScreenPointToRay(Input.mousePosition);
-        //        if (Physics.Raycast(ray, out var hit, 100))
-        //        {
-        //            Target = hit.point;
-        //            steeringAgent.reachedGoal = false;
-        //            return true;
-        //        }
-        //    }
-        //    return false;
-        //}
+        protected bool CheckMouseInput()
+        {
+            if (Input.GetMouseButton(0) && useMouseInput)
+            {
+                var ray = CameraUtils.Main.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out var hit, 100))
+                {
+                    Target = hit.point;
+                    steeringAgent.reachedGoal = false;
+                    return true;
+                }
+            }
+            return false;
+        }
         public abstract Vector3 CalculateForce();
     }
 }
