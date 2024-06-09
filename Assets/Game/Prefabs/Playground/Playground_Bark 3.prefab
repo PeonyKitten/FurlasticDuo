@@ -1670,8 +1670,71 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3505490546393242784, guid: 3d59fd95fdfe00d449ae13635b7750a6,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5777899085038277232}
   m_SourcePrefab: {fileID: 100100000, guid: 3d59fd95fdfe00d449ae13635b7750a6, type: 3}
+--- !u!1 &309915366295751041 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3505490546393242784, guid: 3d59fd95fdfe00d449ae13635b7750a6,
+    type: 3}
+  m_PrefabInstance: {fileID: 3813154111121790241}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5777899085038277232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 309915366295751041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06a08b008ad9e284ab3cfead758e796c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  requiredActivations: 1
+  disallowAdditionalActivations: 0
+  onAddActivation:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5864591726467301787}
+        m_TargetAssemblyTypeName: Game.Scripts.Toys.Door, Assembly-CSharp
+        m_MethodName: OpenDoor
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onRemoveActivation:
+    m_PersistentCalls:
+      m_Calls: []
+  onActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  onDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  onNoActivations:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5864591726467301787}
+        m_TargetAssemblyTypeName: Game.Scripts.Toys.Door, Assembly-CSharp
+        m_MethodName: CloseDoor
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!4 &1966742832914161482 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3431827963846904427, guid: 3d59fd95fdfe00d449ae13635b7750a6,
@@ -1684,7 +1747,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 3813154111121790241}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 309915366295751041}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a0ff42442937b264ebf3c4491ca91777, type: 3}
@@ -1895,7 +1958,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onPress.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 5864591726467301787}
+      objectReference: {fileID: 5777899085038277232}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onRelease.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -1905,7 +1968,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onRelease.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 5864591726467301787}
+      objectReference: {fileID: 5777899085038277232}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onPress.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -1914,7 +1977,7 @@ PrefabInstance:
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onPress.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OpenDoor
+      value: AddActivation
       objectReference: {fileID: 0}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
@@ -1924,17 +1987,17 @@ PrefabInstance:
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onRelease.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: CloseDoor
+      value: RemoveActivation
       objectReference: {fileID: 0}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onPress.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Game.Scripts.Toys.Door, Assembly-CSharp
+      value: Game.Scripts.Misc.MultipleActivation, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onRelease.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Game.Scripts.Toys.Door, Assembly-CSharp
+      value: Game.Scripts.Misc.MultipleActivation, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
@@ -2196,7 +2259,7 @@ PrefabInstance:
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onRelease.m_PersistentCalls.m_Calls.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
@@ -2207,7 +2270,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onPress.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 5864591726467301787}
+      objectReference: {fileID: 5777899085038277232}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onRelease.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -2217,7 +2280,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onRelease.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 5864591726467301787}
+      objectReference: {fileID: 5777899085038277232}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onPress.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -2226,7 +2289,7 @@ PrefabInstance:
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onPress.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OpenDoor
+      value: AddActivation
       objectReference: {fileID: 0}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
@@ -2236,17 +2299,17 @@ PrefabInstance:
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onRelease.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: CloseDoor
+      value: RemoveActivation
       objectReference: {fileID: 0}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onPress.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Game.Scripts.Toys.Door, Assembly-CSharp
+      value: Game.Scripts.Misc.MultipleActivation, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}
       propertyPath: onRelease.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Game.Scripts.Toys.Door, Assembly-CSharp
+      value: Game.Scripts.Misc.MultipleActivation, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 2369273042579484219, guid: 8ea0b95a009fd2542b3bf98ee684fb10,
         type: 3}

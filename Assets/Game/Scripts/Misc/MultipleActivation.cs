@@ -9,9 +9,12 @@ namespace Game.Scripts.Misc
         [SerializeField] private int requiredActivations = 2;
         [SerializeField] private bool disallowAdditionalActivations;
 
-        [Header("Callbacks")]
+        [Header("Callbacks")] 
+        public UnityEvent onAddActivation;
+        public UnityEvent onRemoveActivation;
         public UnityEvent onActivated;
         public UnityEvent onDeactivated;
+        public UnityEvent onNoActivations;
         
         public bool IsActivated { get; private set; }
         public int ActivationCount { get; private set; }
@@ -44,6 +47,7 @@ namespace Game.Scripts.Misc
         public void AddActivation()
         {
             ActivationCount += 1;
+            onAddActivation?.Invoke();
         }
 
         public void RemoveActivation()
@@ -52,6 +56,11 @@ namespace Game.Scripts.Misc
             if (ActivationCount < 0)
             {
                 Debug.LogWarning(name + " has negative activations.");
+            }
+            onRemoveActivation?.Invoke();
+            if (ActivationCount == 0)
+            {
+                onNoActivations?.Invoke();
             }
         }
 
