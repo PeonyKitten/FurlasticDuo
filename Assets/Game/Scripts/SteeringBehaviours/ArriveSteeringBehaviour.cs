@@ -11,7 +11,7 @@ namespace Game.Scripts.SteeringBehaviours
 
         public override Vector3 CalculateForce()
         {
-            CheckMouseInput();
+           // CheckMouseInput();
 
             return CalculateArriveForce();
         }

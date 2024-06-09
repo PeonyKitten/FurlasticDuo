@@ -20,6 +20,10 @@ namespace Game.Scripts.SteeringBehaviours
         public float maxSpeed = 1f;
         public float maxForce = 10f;
         public bool reachedGoal;
+
+        public bool IsOverriden { get; private set; } = false;
+        private Vector3 _overrideTarget;
+        private Vector3 _overrideForce;
         
         public float Mass
         {
@@ -50,29 +54,36 @@ namespace Game.Scripts.SteeringBehaviours
         {
             var totalForce = Vector3.zero;
 
-            foreach (var behaviour in _steeringBehaviours)
+            if (IsOverriden)
             {
-                if (!behaviour.enabled) continue;
-
-                var behaviourForce = behaviour.CalculateForce() * behaviour.Weight;
-
-                switch (summingStrategy)
+                var desiredVelocity = (_overrideTarget - transform.position).normalized * maxSpeed;
+                _overrideForce = (desiredVelocity - Velocity);
+                totalForce = Vector3.ClampMagnitude(_overrideForce, maxForce);
+            }
+            else
+            {
+                foreach (var behaviour in _steeringBehaviours)
                 {
-                    case SummingStrategy.WeightedAverage:
-                        totalForce += behaviourForce;
-                        break;
-                    case SummingStrategy.Prioritized:
-                        if (!AccumulateForce(ref totalForce, behaviourForce))
-                        {
-                            return totalForce;
-                        }
-                        break;
+                    if (!behaviour.enabled) continue;
+
+                    var behaviourForce = behaviour.CalculateForce() * behaviour.Weight;
+
+                    switch (summingStrategy)
+                    {
+                        case SummingStrategy.WeightedAverage:
+                            totalForce += behaviourForce;
+                            break;
+                        case SummingStrategy.Prioritized:
+                            if (!AccumulateForce(ref totalForce, behaviourForce))
+                            {
+                                return totalForce;
+                            }
+                            break;
+                    }
                 }
+                totalForce = Vector3.ClampMagnitude(totalForce, maxForce);
             }
 
-            // Clamp Total Force
-            totalForce = Vector3.ClampMagnitude(totalForce, maxForce);
-            
             return totalForce;
         }
 
@@ -98,29 +109,38 @@ namespace Game.Scripts.SteeringBehaviours
 
         protected virtual void Update()
         {
-            var steeringForce = CalculateSteeringForce();
+            Vector3 steeringForce;
+
+            if (IsOverriden)
+            {
+                steeringForce = _overrideForce;
+            }
+            else
+            {
+                steeringForce = CalculateSteeringForce();
+            }
 
             if (reachedGoal)
             {
                 Velocity = Vector3.zero;
-                _animator.SetFloat(_animHashSpeed, 0);
+                // _animator.SetFloat(_animHashSpeed, 0);
                 return;
             }
-            
+
             var acceleration = steeringForce * InverseMass;
 
             Velocity += acceleration * Time.deltaTime;
 
             if (Velocity.sqrMagnitude == 0) return;
-            
+
             // Slow down, Speedy Gonzales
             Velocity = Vector3.ClampMagnitude(Velocity, maxSpeed);
 
-            if (_animator != null)
-            {
-                _animator.SetFloat(_animHashSpeed, Velocity.magnitude);
-            }
-            
+            //if (_animator != null)
+            //{
+            //    _animator.SetFloat(_animHashSpeed, Velocity.magnitude);
+            //}
+
             // Rotate Agent
             var angle = Vector3.Angle(transform.forward, Velocity);
             if (Mathf.Abs(angle) < deadZone)
@@ -129,27 +149,27 @@ namespace Game.Scripts.SteeringBehaviours
             }
             else
             {
-                transform.rotation = Quaternion.Slerp(transform.rotation, 
-                    Quaternion.LookRotation(Velocity), 
+                transform.rotation = Quaternion.Slerp(transform.rotation,
+                    Quaternion.LookRotation(Velocity),
                     Time.deltaTime * angularDampeningTime);
             }
-            
+
             // Movement is handled for us :)
             if (useRootMotion) return;
-            
+
             Move(Velocity);
         }
-        
-        private void OnAnimatorMove()
-        {
-            if (!useRootMotion || Time.deltaTime == 0f) return;
 
-            var animationVelocity = _animator.deltaPosition / Time.deltaTime;
+        //private void OnAnimatorMove()
+        //{
+        //    if (!useRootMotion || Time.deltaTime == 0f) return;
 
-            var motion = transform.forward * animationVelocity.magnitude;
-            
-            Move(motion);
-        }
+        //    var animationVelocity = _animator.deltaPosition / Time.deltaTime;
+
+        //    var motion = transform.forward * animationVelocity.magnitude;
+
+        //    Move(motion);
+        //}
 
         private void Move(Vector3 motion)
         {
@@ -183,6 +203,17 @@ namespace Game.Scripts.SteeringBehaviours
             {
                 behaviour.Target = target;
             }
+        }
+
+        public void OverrideSteering(Vector3 target)
+        {
+            IsOverriden = true;
+            _overrideTarget = target;
+        }
+
+        public void ClearOverride()
+        {
+            IsOverriden = false;
         }
     }
 }

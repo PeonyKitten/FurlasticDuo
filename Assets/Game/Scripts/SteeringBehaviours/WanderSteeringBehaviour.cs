@@ -42,7 +42,7 @@ namespace Game.Scripts.SteeringBehaviours
 
             Target = transform.ProjectOffset(Target);
 
-            return CalculateSeekForce();
+            return CalculateSeekForce();    
         }
 
         protected override void OnDrawGizmos()
