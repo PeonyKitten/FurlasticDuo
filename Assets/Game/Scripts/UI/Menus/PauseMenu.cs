@@ -43,7 +43,7 @@ namespace Game.Scripts.UI.Menus
 
             var mainMenuButton = options.Create<Button>("main-button");
             mainMenuButton.text = "Main Menu";
-            mainMenuButton.ApplyClickCallbacks(() => GameManager.Instance.ChangeState(new MainMenuState()));
+            mainMenuButton.ApplyClickCallbacks(() => GameManager.Instance.ChangeState(new MainMenuState(), false, true));
             
             if (preventOverflowNavigation)
             {
