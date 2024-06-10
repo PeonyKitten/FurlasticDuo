@@ -20,11 +20,18 @@ namespace Game.Scripts.Game
             ChangeState(new MainMenuState());
         }
 
-        public void ChangeState(IState<GameManager> newState, bool isTemporary = false)
+        public void ChangeState(IState<GameManager> newState, bool isTemporary = false, bool clearHistory = false)
         {
             if (!isTemporary)
             {
                 _currentState?.OnStateExit(this);
+                if (clearHistory)
+                {
+                    foreach (var previousState in _stateHistory)
+                    {
+                        previousState.OnStateExit(this);
+                    }
+                }
             }
             else if (_currentState != null)
             {

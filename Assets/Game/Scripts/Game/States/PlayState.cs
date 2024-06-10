@@ -59,6 +59,7 @@ namespace Game.Scripts.Game.States
         {
             state.pauseGameAction.performed -= OpenPauseGameMenu;
             state.pauseGameAction.Disable();
+            InputSystem.ResetHaptics();
             // EventBus<GameStates>.Publish(GameStates.Paused);
         }
     }
