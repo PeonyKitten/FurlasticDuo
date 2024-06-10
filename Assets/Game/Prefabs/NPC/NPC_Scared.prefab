@@ -117,10 +117,9 @@ GameObject:
   - component: {fileID: 7122006078668547754}
   - component: {fileID: 4328937515994102839}
   - component: {fileID: 9124806457247967528}
-  - component: {fileID: 1120827873217134529}
   - component: {fileID: 5816683602229288475}
-  - component: {fileID: 1791979284983541680}
   - component: {fileID: 231698230890362178}
+  - component: {fileID: 4167613659072903408}
   m_Layer: 10
   m_Name: NPC_Scared
   m_TagString: Untagged
@@ -220,20 +219,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1120827873217134529
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3926928167889902870}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a21ead74e94b7e642bcc2fa307f4b67b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wanderRadius: 0
-  wanderTimer: 0
 --- !u!195 &5816683602229288475
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -256,19 +241,6 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &1791979284983541680
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3926928167889902870}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83e24426c37b6a6429e662707c768925, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fleeSpeedMultiplier: 6
 --- !u!54 &231698230890362178
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -296,6 +268,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &4167613659072903408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3926928167889902870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83e24426c37b6a6429e662707c768925, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fleeSpeedMultiplier: 2
 --- !u!1 &4556465207556937742
 GameObject:
   m_ObjectHideFlags: 0
