@@ -18,16 +18,30 @@ namespace Game.Scripts.Toys
         [SerializeField] private float speed = 2f;
         [SerializeField] private PlatformType platformType = PlatformType.PingPong;
         [SerializeField] private float closeEnoughDistance = 0.1f;
+        [SerializeField] private bool useRigidbody = true;
 
         public Vector3 CurrentWaypoint => waypoints[_currentWaypointIndex].position;
         
         private int _currentWaypointIndex;
         private bool _reverse;
+        private Rigidbody _rb;
+
+        private void Start()
+        {
+            _rb = GetComponent<Rigidbody>();
+        }
         
         private void Update()
         {
             // Move the platform towards the target position
-            transform.position = Vector3.MoveTowards(transform.position, CurrentWaypoint, speed * Time.deltaTime);
+            if (useRigidbody)
+            {
+                _rb.MovePosition(Vector3.MoveTowards(transform.position, CurrentWaypoint, speed * Time.deltaTime));
+            }
+            else
+            {
+                transform.position = Vector3.MoveTowards(transform.position, CurrentWaypoint, speed * Time.deltaTime);
+            }
 
             // Check if the platform has reached the target position
             if (!(Vector3.Distance(transform.position, CurrentWaypoint) < closeEnoughDistance)) return;
