@@ -13,8 +13,17 @@ namespace Game.Scripts.SteeringBehaviours
             Prioritized
         }
 
+        [Serializable]
+        public enum MovementStrategy
+        {
+            DirectTransform,
+            CharacterController,
+            RigidbodyForces
+        }
+
         [Header("Agent Settings")]
         public SummingStrategy summingStrategy = SummingStrategy.WeightedAverage;
+        public MovementStrategy movementStrategy = MovementStrategy.DirectTransform;
 
         [SerializeField] private float mass = 1f;
         public float maxSpeed = 1f;
@@ -44,6 +53,7 @@ namespace Game.Scripts.SteeringBehaviours
         
         private Animator _animator;
         private CharacterController _controller;
+        private Rigidbody _rigidbody;
         private readonly int _animHashSpeed = Animator.StringToHash("Speed");
 
         private Vector3 CalculateSteeringForce()
@@ -94,6 +104,7 @@ namespace Game.Scripts.SteeringBehaviours
             }
 
             _controller = GetComponent<CharacterController>();
+            _rigidbody = GetComponent<Rigidbody>();
         }
 
         protected virtual void Update()
@@ -103,7 +114,10 @@ namespace Game.Scripts.SteeringBehaviours
             if (reachedGoal)
             {
                 Velocity = Vector3.zero;
-                _animator.SetFloat(_animHashSpeed, 0);
+                if (_animator != null)
+                {
+                    _animator.SetFloat(_animHashSpeed, 0);
+                }
                 return;
             }
             
@@ -153,16 +167,39 @@ namespace Game.Scripts.SteeringBehaviours
 
         private void Move(Vector3 motion)
         {
-            if (_controller == null)
+            var useTransformMovement = movementStrategy == MovementStrategy.DirectTransform;
+            
+            switch (movementStrategy)
+            {
+                case MovementStrategy.CharacterController:
+                    if (_controller)
+                    {
+                        _controller.Move(motion * Time.deltaTime);
+                        if (useGravity)
+                        {
+                            _controller.Move(Physics.gravity * Time.deltaTime);
+                        }
+                    } else
+                    {
+                        Debug.LogWarning("Steering Agent movement mode set to 'CharacterController' but missing Component. Falling back to position update.");
+                        useTransformMovement = true;
+                    }
+                    break;
+                case MovementStrategy.RigidbodyForces:
+                    if (_rigidbody)
+                    {
+                        _rigidbody.AddForce(motion, ForceMode.Force);
+                    } else
+                    {
+                        Debug.LogWarning("Steering Agent movement mode set to 'Rigidbody' but missing Component. Falling back to position update.");
+                        useTransformMovement = true;
+                    }
+                    break;
+            }
+
+            if (useTransformMovement)
             {
                 transform.position += motion * Time.deltaTime;
-                return;
-            }
-            
-            _controller.Move(motion * Time.deltaTime);
-            if (useGravity)
-            {
-                _controller.Move(Physics.gravity * Time.deltaTime);
             }
         }
 

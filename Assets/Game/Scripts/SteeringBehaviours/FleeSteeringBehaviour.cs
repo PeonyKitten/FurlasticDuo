@@ -7,11 +7,13 @@ namespace Game.Scripts.SteeringBehaviours
     {
         [Header("Flee Behaviour")]
         [SerializeField] private Transform enemy;
-        [SerializeField] private float fleeDistance = 5f;
+        [SerializeField] protected float fleeDistance = 5f;
         
         public Transform Enemy { get => enemy; set => enemy = value; }
 
         private bool _showGizmoArrows;
+
+        public float FleeDistance => fleeDistance;
 
         public override Vector3 CalculateForce()
         {
