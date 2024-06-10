@@ -3,7 +3,8 @@ using UnityEngine.AI;
 
 namespace Game.Scripts.Barking
 {
-    public class NPCAttract : MonoBehaviour, IBarkReaction
+    [RequireComponent(typeof(NavMeshAgent))]
+    public class BarkAttract : MonoBehaviour, IBarkReaction
     {
         [SerializeField] private float attractSpeedMultiplier = 0.5f;
         public bool IsReacting { get; set; }

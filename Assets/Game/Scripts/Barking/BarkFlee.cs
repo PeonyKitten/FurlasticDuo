@@ -3,6 +3,7 @@ using UnityEngine.AI;
 
 namespace Game.Scripts.Barking
 {
+    [RequireComponent(typeof(NavMeshAgent))]
     public class BarkFlee : MonoBehaviour, IBarkReaction
     {
         public float fleeSpeedMultiplier = 2f;
