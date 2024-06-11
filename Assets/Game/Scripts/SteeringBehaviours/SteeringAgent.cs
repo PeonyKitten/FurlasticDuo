@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game.Scripts.Utils;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -44,6 +45,8 @@ namespace Game.Scripts.SteeringBehaviours
         public Vector3 Velocity { get; private set; } = Vector3.zero;
 
         private readonly List<SteeringBehaviour> _steeringBehaviours = new();
+
+        public int SteeringBehaviourCount => _steeringBehaviours.Count;
 
         public float angularDampeningTime = 5f;
         public float deadZone = 10f;
@@ -139,12 +142,12 @@ namespace Game.Scripts.SteeringBehaviours
             var angle = Vector3.Angle(transform.forward, Velocity);
             if (Mathf.Abs(angle) < deadZone)
             {
-                transform.LookAt(transform.position + Velocity);
+                transform.LookAt(transform.position + Velocity.Flatten(UtilsMath.FlattenAxis3D.Y).Bulk());
             }
             else
             {
                 transform.rotation = Quaternion.Slerp(transform.rotation, 
-                    Quaternion.LookRotation(Velocity), 
+                    Quaternion.LookRotation(Velocity.Flatten(UtilsMath.FlattenAxis3D.Y).Bulk()), 
                     Time.deltaTime * angularDampeningTime);
             }
             

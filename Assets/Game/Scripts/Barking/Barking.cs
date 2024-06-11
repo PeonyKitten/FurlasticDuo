@@ -39,7 +39,7 @@ namespace Game.Scripts.Barking
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, barkRadius);
             foreach (var hitCollider in hitColliders)
             {
-                var npcReaction = hitCollider.GetComponent<IBarkReaction>();
+                var npcReaction = hitCollider.GetComponentInChildren<IBarkReaction>();
                 npcReaction?.React(this);
             }
 

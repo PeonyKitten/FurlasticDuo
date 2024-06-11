@@ -1,29 +1,26 @@
 using UnityEngine;
 using Game.Scripts.Barking;
 using Game.Scripts.SteeringBehaviours;
-using UnityEngine.AI;
 using System.Collections;
 using System;
 
 namespace Game.Scripts.NPC
 {
-    public class BarkFleeSB : FleeSteeringBehaviour, IBarkReaction
+    public class BarkAttractSB : ArriveSteeringBehaviour, IBarkReaction
     {
         [Serializable]
-        public enum FleeStrategy
+        public enum AttractStrategy
         {
-            FleeByDistance,
-            FleeForDuration,
+            AttractByDistance,
+            AttractForDuration,
         }
 
-        [Header("Bark Flee Settings")]
-        [SerializeField] private FleeStrategy fleeStrategy = FleeStrategy.FleeForDuration;
-        [SerializeField] private float fleeTime = 3f;
-        [Tooltip("When it is the only active SteeringBehaviour, should we keep running after we stop reacting?")]
-        [SerializeField] private bool shouldRunAwayForever = true;
+        [Header("Bark Attract Settings")]
+        [SerializeField] private AttractStrategy attractStrategy = AttractStrategy.AttractForDuration;
+        [SerializeField] private float attractTime = 3f;
+        [SerializeField] private float attractSpeedMultiplier = 0.5f;
 
         public bool IsReacting { get; set; }
-
         private Coroutine _barkCoroutine;
 
         public void React(Bark bark)
@@ -31,15 +28,16 @@ namespace Game.Scripts.NPC
             IsReacting = true;
             Target = bark.transform.position;
             steeringAgent.reachedGoal = false;
+            steeringAgent.maxSpeed *= attractSpeedMultiplier;
 
-            if (fleeStrategy == FleeStrategy.FleeByDistance) return;
+            if (attractStrategy == AttractStrategy.AttractByDistance) return;
 
             if (_barkCoroutine != null)
             {
                 StopCoroutine(_barkCoroutine);
             }
 
-            _barkCoroutine = StartCoroutine(StopReactingAfterTime(fleeTime));
+            _barkCoroutine = StartCoroutine(StopReactingAfterTime(attractTime));
         }
 
         public override Vector3 CalculateForce()
@@ -49,21 +47,18 @@ namespace Game.Scripts.NPC
                 return Vector3.zero;
             }
 
-            if (fleeStrategy == FleeStrategy.FleeByDistance)
+            if (attractStrategy == AttractStrategy.AttractByDistance)
             {
-                // If we've gotten out of range, stop reacting
-                var fleeForce = base.CalculateForce();
-                if (fleeForce == Vector3.zero)
+                var attractForce = CalculateArriveForce();
+                if (attractForce == Vector3.zero)
                 {
+                    Debug.Log("Attract force = 0");
                     StopReacting();
                 }
-
-                return fleeForce;
+                return attractForce;
             }
 
-            CalculateSeekForce();
-
-            DesiredVelocity = -DesiredVelocity;
+            CalculateArriveForce();
 
             return DesiredVelocity;
         }
@@ -71,10 +66,8 @@ namespace Game.Scripts.NPC
         private void StopReacting()
         {
             IsReacting = false;
-            if (steeringAgent.SteeringBehaviourCount == 1 && !shouldRunAwayForever)
-            {
-                steeringAgent.reachedGoal = true;
-            }
+            steeringAgent.maxSpeed /= attractSpeedMultiplier;
+            //steeringAgent.reachedGoal = true;
         }
 
         private IEnumerator StopReactingAfterTime(float time)
@@ -88,7 +81,7 @@ namespace Game.Scripts.NPC
             base.OnDrawGizmos();
             if (IsReacting)
             {
-                DebugExtension.DrawCircle(transform.position, Vector3.up, Color.red);
+                DebugExtension.DrawCircle(transform.position, Vector3.up, Color.blue);
             }
         }
     }
