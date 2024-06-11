@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 4953320812321419438}
   - component: {fileID: 5212653393664587358}
   - component: {fileID: 7156274775594864634}
+  - component: {fileID: 3213289812625190971}
   - component: {fileID: 6505845640361679730}
   m_Layer: 0
   m_Name: Dog
@@ -287,7 +288,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ab1646e4cb0b3a4797bbd946cea5af1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  barkRadius: 6
+  barkRadius: 4
   barkSound: {fileID: 8300000, guid: a809aae36e0a71a4da51e9cacf5beaf2, type: 3}
   barkDelay: 0.5
   barkEffect: {fileID: 676789718690479089, guid: d8a1778683d59864d8f0a2c29aab3473,
@@ -313,6 +314,41 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &3213289812625190971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 813081530204185311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8346279205b85dc46aab4a33053a7df2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jumpTime: 0.667
+  jumpSpeed: 2.5
+  jumpInputBuffer: 0.33
+  coyoteTime: 0.33
+  jumpGroundForce: 10
+  landGroundForce: 100
+  jumpSpeedMultiplier: 0.5
+  jumpAngularSpeedMultiplier: 0.5
+  fallGravityMultiplier: 2
+  jumpStartEffect: {fileID: 0}
+  fallStartEffect: {fileID: 0}
+  jumpEndEffect: {fileID: 0}
+  ignoreGroundEffectSpawnRotation: 0
+  globalFallEffect: 0
+  onPlayerJump:
+    m_PersistentCalls:
+      m_Calls: []
+  onPlayerFall:
+    m_PersistentCalls:
+      m_Calls: []
+  onPlayerLand:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!82 &6505845640361679730
 AudioSource:
   m_ObjectHideFlags: 0
