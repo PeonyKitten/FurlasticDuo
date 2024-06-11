@@ -26,6 +26,8 @@ namespace Game.Scripts.SteeringBehaviours
                 useMouseInput = false;
             }
             
+
+            // Will not stop running away if not used with another SteeringBehaviour
             if (Vector3.Distance(transform.position, Target) > fleeDistance)
             {
                 _showGizmoArrows = false;
