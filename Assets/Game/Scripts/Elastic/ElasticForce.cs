@@ -107,10 +107,7 @@ namespace Game.Scripts.Elastic
             if (normalizedDistance <= forceApplied)
             {
                 force = Vector3.zero;
-                if (Gamepad.current is not null)
-                {
-                    Gamepad.current.ResetHaptics();
-                }
+                InputSystem.ResetHaptics();
                 return false;
             }
 
