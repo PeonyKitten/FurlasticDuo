@@ -3,6 +3,7 @@ using Game.Scripts.Barking;
 using Game.Scripts.SteeringBehaviours;
 using UnityEngine.AI;
 using System.Collections;
+using UnityEngine.Events;
 
 namespace Game.Scripts.NPC
 {
@@ -11,6 +12,10 @@ namespace Game.Scripts.NPC
         [SerializeField] private bool fleeBasedOnDistance = true;
         [SerializeField] private float fleeTime = 3f;
 
+        [Header("Callbacks")]
+        public UnityEvent onReact;
+        public UnityEvent onBarkReactionEnd;
+        
         public bool IsReacting { get; set; }
 
         private Coroutine _barkCoroutine;
@@ -27,6 +32,8 @@ namespace Game.Scripts.NPC
             }
 
             _barkCoroutine = StartCoroutine(StopReactingAfterTime(fleeTime));
+            
+            onReact?.Invoke();
         }
 
         public override Vector3 CalculateForce()
@@ -52,6 +59,8 @@ namespace Game.Scripts.NPC
         {
             IsReacting = false;
             steeringAgent.reachedGoal = true;
+            
+            onBarkReactionEnd?.Invoke();
         }
 
         private IEnumerator StopReactingAfterTime(float time)
