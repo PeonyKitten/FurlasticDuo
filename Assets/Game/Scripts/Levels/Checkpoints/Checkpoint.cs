@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Game.Scripts.Levels.Checkpoints
 {
@@ -11,6 +12,8 @@ namespace Game.Scripts.Levels.Checkpoints
         [SerializeField] private List<Transform> spawnPositions = new();
         [SerializeField] private bool initialSavePoint = false;
 
+        public UnityEvent onRespawn;
+        
         private BoxCollider _trigger;
         
         private void Start()
@@ -46,6 +49,8 @@ namespace Game.Scripts.Levels.Checkpoints
             {
                 players[index].transform.SetPositionAndRotation(spawnPositions[index].position, Quaternion.identity);
             }
+            
+            onRespawn?.Invoke();
         }
         private void OnDrawGizmos()
         {
