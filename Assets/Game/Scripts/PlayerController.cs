@@ -14,11 +14,25 @@ namespace Game.Scripts
         public float strength;
         public float damping;
     }
+
+    [Serializable]
+    public enum Player
+    {
+        Cat,
+        Dog,
+    }
+
+    [Serializable]
+    public enum PlayerInteraction
+    {
+        CatOnly,
+        DogOnly,
+        Both
+    }
     
     [RequireComponent(typeof(Rigidbody))]
     public class PlayerController : MonoBehaviour
     {
-
         [Header("Movement")]
         [SerializeField] private bool useCameraRelativeMovement = true;
         [SerializeField] private float maxSpeed = 10f;
@@ -27,7 +41,7 @@ namespace Game.Scripts
         [SerializeField] private float maxAcceleration = 150f;
         [SerializeField] private AnimationCurve maxAccelerationFactorDot;
         [SerializeField] private Vector3 forceScale = new(1, 0, 1);
-        
+
         [Header("Character Controller")]
         [SerializeField] private float rideHeight = 0.5f;
         [SerializeField] private float groundCheckLength = 1f;
@@ -38,6 +52,7 @@ namespace Game.Scripts
         [SerializeField] private Camera primaryCamera;
         [SerializeField] private bool disableSteepSlopeMovement = true;
 
+        public Player playerType = Player.Cat;
         public Vector3 gravityMultiplier = Vector3.one;
         public float speedFactor = 1f;
         public float accelerationFactor = 1f;
@@ -59,6 +74,8 @@ namespace Game.Scripts
         public float GroundCheckLength => groundCheckLength;
         public Vector3 Movement => _movement.Bulk();
         public bool IsGrabbing => _grabbing.IsGrabbing;
+        public bool IsDog => playerType == Player.Dog;
+        public bool IsCat => playerType == Player.Cat;
 
         private void Start()
         {
