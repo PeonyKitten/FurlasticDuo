@@ -55,8 +55,6 @@ namespace Game.Scripts.Toys
         private void Start()
         {
             _gateRb = gate.GetComponent<Rigidbody>();
-            
-            if (scriptOverride) return;
 
             switch (startState)
             {
