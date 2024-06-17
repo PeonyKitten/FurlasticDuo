@@ -1,54 +1,62 @@
 using System.Collections.Generic;
+using Game.Scripts.Utils;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Game.Scripts.Toys
 {
     public class HamsterWheel : MonoBehaviour
     {
-        public struct PlayerData
+        private struct PlayerData
         {
-            public float speedFactor;
-            public Jump jump;
+            public float SpeedFactor;
+            public Jump Jump;
         }
 
         [SerializeField] private Transform wheel;
         [SerializeField] private float turnSpeed;
+        [SerializeField] private bool useWheelRadius = true;
+        [SerializeField] private float wheelRadius = 3.5f;
 
         [SerializeField] public Door door;
         [SerializeField] private float doorSpeedMultiplier;
 
-        private Dictionary<PlayerController, PlayerData> enteredPlayers = new();
+        private readonly Dictionary<PlayerController, PlayerData> _enteredPlayers = new();
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out PlayerController player))
+            if (!other.TryGetComponent(out PlayerController player)) return;
+            
+            var playerData = new PlayerData
             {
-                PlayerData playerData = new PlayerData();
-                playerData.speedFactor = player.speedFactor;
-                playerData.jump = player.GetComponent<Jump>();
+                SpeedFactor = player.speedFactor,
+                Jump = player.GetComponent<Jump>()
+            };
 
-                enteredPlayers.Add(player, playerData);
+            _enteredPlayers.Add(player, playerData);
 
-                player.ignoreGroundVelocity = true;
-            }
+            player.ignoreGroundVelocity = true;
         }
 
         private void FixedUpdate()
         {
             float currentRotation = 0;
 
-            foreach (var player in enteredPlayers) 
+            foreach (var (player, playerData) in _enteredPlayers) 
             {
-                if (player.Value.jump && player.Value.jump.IsJumping) continue;
+                // Ignore movement if Player is airborne
+                if (playerData.Jump is not null && playerData.Jump.IsJumping) continue;
+                
+                // Ignore movement if Player is outside trigger region
+                var localPlayerPosition = wheel.InverseTransformPoint(player.transform.position);
+                if (useWheelRadius && !wheel.localPosition.IsWithinCylinder(localPlayerPosition, wheelRadius, UtilsMath.Axis3D.X)) continue;
 
-                Vector3 _movement = player.Key.Movement;
-                float turnSpeedFactor = Vector3.Dot(_movement, transform.forward);
+                var movement = player.Movement;
+                var turnSpeedFactor = Vector3.Dot(movement, transform.forward);
 
-                float moveSpeedFactor = Vector3.Dot(_movement, transform.right);
-                float absMoveSpeedFactor = Mathf.Abs(moveSpeedFactor);
+                var moveSpeedFactor = Vector3.Dot(movement, transform.right);
+                var absMoveSpeedFactor = Mathf.Abs(moveSpeedFactor);
                 absMoveSpeedFactor = absMoveSpeedFactor * absMoveSpeedFactor;
-                player.Key.speedFactor = player.Value.speedFactor * absMoveSpeedFactor;
+                player.speedFactor = playerData.SpeedFactor * absMoveSpeedFactor;
 
                 currentRotation += turnSpeedFactor;
             }
@@ -56,7 +64,7 @@ namespace Game.Scripts.Toys
             wheel.Rotate(currentRotation * turnSpeed * Time.deltaTime, 0f, 0f);
 
             // Affect the door if it's not null
-            if (door != null)
+            if (door)
             {
                 door.IncrementOpenness(currentRotation * doorSpeedMultiplier);
             }
@@ -64,14 +72,18 @@ namespace Game.Scripts.Toys
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.TryGetComponent(out PlayerController player))
+            if (!other.TryGetComponent(out PlayerController player)) return;
+            
+            if (_enteredPlayers.Remove(player, out var playerData))
             {
-                if (enteredPlayers.Remove(player, out var playerData))
-                {
-                    player.ignoreGroundVelocity = false;
-                    player.speedFactor = playerData.speedFactor;
-                }
+                player.ignoreGroundVelocity = false;
+                player.speedFactor = playerData.SpeedFactor;
             }
+        }
+        
+        private void OnDrawGizmos()
+        {
+            Gizmos.DrawRay(wheel.position, wheel.forward * wheelRadius);
         }
     }
 }
