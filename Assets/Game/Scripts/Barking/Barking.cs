@@ -12,24 +12,27 @@ namespace Game.Scripts.Barking
         [SerializeField] private float barkDelay = 0.5f;
         [SerializeField] private GameObject barkEffect;
 
+        private PlayerController _controller;
         private AudioSource _audioSource;
         private float _barkTimer = 0f;
 
         private void Awake()
         {
+            _controller = GetComponent<PlayerController>();
             _audioSource = GetComponent<AudioSource>();
         }
 
         private void OnBark()
         {
+            _controller.animator?.ResetTrigger("Bark");
             if (_barkTimer > 0) return;
             
-            Debug.Log("woof woof");
             if (barkSound != null && _audioSource != null)
             {
                 _audioSource.PlayOneShot(barkSound); 
             }
 
+            _controller.animator?.SetTrigger("Bark");
             if (barkEffect)
             {
                 var effect = Instantiate(barkEffect, transform.position, Quaternion.identity);

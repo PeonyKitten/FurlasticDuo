@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,6 +28,11 @@ namespace Game.Scripts.Grab
                 fixedJoint.enablePreprocessing = false;
 
                 fixedJoint.anchor = playerGrabPoint.InverseTransformPoint(hitPoint);
+
+                if (player.animator)
+                {
+                    player.animator.SetBool("IsDragging", true);
+                }
             }
         }
 
@@ -35,6 +41,10 @@ namespace Game.Scripts.Grab
             var player = playerGrabPoint.GetComponentInParent<PlayerController>();
             if (player != null)
             {
+                if (player.animator)
+                {
+                    player.animator.SetBool("IsDragging", false);
+                }
                 var joint = player.GetComponent<FixedJoint>();
                 if (joint != null)
                 {

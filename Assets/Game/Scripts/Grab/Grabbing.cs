@@ -170,6 +170,15 @@ namespace Game.Scripts.Grab
             _grabAction.canceled -= OnGrabReleased;
         }
 
+        private void Update()
+        {
+            if (!IsGrabbing || _playerController.animator == null) return;
+
+            var moveDirectionDot = Vector3.Dot(_playerController.Movement, transform.forward);
+            var newMoveDirectionDot = Mathf.MoveTowards(_playerController.animator.GetFloat("MoveDirectionDot"), moveDirectionDot, 0.1f);
+            _playerController.animator.SetFloat("MoveDirectionDot", newMoveDirectionDot);
+        }
+
         private void OnDrawGizmosSelected()
         {
             if (!Application.isPlaying) return;

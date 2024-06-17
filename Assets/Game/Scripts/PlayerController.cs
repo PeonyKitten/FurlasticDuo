@@ -38,7 +38,7 @@ namespace Game.Scripts
         [SerializeField] private Camera primaryCamera;
         [SerializeField] private bool disableSteepSlopeMovement = true;
 
-        [SerializeField] private Animator animator;
+        [SerializeField] public Animator animator;
         [SerializeField] private float maxVelocity = 5f;
 
         public Vector3 gravityMultiplier = Vector3.one;
