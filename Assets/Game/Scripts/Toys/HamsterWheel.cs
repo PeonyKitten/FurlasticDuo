@@ -100,19 +100,16 @@ namespace Game.Scripts.Toys
 
         private void DisableRotation()
         {
-            Debug.Log("Booom");
             if (!disableRotationAtEnds) return;
             _rotationDisableTimer = rotationDisableDelay;
         }
 
         private void Start()
         {
-            Debug.Log("awooga");
             if (!door) return;
 
             door.scriptOverride = true;
 
-            Debug.Log("awooga 2");
             door.onDoorOpen.AddListener(DisableRotation);
             door.onDoorClose.AddListener(DisableRotation);
         }
