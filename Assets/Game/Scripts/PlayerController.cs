@@ -38,6 +38,9 @@ namespace Game.Scripts
         [SerializeField] private Camera primaryCamera;
         [SerializeField] private bool disableSteepSlopeMovement = true;
 
+        [SerializeField] private Animator animator;
+        [SerializeField] private float maxVelocity = 5f;
+
         public Vector3 gravityMultiplier = Vector3.one;
         public float speedFactor = 1f;
         public float accelerationFactor = 1f;
@@ -213,6 +216,10 @@ namespace Game.Scripts
             if (!(disableSteepSlopeMovement && angle > maxSlopeAngleDeg))
             {
                 neededAccel = Vector3.ClampMagnitude(neededAccel, maxAccel);
+                if (animator)
+                {
+                    animator.SetFloat("Speed", totalVel.magnitude / maxVelocity);
+                }
                 _rb.AddForce(Vector3.Scale(neededAccel * _rb.mass, forceScale));
             }
 
