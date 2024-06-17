@@ -29,6 +29,7 @@ namespace Game.Scripts.Grab
         private PlayerInput _playerInput;
         private InputAction _grabAction;
         private readonly Collider[] _colliders = new Collider[10];
+        private static readonly int AnimHashMoveDirectionDot = Animator.StringToHash("MoveDirectionDot");
 
         public bool IsGrabbing { get; private set; } 
 
@@ -175,8 +176,8 @@ namespace Game.Scripts.Grab
             if (!IsGrabbing || _playerController.animator == null) return;
 
             var moveDirectionDot = Vector3.Dot(_playerController.Movement, transform.forward);
-            var newMoveDirectionDot = Mathf.MoveTowards(_playerController.animator.GetFloat("MoveDirectionDot"), moveDirectionDot, 0.1f);
-            _playerController.animator.SetFloat("MoveDirectionDot", newMoveDirectionDot);
+            var newMoveDirectionDot = Mathf.MoveTowards(_playerController.animator.GetFloat(AnimHashMoveDirectionDot), moveDirectionDot, 0.1f);
+            _playerController.animator.SetFloat(AnimHashMoveDirectionDot, newMoveDirectionDot);
         }
 
         private void OnDrawGizmosSelected()

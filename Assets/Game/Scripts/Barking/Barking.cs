@@ -15,6 +15,7 @@ namespace Game.Scripts.Barking
         private PlayerController _controller;
         private AudioSource _audioSource;
         private float _barkTimer = 0f;
+        private static readonly int AnimHashBark = Animator.StringToHash("Bark");
 
         private void Awake()
         {
@@ -24,7 +25,7 @@ namespace Game.Scripts.Barking
 
         private void OnBark()
         {
-            _controller.animator?.ResetTrigger("Bark");
+            _controller.animator?.ResetTrigger(AnimHashBark);
             if (_barkTimer > 0) return;
             
             if (barkSound != null && _audioSource != null)
@@ -32,7 +33,7 @@ namespace Game.Scripts.Barking
                 _audioSource.PlayOneShot(barkSound); 
             }
 
-            _controller.animator?.SetTrigger("Bark");
+            _controller.animator?.SetTrigger(AnimHashBark);
             if (barkEffect)
             {
                 var effect = Instantiate(barkEffect, transform.position, Quaternion.identity);

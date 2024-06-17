@@ -54,6 +54,7 @@ namespace Game.Scripts
         private float _groundCheckDisabledTimer;
 
         private Grabbing _grabbing;
+        private static readonly int AnimHashSpeed = Animator.StringToHash("Speed");
 
         /// Camera to be used for camera-relative movement
         public Camera PrimaryCamera { get => primaryCamera; set => primaryCamera = value; }
@@ -218,7 +219,7 @@ namespace Game.Scripts
                 neededAccel = Vector3.ClampMagnitude(neededAccel, maxAccel);
                 if (animator)
                 {
-                    animator.SetFloat("Speed", totalVel.magnitude / maxVelocity);
+                    animator.SetFloat(AnimHashSpeed, totalVel.magnitude / maxVelocity * speedFactor);
                 }
                 _rb.AddForce(Vector3.Scale(neededAccel * _rb.mass, forceScale));
             }

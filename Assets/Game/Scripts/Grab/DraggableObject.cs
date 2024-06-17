@@ -7,6 +7,7 @@ namespace Game.Scripts.Grab
     public class DraggableObject : MonoBehaviour, IGrabbable
     {
         private Rigidbody _rb;
+        private static readonly int AnimHashIsDragging = Animator.StringToHash("IsDragging");
 
         private void Awake()
         {
@@ -31,7 +32,7 @@ namespace Game.Scripts.Grab
 
                 if (player.animator)
                 {
-                    player.animator.SetBool("IsDragging", true);
+                    player.animator.SetBool(AnimHashIsDragging, true);
                 }
             }
         }
