@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Game.Scripts.Utils;
 using UnityEngine;
@@ -12,15 +13,20 @@ namespace Game.Scripts.Toys
             public Jump Jump;
         }
 
+        [Header("Hamster Wheel Settings")]
         [SerializeField] private Transform wheel;
         [SerializeField] private float turnSpeed;
         [SerializeField] private bool useWheelRadius = true;
         [SerializeField] private float wheelRadius = 3.5f;
-
-        [SerializeField] public Door door;
+        [Header("Door Settings")]
+        [SerializeField] private Door door;
         [SerializeField] private float doorSpeedMultiplier;
+        [SerializeField] private bool clampRotationAtEnds = true;
+        [SerializeField] private bool disableRotationAtEnds = true;
+        [SerializeField] private float rotationDisableDelay = 4.0f;
 
         private readonly Dictionary<PlayerController, PlayerData> _enteredPlayers = new();
+        private float _rotationDisableTimer;
 
         private void OnTriggerEnter(Collider other)
         {
@@ -39,6 +45,8 @@ namespace Game.Scripts.Toys
 
         private void FixedUpdate()
         {
+            _rotationDisableTimer -= Time.deltaTime;
+            
             float currentRotation = 0;
 
             foreach (var (player, playerData) in _enteredPlayers) 
@@ -61,13 +69,17 @@ namespace Game.Scripts.Toys
                 currentRotation += turnSpeedFactor;
             }
 
-            wheel.Rotate(currentRotation * turnSpeed * Time.deltaTime, 0f, 0f);
-
+            if (_rotationDisableTimer > 0) return;
+            
             // Affect the door if it's not null
             if (door)
             {
                 door.IncrementOpenness(currentRotation * doorSpeedMultiplier);
+                
+                if (clampRotationAtEnds && (door.Openness <= 0 || door.Openness >= 1)) return;
             }
+            
+            wheel.Rotate(currentRotation * turnSpeed * Time.deltaTime, 0f, 0f);
         }
 
         private void OnTriggerExit(Collider other)
@@ -84,6 +96,33 @@ namespace Game.Scripts.Toys
         private void OnDrawGizmos()
         {
             Gizmos.DrawRay(wheel.position, wheel.forward * wheelRadius);
+        }
+
+        private void DisableRotation()
+        {
+            Debug.Log("Booom");
+            if (!disableRotationAtEnds) return;
+            _rotationDisableTimer = rotationDisableDelay;
+        }
+
+        private void Start()
+        {
+            Debug.Log("awooga");
+            if (!door) return;
+
+            door.scriptOverride = true;
+
+            Debug.Log("awooga 2");
+            door.onDoorOpen.AddListener(DisableRotation);
+            door.onDoorClose.AddListener(DisableRotation);
+        }
+
+        private void OnDestroy()
+        {
+            if (!door) return;
+            
+            door.onDoorOpen.RemoveListener(DisableRotation);
+            door.onDoorClose.RemoveListener(DisableRotation);
         }
     }
 }

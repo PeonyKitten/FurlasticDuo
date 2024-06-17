@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Game.Scripts.Toys
 {
@@ -17,6 +18,7 @@ namespace Game.Scripts.Toys
         
         [Header("Translation")]
         [SerializeField] private bool usePosition = true;
+        [SerializeField] private bool useRigidbodyPosition;
         [SerializeField] private bool useGlobalPosition;
         [SerializeField] private Vector3 openPosition;
         [SerializeField] private Vector3 closePosition;
@@ -33,7 +35,13 @@ namespace Game.Scripts.Toys
         [SerializeField, Range(0, 1)] private float openThreshold = 0.5f;
         [SerializeField] private StartState startState = StartState.None;
 
-        [SerializeField] private bool scriptOverride;
+        [Header("Script Override")]
+        [SerializeField] public bool scriptOverride;
+        [SerializeField] public bool scriptOverrideCallbacks = true;
+
+        [Header("Callbacks")]
+        public UnityEvent onDoorOpen;
+        public UnityEvent onDoorClose;
 
         public bool IsOpen => _openness > openThreshold;
         public float Openness => _openness;
@@ -41,10 +49,13 @@ namespace Game.Scripts.Toys
         private float _openness;
         private bool _isOpening;
         private bool _isClosing;
+        private Rigidbody _gateRb;
         
         // Start is called before the first frame update
         private void Start()
         {
+            _gateRb = gate.GetComponent<Rigidbody>();
+            
             if (scriptOverride) return;
 
             switch (startState)
@@ -65,6 +76,18 @@ namespace Game.Scripts.Toys
         private void ApplyPosition(Vector3 pos)
         {
             if (!usePosition) return;
+
+            // Use Rigidbody movement instead of Transform movement
+            if (useRigidbodyPosition && _gateRb)
+            {
+                if (!useGlobalPosition)
+                {
+                    pos = gate.TransformPoint(pos);
+                }
+                _gateRb.MovePosition(pos);
+                
+                return;
+            }
             
             if (useGlobalPosition)
             {
@@ -110,11 +133,36 @@ namespace Game.Scripts.Toys
 
         public void ApplyOpenness(float openness)
         {
-            _openness = Mathf.Clamp01(openness);
+            var clampedOpenness = Mathf.Clamp01(openness);
+            if (_openness < openness)
+            {
+                _isOpening = true;
+            }
 
+            if (_openness > openness)
+            {
+                _isClosing = true;
+            }
 
+            _openness = clampedOpenness;
+            
             ApplyPosition(Vector3.LerpUnclamped(closePosition, openPosition, _openness));
             ApplyRotation(Mathf.LerpUnclamped(closeRotationDeg, openRotationDeg, _openness));
+            
+            // Note: when being overridden by script, these callbacks are called *AFTER* the door's position and rotation are applied
+            if (!scriptOverrideCallbacks) return;
+
+            if (_isOpening && openness >= 1)
+            {
+                _isOpening = false;
+                onDoorOpen?.Invoke();
+            }
+            
+            if (_isClosing && openness <= 0)
+            {
+                _isClosing = false;
+                onDoorClose?.Invoke();
+            }
         }
 
         public void IncrementOpenness(float increment)
@@ -125,7 +173,6 @@ namespace Game.Scripts.Toys
         private void Update()
         {
             if (scriptOverride || Time.timeScale == 0) return;
-
             
             if (_isOpening)
             {
@@ -141,12 +188,14 @@ namespace Game.Scripts.Toys
             {
                 _openness = 1;
                 _isOpening = false;
+                onDoorOpen?.Invoke();
             }
 
             if (_openness < 0)
             {
                 _openness = 0;
                 _isClosing = false;
+                onDoorClose?.Invoke();
             }
 
             ApplyPosition(Vector3.LerpUnclamped(closePosition, openPosition, _openness));
