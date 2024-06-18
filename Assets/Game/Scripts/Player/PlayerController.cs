@@ -129,7 +129,7 @@ namespace Game.Scripts.Player
             return cameraRelativeMovement.Flatten();
         }
 
-        private void OnMovement(InputValue value)
+        public void OnMovement(InputValue value)
         {
             var input = value.Get<Vector2>();
 
@@ -203,7 +203,7 @@ namespace Game.Scripts.Player
             var velDot = Vector3.Dot(_goalVel, unitVel);
             var accel = acceleration * accelerationFactorDot.Evaluate(velDot);
             
-            // TODO: speed factor bad. fix @alvins
+            // TODO: speed factor bad. fix @alvin
             if (speedFactor > 1)
             {
                 Debug.LogWarning("SpeedFactor > 1. Clamping to 1");

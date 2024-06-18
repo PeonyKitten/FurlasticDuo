@@ -28,10 +28,11 @@ namespace Game.Scripts.Game.States
         public void OnStateEnter(GameManager state)
         {
             // EventBus<GameStates>.Publish(GameStates.Running);
+
             GameManager.Instance.StartCoroutine(LoadPlaygroundScene(state));
         }
 
-        private static IEnumerator LoadPlaygroundScene(GameManager state)
+        private  IEnumerator LoadPlaygroundScene(GameManager state)
         {
             var asyncLoad = SceneManager.LoadSceneAsync("Playground-core", LoadSceneMode.Additive);
 
@@ -50,6 +51,15 @@ namespace Game.Scripts.Game.States
             state.pauseGameAction.performed += OpenPauseGameMenu;
 
             CheckpointSystem.Instance.ForceGrabValues();
+
+            if (_mode == PlayMode.LocalCoop)
+            {
+                state.playerInputManager.EnableJoining();
+            }
+            else
+            {
+                state.SpawnDefaultInputHandler();
+            }
         }
 
         public void OnStateResume(GameManager state)
@@ -73,7 +83,9 @@ namespace Game.Scripts.Game.States
         {
             state.pauseGameAction.performed -= OpenPauseGameMenu;
             state.pauseGameAction.Disable();
+            state.ClearInputHandlers();
             InputSystem.ResetHaptics();
+            state.playerInputManager.DisableJoining();
             // EventBus<GameStates>.Publish(GameStates.Paused);
         }
     }

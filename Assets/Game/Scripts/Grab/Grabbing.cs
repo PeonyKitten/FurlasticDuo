@@ -1,7 +1,6 @@
 using Game.Scripts.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
 namespace Game.Scripts.Grab
 {
@@ -27,7 +26,6 @@ namespace Game.Scripts.Grab
         private PlayerController _playerController;
         private GameObject _currentGrabbableObject;
 
-        private PlayerInput _playerInput;
         private InputAction _grabAction;
         private readonly Collider[] _colliders = new Collider[10];
 
@@ -36,14 +34,9 @@ namespace Game.Scripts.Grab
         private void Start()
         {
             _playerController = GetComponent<PlayerController>();
-            _playerInput = GetComponent<PlayerInput>();
             _grabPoint = new GameObject("GrabPoint").transform;
             _grabPoint.SetParent(transform);
             _grabPoint.localPosition = new Vector3(0, 0, 1.4f);
-            _grabAction = _playerInput.actions["Grab"];
-
-            _grabAction.performed += OnGrabPerformed;
-            _grabAction.canceled += OnGrabReleased;
         }
 
         private void OnGrab()
@@ -167,8 +160,18 @@ namespace Game.Scripts.Grab
 
         private void OnDestroy()
         {
+            if (_grabAction is null) return;
+
             _grabAction.performed -= OnGrabPerformed;
             _grabAction.canceled -= OnGrabReleased;
+        }
+
+        public void SetGrabAction(InputAction grabAction)
+        {
+            _grabAction = grabAction;
+
+            _grabAction.performed += OnGrabPerformed;
+            _grabAction.canceled += OnGrabReleased;
         }
 
         private void OnDrawGizmosSelected()

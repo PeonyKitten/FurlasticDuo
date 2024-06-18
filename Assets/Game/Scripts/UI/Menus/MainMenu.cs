@@ -26,7 +26,7 @@ namespace Game.Scripts.UI.Menus
             coopPlayButton.Focus();
             coopPlayButton.ApplyClickCallbacks(() =>
             {
-                GameManager.Instance.ChangeState(new PlayState());
+                GameManager.Instance.ChangeState(new PlayState(PlayState.PlayMode.LocalCoop));
                 coopPlayButton.SetEnabled(false);
             });
             
@@ -34,7 +34,7 @@ namespace Game.Scripts.UI.Menus
             soloPlayButton.text = "Single-Player";
             soloPlayButton.ApplyClickCallbacks(() =>
             {
-                GameManager.Instance.ChangeState(new PlayState());
+                GameManager.Instance.ChangeState(new PlayState(PlayState.PlayMode.SinglePlayer));
                 soloPlayButton.SetEnabled(false);
             });
             

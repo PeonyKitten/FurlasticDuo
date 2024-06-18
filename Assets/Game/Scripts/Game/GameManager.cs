@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Game.Scripts.Game.States;
 using Game.Scripts.Patterns;
+using Game.Scripts.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,11 +13,18 @@ namespace Game.Scripts.Game
         public InputAction pauseGameAction;
         
         public Camera uiCamera;
+        public PlayerInputManager playerInputManager;
         private readonly Stack<IState<GameManager>> _stateHistory = new();
         private IState<GameManager> _currentState;
 
+        private int _playerIndex;
+
+        public List<PlayerInputHandler> inputHandlers = new();
+
         private void Start()
         {
+            playerInputManager = GetComponent<PlayerInputManager>();
+            
             ChangeState(new MainMenuState());
         }
 
@@ -58,5 +66,50 @@ namespace Game.Scripts.Game
             _currentState.OnStateResume(this);
         }
 
+        private void OnPlayerJoined(PlayerInput playerInput)
+        {
+            Debug.Assert(_playerIndex <= 1, $"Invalid Player Index {_playerIndex}");
+
+            var inputHandler = playerInput.GetComponent<PlayerInputHandler>();
+            var playerType = _playerIndex == 0
+                ? PlayerInputHandler.PlayerInputType.Cat
+                : PlayerInputHandler.PlayerInputType.Dog;
+            inputHandler.SetupPlayer(playerType);
+            inputHandler.SetupGrabActions();
+            inputHandlers.Add(inputHandler);
+            _playerIndex++;
+
+            if (_playerIndex >= 2)
+            {
+                playerInputManager.DisableJoining();
+            }
+        }
+
+        public void SpawnDefaultInputHandler()
+        {
+            var inputHandler = Instantiate(playerInputManager.playerPrefab).GetComponent<PlayerInputHandler>();
+            inputHandler.SetupPlayer(PlayerInputHandler.PlayerInputType.Combined);
+            inputHandler.SetupGrabActions();
+            inputHandlers.Add(inputHandler);
+        }
+
+        private void OnPlayerLeft(PlayerInput playerInput)
+        {
+            _playerIndex = Math.Max(_playerIndex - 1, 0);
+
+            if (_playerIndex < 2)
+            {
+                playerInputManager.EnableJoining();
+            }
+        }
+
+        public void ClearInputHandlers()
+        {
+            foreach (var inputHandler in inputHandlers)
+            {
+                Destroy(inputHandler.gameObject);
+            }
+            inputHandlers.Clear();
+        }
     }
 }
