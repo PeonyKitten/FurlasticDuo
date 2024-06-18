@@ -69,8 +69,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wheel: {fileID: 4758130280883720239}
   turnSpeed: 50
+  useWheelRadius: 1
+  wheelRadius: 3.5
+  requiredPlayers: 2
   door: {fileID: 0}
   doorSpeedMultiplier: 0
+  clampRotationAtEnds: 1
+  disableRotationAtEnds: 1
+  disableStoppingRotationIfNoPlayers: 1
+  rotationDisableDelay: 1
 --- !u!1001 &5008846362807629764
 PrefabInstance:
   m_ObjectHideFlags: 0
