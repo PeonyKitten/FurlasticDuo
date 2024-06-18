@@ -22,7 +22,7 @@ namespace Game.Scripts.UI.Menus
             options.Clear();
             
             var coopPlayButton = options.Create<Button>("main-button");
-            coopPlayButton.text = "Play Co-Op";
+            coopPlayButton.text = "Local Co-op";
             coopPlayButton.Focus();
             coopPlayButton.ApplyClickCallbacks(() =>
             {
@@ -31,7 +31,7 @@ namespace Game.Scripts.UI.Menus
             });
             
             var soloPlayButton = options.Create<Button>("main-button");
-            soloPlayButton.text = "Single-Player";
+            soloPlayButton.text = "Singleplayer";
             soloPlayButton.ApplyClickCallbacks(() =>
             {
                 GameManager.Instance.ChangeState(new PlayState(PlayState.PlayMode.SinglePlayer));
