@@ -19,12 +19,15 @@ namespace Game.Scripts.Toys
         [SerializeField] private float turnSpeed;
         [SerializeField] private bool useWheelRadius = true;
         [SerializeField] private float wheelRadius = 3.5f;
+        [SerializeField] private int requiredPlayers = 2;
+        
         [Header("Door Settings")]
         [SerializeField] private Door door;
         [SerializeField] private float doorSpeedMultiplier;
         [SerializeField] private bool clampRotationAtEnds = true;
         [SerializeField] private bool disableRotationAtEnds = true;
-        [SerializeField] private float rotationDisableDelay = 4.0f;
+        [SerializeField] private bool disableStoppingRotationIfNoPlayers = true;
+        [SerializeField] private float rotationDisableDelay = 1.0f;
 
         private readonly Dictionary<PlayerController, PlayerData> _enteredPlayers = new();
         private float _rotationDisableTimer;
@@ -70,7 +73,7 @@ namespace Game.Scripts.Toys
                 currentRotation += turnSpeedFactor;
             }
 
-            if (_rotationDisableTimer > 0) return;
+            if (_rotationDisableTimer > 0 || _enteredPlayers.Count < requiredPlayers) return;
             
             // Affect the door if it's not null
             if (door)
@@ -102,6 +105,8 @@ namespace Game.Scripts.Toys
         private void DisableRotation()
         {
             if (!disableRotationAtEnds) return;
+            if (disableStoppingRotationIfNoPlayers && _enteredPlayers.Count == 0) return;
+            
             _rotationDisableTimer = rotationDisableDelay;
         }
 
