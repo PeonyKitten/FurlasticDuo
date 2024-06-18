@@ -24,6 +24,12 @@ namespace Game.Scripts.Player
         
         public PlayerController dog;
         public PlayerController cat;
+
+        public void DefaultSetup()
+        {
+            SetupPlayer(PlayerInputType.Combined);
+            SetupGrabActions();
+        }
         
         public void SetupPlayer(PlayerInputType playerType)
         { 
