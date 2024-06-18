@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Game.Scripts.Utils;
+using Game.Scripts.Player;
 using UnityEngine;
 
 namespace Game.Scripts.Toys
