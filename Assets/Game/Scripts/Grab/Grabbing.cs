@@ -1,4 +1,5 @@
 using Game.Scripts.Player;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -28,6 +29,8 @@ namespace Game.Scripts.Grab
 
         private InputAction _grabAction;
         private readonly Collider[] _colliders = new Collider[10];
+
+        private static Dictionary<GameObject, int> activeGrabs = new Dictionary<GameObject, int>();
 
         public bool IsGrabbing { get; private set; } 
 
@@ -110,16 +113,25 @@ namespace Game.Scripts.Grab
 
             AdjustPlayerSpeed();
 
-            var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
-            foreach (var mRenderer in renderers)
+            if (!activeGrabs.ContainsKey(_currentGrabbableObject))
             {
-                foreach (var rendererMaterial in mRenderer.sharedMaterials)
+                activeGrabs[_currentGrabbableObject] = 0;
+            }
+
+            if (activeGrabs[_currentGrabbableObject] == 0)
+            {
+                var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
+                foreach (var mRenderer in renderers)
                 {
-                    if (rendererMaterial != defaultMaterial) continue;
-                    mRenderer.material = selectedMaterial;
+                    foreach (var rendererMaterial in mRenderer.sharedMaterials)
+                    {
+                        if (rendererMaterial != defaultMaterial) continue;
+                        mRenderer.material = selectedMaterial;
+                    }
                 }
             }
-                    
+
+            activeGrabs[_currentGrabbableObject]++;
             IsGrabbing = grabbable.ShouldAffectElastcForce();
 
             return true;
@@ -131,17 +143,23 @@ namespace Game.Scripts.Grab
 
             _currentGrabbable.OnRelease(_grabPoint);
 
-            var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
+            activeGrabs[_currentGrabbableObject]--;
 
-            foreach (var mRenderer in renderers)
+            if (activeGrabs[_currentGrabbableObject] == 0)
             {
-                foreach (var rendererMaterial in mRenderer.sharedMaterials)
-                {
-                    if (rendererMaterial != selectedMaterial) continue;
+                var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
 
-                    mRenderer.material = defaultMaterial;
+                foreach (var mRenderer in renderers)
+                {
+                    foreach (var rendererMaterial in mRenderer.sharedMaterials)
+                    {
+                        if (rendererMaterial != selectedMaterial) continue;
+
+                        mRenderer.material = defaultMaterial;
+                    }
                 }
             }
+
             ResetPlayerSpeed();
             _currentGrabbable = null;
             _currentGrabbableObject = null;
