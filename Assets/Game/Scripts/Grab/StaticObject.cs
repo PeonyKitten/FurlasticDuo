@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Game.Scripts.Player;
 
 namespace Game.Scripts.Grab
 {

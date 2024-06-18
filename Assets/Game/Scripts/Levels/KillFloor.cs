@@ -1,5 +1,6 @@
 using System;
 using Game.Scripts.Levels.Checkpoints;
+using Game.Scripts.Player;
 using UnityEngine;
 using UnityEngine.Events;
 
