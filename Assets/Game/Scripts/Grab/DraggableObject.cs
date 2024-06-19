@@ -40,13 +40,9 @@ namespace Game.Scripts.Grab
             _grabCount++;
             UpdateMaterial();
 
-            if (requireBothPlayersToMove && _grabCount < 2)
+            if (requireBothPlayersToMove)
             {
-                _rb.isKinematic = true;
-            }
-            else
-            {
-                _rb.isKinematic = false;
+                _rb.isKinematic = _grabCount < 2;
             }
         }
 
@@ -65,13 +61,9 @@ namespace Game.Scripts.Grab
             _grabCount--;
             UpdateMaterial();
 
-            if (requireBothPlayersToMove && _grabCount < 2)
+            if (requireBothPlayersToMove)
             {
-                _rb.isKinematic = true;
-            }
-            else
-            {
-                _rb.isKinematic = false;
+                _rb.isKinematic = _grabCount < 2;
             }
         }
 
