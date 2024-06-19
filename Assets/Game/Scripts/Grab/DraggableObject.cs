@@ -6,11 +6,18 @@ namespace Game.Scripts.Grab
 {
     public class DraggableObject : MonoBehaviour, IGrabbable
     {
+        [SerializeField] private Material normalMaterial;
+        [SerializeField] private Material selectedMaterial;
+        [SerializeField] private bool requireBothPlayersToMove = false;
+
+        private Renderer[] _renderers;
+        private int _grabCount = 0;
         private Rigidbody _rb;
 
         private void Awake()
         {
             _rb = GetComponent<Rigidbody>();
+            _renderers = GetComponentsInChildren<Renderer>();
         }
 
         public void OnGrab(Transform playerGrabPoint)
@@ -29,6 +36,18 @@ namespace Game.Scripts.Grab
 
                 fixedJoint.anchor = playerGrabPoint.InverseTransformPoint(hitPoint);
             }
+
+            _grabCount++;
+            UpdateMaterial();
+
+            if (requireBothPlayersToMove && _grabCount < 2)
+            {
+                _rb.isKinematic = true;
+            }
+            else
+            {
+                _rb.isKinematic = false;
+            }
         }
 
         public void OnRelease(Transform playerGrabPoint)
@@ -42,6 +61,18 @@ namespace Game.Scripts.Grab
                     Destroy(joint);
                 }
             }
+
+            _grabCount--;
+            UpdateMaterial();
+
+            if (requireBothPlayersToMove && _grabCount < 2)
+            {
+                _rb.isKinematic = true;
+            }
+            else
+            {
+                _rb.isKinematic = false;
+            }
         }
 
         //TODO: maybe change?
@@ -54,6 +85,24 @@ namespace Game.Scripts.Grab
                 if (joint != null && joint.connectedBody == _rb)
                 {
                     Destroy(joint);
+                }
+            }
+            _grabCount = 0;
+            UpdateMaterial();
+            _rb.isKinematic = true;
+        }
+
+        private void UpdateMaterial()
+        {
+            var material = _grabCount > 0 ? selectedMaterial : normalMaterial;
+            foreach (var renderer in _renderers)
+            {
+                foreach (var rendererMaterial in renderer.sharedMaterials)
+                {
+                    if (rendererMaterial == normalMaterial || rendererMaterial == selectedMaterial)
+                    {
+                        renderer.material = material;
+                    }
                 }
             }
         }

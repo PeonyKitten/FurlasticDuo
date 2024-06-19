@@ -11,8 +11,6 @@ namespace Game.Scripts.Grab
         [SerializeField] private float playerSpeedModifier = 1f;
         [SerializeField] private bool holdToGrab = true;
 
-        [SerializeField] private Material selectedMaterial;
-        [SerializeField] private Material defaultMaterial;
         [SerializeField] private float sphereRadius = 0.6f;
         [SerializeField] private LayerMask grabLayerMask = ~0;
 
@@ -109,16 +107,6 @@ namespace Game.Scripts.Grab
             _currentGrabbable.OnGrab(_grabPoint);
 
             AdjustPlayerSpeed();
-
-            var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
-            foreach (var mRenderer in renderers)
-            {
-                foreach (var rendererMaterial in mRenderer.sharedMaterials)
-                {
-                    if (rendererMaterial != defaultMaterial) continue;
-                    mRenderer.material = selectedMaterial;
-                }
-            }
                     
             IsGrabbing = grabbable.ShouldAffectElastcForce();
 
@@ -131,17 +119,7 @@ namespace Game.Scripts.Grab
 
             _currentGrabbable.OnRelease(_grabPoint);
 
-            var renderers = _currentGrabbableObject.GetComponentsInChildren<MeshRenderer>();
-
-            foreach (var mRenderer in renderers)
-            {
-                foreach (var rendererMaterial in mRenderer.sharedMaterials)
-                {
-                    if (rendererMaterial != selectedMaterial) continue;
-
-                    mRenderer.material = defaultMaterial;
-                }
-            }
+            
             ResetPlayerSpeed();
             _currentGrabbable = null;
             _currentGrabbableObject = null;
