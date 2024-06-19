@@ -3,6 +3,7 @@ using Game.Scripts.Barking;
 using Game.Scripts.SteeringBehaviours;
 using UnityEngine.AI;
 using System.Collections;
+using Game.Scripts.Utils;
 
 namespace Game.Scripts.NPC
 {

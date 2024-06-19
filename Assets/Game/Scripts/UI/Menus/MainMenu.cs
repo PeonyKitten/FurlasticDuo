@@ -21,13 +21,21 @@ namespace Game.Scripts.UI.Menus
             var options = root.Q("Buttons");
             options.Clear();
             
-            var playButton = options.Create<Button>("main-button");
-            playButton.text = "Start";
-            playButton.Focus();
-            playButton.ApplyClickCallbacks(() =>
+            var coopPlayButton = options.Create<Button>("main-button");
+            coopPlayButton.text = "Local Co-op";
+            coopPlayButton.Focus();
+            coopPlayButton.ApplyClickCallbacks(() =>
             {
-                GameManager.Instance.ChangeState(new PlayState());
-                playButton.SetEnabled(false);
+                GameManager.Instance.ChangeState(new PlayState(PlayState.PlayMode.LocalCoop));
+                coopPlayButton.SetEnabled(false);
+            });
+            
+            var soloPlayButton = options.Create<Button>("main-button");
+            soloPlayButton.text = "Singleplayer";
+            soloPlayButton.ApplyClickCallbacks(() =>
+            {
+                GameManager.Instance.ChangeState(new PlayState(PlayState.PlayMode.SinglePlayer));
+                soloPlayButton.SetEnabled(false);
             });
             
             var optionsButton = options.Create<Button>("main-button");
@@ -44,7 +52,7 @@ namespace Game.Scripts.UI.Menus
             
             if (preventOverflowNavigation)
             {
-                playButton.DisableNavigationInDirections(NavigationMoveEvent.Direction.Up);
+                coopPlayButton.DisableNavigationInDirections(NavigationMoveEvent.Direction.Up);
                 quitButton.DisableNavigationInDirections(NavigationMoveEvent.Direction.Down);
             }
         }

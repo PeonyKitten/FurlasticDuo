@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Game.Scripts.Levels.Checkpoints;
@@ -10,15 +11,29 @@ namespace Game.Scripts.Game.States
 {
     public class PlayState : IState<GameManager>
     {
+        [Serializable]
+        public enum PlayMode
+        {
+            SinglePlayer,
+            LocalCoop,
+        }
+
+        private PlayMode _mode;
+
+        public PlayState(PlayMode mode = PlayMode.SinglePlayer)
+        {
+            _mode = mode;
+        }
+        
         public void OnStateEnter(GameManager state)
         {
             // EventBus<GameStates>.Publish(GameStates.Running);
+
             GameManager.Instance.StartCoroutine(LoadPlaygroundScene(state));
         }
 
-        private static IEnumerator LoadPlaygroundScene(GameManager state)
+        private  IEnumerator LoadPlaygroundScene(GameManager state)
         {
-            
             var asyncLoad = SceneManager.LoadSceneAsync("Playground-core", LoadSceneMode.Additive);
 
             if (asyncLoad == null) yield break;
@@ -36,6 +51,15 @@ namespace Game.Scripts.Game.States
             state.pauseGameAction.performed += OpenPauseGameMenu;
 
             CheckpointSystem.Instance.ForceGrabValues();
+
+            if (_mode == PlayMode.LocalCoop)
+            {
+                state.playerInputManager.EnableJoining();
+            }
+            else
+            {
+                state.SpawnDefaultInputHandler();
+            }
         }
 
         public void OnStateResume(GameManager state)
@@ -59,7 +83,9 @@ namespace Game.Scripts.Game.States
         {
             state.pauseGameAction.performed -= OpenPauseGameMenu;
             state.pauseGameAction.Disable();
+            state.ClearInputHandlers();
             InputSystem.ResetHaptics();
+            state.playerInputManager.DisableJoining();
             // EventBus<GameStates>.Publish(GameStates.Paused);
         }
     }

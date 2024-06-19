@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Game.Scripts.Utils;
+using UnityEngine;
 
 namespace Game.Scripts.SteeringBehaviours
 {
