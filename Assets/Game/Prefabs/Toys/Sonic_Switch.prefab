@@ -146,7 +146,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 4, y: 4, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4585534274915344970}
@@ -238,6 +238,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gate: {fileID: 7104921985291782541}
   usePosition: 1
+  useRigidbodyPosition: 0
   useGlobalPosition: 0
   openPosition: {x: 0, y: 0, z: 0}
   closePosition: {x: 0, y: -0.016, z: 0}
@@ -250,6 +251,13 @@ MonoBehaviour:
   openThreshold: 0.5
   startState: 1
   scriptOverride: 0
+  scriptOverrideCallbacks: 1
+  onDoorOpen:
+    m_PersistentCalls:
+      m_Calls: []
+  onDoorClose:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &2267105720665461420
 MonoBehaviour:
   m_ObjectHideFlags: 0
