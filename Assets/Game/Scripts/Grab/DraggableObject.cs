@@ -9,6 +9,7 @@ namespace Game.Scripts.Grab
         [SerializeField] private Material normalMaterial;
         [SerializeField] private Material selectedMaterial;
         [SerializeField] private bool requireBothPlayersToMove = false;
+        [SerializeField] private bool pushIfNotGrabbed = true;
 
         private Renderer[] _renderers;
         private int _grabCount = 0;
@@ -18,6 +19,8 @@ namespace Game.Scripts.Grab
         {
             _rb = GetComponent<Rigidbody>();
             _renderers = GetComponentsInChildren<Renderer>();
+
+            _rb.isKinematic = !pushIfNotGrabbed;
         }
 
         public void OnGrab(Transform playerGrabPoint)
@@ -25,16 +28,7 @@ namespace Game.Scripts.Grab
             var player = playerGrabPoint.GetComponentInParent<PlayerController>();
             if (player != null)
             {
-                var hitPoint = playerGrabPoint.position;
-                    
-                var fixedJoint = player.gameObject.AddComponent<FixedJoint>();
-                fixedJoint.connectedBody = _rb;
-                fixedJoint.breakForce = float.MaxValue;
-                fixedJoint.breakTorque = float.MaxValue;
-                fixedJoint.enableCollision = false;
-                fixedJoint.enablePreprocessing = false;
-
-                fixedJoint.anchor = playerGrabPoint.InverseTransformPoint(hitPoint);
+                AddJoint(player, playerGrabPoint);
             }
 
             _grabCount++;
@@ -44,6 +38,10 @@ namespace Game.Scripts.Grab
             {
                 _rb.isKinematic = _grabCount < 2;
             }
+            else
+            {
+                _rb.isKinematic = false;
+            }
         }
 
         public void OnRelease(Transform playerGrabPoint)
@@ -51,11 +49,7 @@ namespace Game.Scripts.Grab
             var player = playerGrabPoint.GetComponentInParent<PlayerController>();
             if (player != null)
             {
-                var joint = player.GetComponent<FixedJoint>();
-                if (joint != null)
-                {
-                    Destroy(joint);
-                }
+                RemoveJoint(player);
             }
 
             _grabCount--;
@@ -65,9 +59,14 @@ namespace Game.Scripts.Grab
             {
                 _rb.isKinematic = _grabCount < 2;
             }
+
+            if (_grabCount <= 0)
+            {
+                _rb.isKinematic = !pushIfNotGrabbed;
+            }
         }
 
-        //TODO: maybe change?
+        //TODO: maybe change?   
         public void ReleaseAll()
         {
             var allPlayers = FindObjectsOfType<PlayerController>();
@@ -81,7 +80,30 @@ namespace Game.Scripts.Grab
             }
             _grabCount = 0;
             UpdateMaterial();
-            _rb.isKinematic = true;
+            _rb.isKinematic = !pushIfNotGrabbed;
+        }
+
+        private void AddJoint(PlayerController player, Transform playerGrabPoint)
+        {
+            var hitPoint = playerGrabPoint.position;
+
+            var fixedJoint = player.gameObject.AddComponent<FixedJoint>();
+            fixedJoint.connectedBody = _rb;
+            fixedJoint.breakForce = float.MaxValue;
+            fixedJoint.breakTorque = float.MaxValue;
+            fixedJoint.enableCollision = false;
+            fixedJoint.enablePreprocessing = false;
+
+            fixedJoint.anchor = playerGrabPoint.InverseTransformPoint(hitPoint);
+        }
+
+        private void RemoveJoint(PlayerController player)
+        {
+            var joint = player.GetComponent<FixedJoint>();
+            if (joint != null)
+            {
+                Destroy(joint);
+            }
         }
 
         private void UpdateMaterial()

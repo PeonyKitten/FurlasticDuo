@@ -119,7 +119,6 @@ namespace Game.Scripts.Grab
 
             _currentGrabbable.OnRelease(_grabPoint);
 
-            
             ResetPlayerSpeed();
             _currentGrabbable = null;
             _currentGrabbableObject = null;
