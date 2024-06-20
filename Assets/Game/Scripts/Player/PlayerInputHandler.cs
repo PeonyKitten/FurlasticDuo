@@ -1,8 +1,12 @@
+// PlayerInputHandler.cs
+// Alvin Philips
+// 2024-06-20
+// Acts as an interface between a PlayerInput and either both or one of the PlayerControllers.
+
 using System;
 using Game.Scripts.Grab;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
 namespace Game.Scripts.Player
 {
@@ -77,8 +81,6 @@ namespace Game.Scripts.Player
 
         private void OnBark()
         {
-            Debug.Assert(playerInputType == PlayerInputType.Dog, $"Wrong PlayerInputType - Expected 'Dog', got: {playerInputType}");
-
             if (player)
             {
                 player.SendMessage("OnBark");
@@ -95,7 +97,6 @@ namespace Game.Scripts.Player
         
         private void OnDogBark()
         {
-            Debug.Log("Bark");
             if (dog)
             {
                 dog.SendMessage("OnBark");
@@ -105,7 +106,6 @@ namespace Game.Scripts.Player
 
         private void OnDogMovement(InputValue value)
         {
-            Debug.Log("Dog Move");
             if (dog)
             {
                 dog.SendMessage("OnMovement", value);
@@ -114,7 +114,6 @@ namespace Game.Scripts.Player
         
         private void OnCatJump()
         {
-            Debug.Log("Cat Jump");
             if (cat)
             {
                 cat.SendMessage("OnJump");
@@ -123,7 +122,6 @@ namespace Game.Scripts.Player
 
         private void OnCatMovement(InputValue value)
         {
-            Debug.Log("Cat Move");
             if (cat)
             {
                 cat.SendMessage("OnMovement", value);
