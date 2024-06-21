@@ -2,7 +2,7 @@ using Game.Scripts.Player;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Game.Scripts.Utils
+namespace Game.Scripts.Misc
 {
     public class CinemachineSwitcher : MonoBehaviour
     {
@@ -21,6 +21,5 @@ namespace Game.Scripts.Utils
         {
             onEnter.Invoke();
         }
-
     }
 }

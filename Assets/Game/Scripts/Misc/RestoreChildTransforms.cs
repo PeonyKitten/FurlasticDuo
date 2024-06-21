@@ -1,3 +1,8 @@
+// RestoreChildTransforms.cs
+// Alvin Philips
+// 2024-06-20
+// Stores and resets the position and rotation of all children, and optionally reset Rigidbodies.
+
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -36,19 +41,19 @@ namespace Game.Scripts.Misc
 
         public void RestoreTransforms()
         {
-            foreach (var childData in _children)
+            foreach (var (childTransform, childData) in _children)
             {
                 if (storeGlobalPosition)
                 {
-                    childData.Key.position = childData.Value.position;
+                    childTransform.position = childData.position;
                 }
                 else
                 {
-                    childData.Key.localPosition = childData.Value.position;
+                    childTransform.localPosition = childData.position;
                 }
-                childData.Key.rotation = childData.Value.rotation;
+                childTransform.rotation = childData.rotation;
 
-                if (resetRigidbodyVelocities && childData.Key.TryGetComponent(out Rigidbody rb))
+                if (resetRigidbodyVelocities && childTransform.TryGetComponent(out Rigidbody rb))
                 {
                     rb.velocity = Vector3.zero;
                     rb.angularVelocity = Vector3.zero;
