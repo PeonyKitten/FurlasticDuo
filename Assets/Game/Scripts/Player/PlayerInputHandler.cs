@@ -4,7 +4,9 @@
 // Acts as an interface between a PlayerInput and either both or one of the PlayerControllers.
 
 using System;
+using Game.Scripts.Game.States;
 using Game.Scripts.Grab;
+using Game.Scripts.Patterns;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -53,6 +55,10 @@ namespace Game.Scripts.Player
             
             playerInput = GetComponent<PlayerInput>();
             playerInputType = playerType;
+            
+            // Subscribe to pause and unpause events
+            EventBus<GameEvents>.Subscribe(GameEvents.Paused, () => playerInput.DeactivateInput());
+            EventBus<GameEvents>.Subscribe(GameEvents.Unpaused, () => playerInput.ActivateInput());
             
             switch (playerInputType)
             {

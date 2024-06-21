@@ -1,6 +1,7 @@
 using System;
 using Game.Scripts.Game.States;
 using Game.Scripts.Grab;
+using Game.Scripts.Misc;
 using Game.Scripts.Patterns;
 using Game.Scripts.Utils;
 using UnityEngine;
@@ -8,13 +9,6 @@ using UnityEngine.InputSystem;
 
 namespace Game.Scripts.Player
 {
-    [Serializable]
-    public struct Spring
-    {
-        public float strength;
-        public float damping;
-    }
-
     [Serializable]
     public enum Player
     {
@@ -27,6 +21,7 @@ namespace Game.Scripts.Player
     {
         CatOnly,
         DogOnly,
+        Either,
         Both
     }
     
@@ -72,6 +67,7 @@ namespace Game.Scripts.Player
         public float Mass => _rb.mass;
         public Quaternion TargetRotation { get; private set; } = Quaternion.identity;
         public float GroundCheckLength => groundCheckLength;
+        public float MaximumSpeed => maxSpeed * speedFactor;
         public Vector3 Movement => _movement.Bulk();
         public bool IsGrabbing => _grabbing.IsGrabbing;
         public bool IsDog => playerType == Player.Dog;
@@ -86,47 +82,6 @@ namespace Game.Scripts.Player
             {
                 primaryCamera = Camera.main;
             }
-            
-            if (gameObject.TryGetComponent(out PlayerInput playerInput))
-            {
-                EventBus<GameEvents>.Subscribe(GameEvents.Paused, () => playerInput.DeactivateInput());
-                EventBus<GameEvents>.Subscribe(GameEvents.Unpaused, () => playerInput.ActivateInput());
-            }
-        }
-
-        public void DisableGroundCheckForSeconds(float delay)
-        {
-            _groundCheckDisabledTimer = delay;
-        }
-
-        private void UpdateUprightForce(float elapsedTime)
-        {
-            var currentRotation = transform.rotation;
-            var goalRotation = TargetRotation.ShortestRotation(currentRotation);
-
-            goalRotation.ToAngleAxis(out var rotDegrees, out var rotAxis);
-            rotAxis.Normalize();
-
-            var rotRadians = rotDegrees * Mathf.Deg2Rad;
-        
-            _rb.AddTorque((rotAxis * (rotRadians * uprightJointSpring.strength * angularSpeedFactor) - _rb.angularVelocity * (uprightJointSpring.damping / angularSpeedFactor)) * elapsedTime);
-        }
-
-        private Vector2 CalculateCameraRelativeMovement(Vector2 input)
-        {
-            var cameraForward = primaryCamera.transform.forward;
-            var cameraRight = primaryCamera.transform.right;
-            cameraForward.y = 0;
-            cameraRight.y = 0;
-            cameraForward.Normalize();
-            cameraRight.Normalize();
-            
-            var forwardRelativeInput = input.y * cameraForward;
-            var rightRelativeInput = input.x * cameraRight;
-
-            var cameraRelativeMovement = forwardRelativeInput + rightRelativeInput;
-            
-            return cameraRelativeMovement.Flatten();
         }
 
         public void OnMovement(InputValue value)
@@ -135,7 +90,7 @@ namespace Game.Scripts.Player
 
             if (useCameraRelativeMovement)
             {
-                input = CalculateCameraRelativeMovement(input);
+                input = primaryCamera.CalculateRelativeMovement(input);
             }
 
             _movementControlDisabledTimer -= Time.deltaTime;
@@ -158,50 +113,12 @@ namespace Game.Scripts.Player
         private void FixedUpdate()
         {
             _groundCheckDisabledTimer -= Time.deltaTime;
+
+            var hitGround = FloatPlayerAboveGround(out var hitInfo, out var groundVel);
+
+            HoldPlayerUpright(Time.deltaTime);
             
-            var groundVel = Vector3.zero;
-
-            var groundRay = new Ray(transform.position, Vector3.down);
-            
-            var hitGround = Physics.Raycast(groundRay, out var hitInfo, groundCheckLength, groundLayerMask.value, QueryTriggerInteraction.Ignore);
-            
-            if (hitGround && _groundCheckDisabledTimer < 0)
-            {
-                var velocity = _rb.velocity;
-                var rayDir = -hitInfo.normal;
-
-                var otherVelocity = Vector3.zero;
-                var hitBody = hitInfo.rigidbody;
-
-                if (hitBody)
-                {
-                    otherVelocity = hitBody.velocity;
-                }
-
-                var rayDirVelocity = Vector3.Dot(rayDir, velocity);
-                var otherDirVelocity = Vector3.Dot(rayDir, otherVelocity);
-
-                var relativeVelocity = rayDirVelocity - otherDirVelocity;
-
-                var displacement = hitInfo.distance - rideHeight;
-
-                var springForce = displacement * rideSpring.strength - relativeVelocity * rideSpring.damping;
-
-                _rb.AddForce(rayDir * springForce);
-
-                if (hitBody)
-                {
-                    hitBody.AddForceAtPosition(rayDir * -springForce, hitInfo.point);
-                    groundVel = hitBody.GetPointVelocity(hitInfo.point);
-                    Debug.DrawRay(transform.position, groundVel, Color.yellow);
-                }
-            }
-
-            UpdateUprightForce(Time.deltaTime);
-            
-            var unitVel = _goalVel.normalized;
-            var velDot = Vector3.Dot(_goalVel, unitVel);
-            var accel = acceleration * accelerationFactorDot.Evaluate(velDot);
+            var groundAngle = Vector3.Angle(Vector3.up, hitInfo.normal);
             
             // TODO: speed factor bad. fix @alvin
             if (speedFactor > 1)
@@ -209,10 +126,77 @@ namespace Game.Scripts.Player
                 Debug.LogWarning("SpeedFactor > 1. Clamping to 1");
                 speedFactor = 1;
             }
+            
+            HandleMovement(groundVel, groundAngle);
 
-            var goalVel = _movement.Bulk() * (maxSpeed * speedFactor);
+            var effectiveGravity = Vector3.Scale(Physics.gravity, gravityMultiplier);
+
+            // Slopes
+            if (hitGround)
+            {
+                HandleStickingToSlopes(groundAngle, effectiveGravity, hitInfo.normal);
+            }
+            
+            // Apply gravity
+            _rb.AddForce(effectiveGravity, ForceMode.Acceleration);
+        }
+
+        private bool FloatPlayerAboveGround(out RaycastHit hitInfo, out Vector3 groundVel)
+        {
+            groundVel = Vector3.zero;
+            
+            var groundRay = new Ray(transform.position, Vector3.down);
+            
+            var hitGround = Physics.Raycast(groundRay, out hitInfo, groundCheckLength, groundLayerMask.value, QueryTriggerInteraction.Ignore);
+
+            if (!hitGround || _groundCheckDisabledTimer > 0) return false;
+            
+            var velocity = _rb.velocity;
+            var rayDir = -hitInfo.normal;
+
+            var otherVelocity = Vector3.zero;
+            var hitBody = hitInfo.rigidbody;
+
+            if (hitBody)
+            {
+                otherVelocity = hitBody.velocity;
+            }
+
+            var rayDirVelocity = Vector3.Dot(rayDir, velocity);
+            var otherDirVelocity = Vector3.Dot(rayDir, otherVelocity);
+            var relativeVelocity = rayDirVelocity - otherDirVelocity;
+
+            var displacement = hitInfo.distance - rideHeight;
+
+            var springForce = rideSpring.CalculateSpringForce(displacement, relativeVelocity);
+
+            _rb.AddForce(rayDir * springForce);
+
+            // Apply force to the Rigidbody we're standing on
+            if (hitBody)
+            {
+                hitBody.AddForceAtPosition(rayDir * -springForce, hitInfo.point);
+                groundVel = hitBody.GetPointVelocity(hitInfo.point);
+                Debug.DrawRay(transform.position, groundVel, Color.yellow);
+            }
+
+            return true;
+        }
+
+        private void HandleMovement(Vector3 groundVel, float groundAngle)
+        {
+            // Do not move if we're on too steep of a slope
+            if (disableSteepSlopeMovement && groundAngle > maxSlopeAngleDeg) return;
+
+            var movement = _movement.Bulk();
+            var velDot = Vector3.Dot(movement, _goalVel.normalized);
+            
+            var accel = acceleration * accelerationFactorDot.Evaluate(velDot);
+
+            var goalVel = movement * MaximumSpeed;
 
             var totalVel = goalVel;
+            
             if (!ignoreGroundVelocity)
             {
                 totalVel += groundVel;
@@ -224,28 +208,39 @@ namespace Game.Scripts.Player
 
             var neededAccel = (_goalVel - _rb.velocity) / Time.deltaTime * accelerationFactor;
             var maxAccel = maxAcceleration * maxAccelerationFactorDot.Evaluate(velDot);
-            
-            var angle = Vector3.Angle(Vector3.up, hitInfo.normal);
 
-            if (!(disableSteepSlopeMovement && angle > maxSlopeAngleDeg))
-            {
-                neededAccel = Vector3.ClampMagnitude(neededAccel, maxAccel);
-                _rb.AddForce(Vector3.Scale(neededAccel * _rb.mass, forceScale));
-            }
+            neededAccel = Vector3.ClampMagnitude(neededAccel, maxAccel);
+            _rb.AddForce(Vector3.Scale(neededAccel * _rb.mass, forceScale));
+        }
 
-            var effectiveGravity = Vector3.Scale(Physics.gravity, gravityMultiplier);
+        private void HandleStickingToSlopes(float groundAngle, Vector3 gravity, Vector3 groundNormal)
+        {
+            if (groundAngle > maxSlopeAngleDeg) return;
             
-            // Handle slopes
-            if (hitGround && angle <= maxSlopeAngleDeg)
-            {
-                var gravityComponent = Vector3.ProjectOnPlane(effectiveGravity, hitInfo.normal);
-                var counterForce = -gravityComponent * _rb.mass;
-                _rb.AddForce(counterForce);
-                Debug.DrawRay(transform.position, counterForce.normalized);
-            }
+            var gravityComponent = Vector3.ProjectOnPlane(gravity, groundNormal);
+            var counterForce = -gravityComponent;
             
-            // Apply gravity
-            _rb.AddForce(effectiveGravity, ForceMode.Acceleration);
+            _rb.AddForce(counterForce, ForceMode.Acceleration);
+            
+            Debug.DrawRay(transform.position, counterForce.normalized);
+        }
+        
+        private void HoldPlayerUpright(float elapsedTime)
+        {
+            var currentRotation = transform.rotation;
+            var goalRotation = TargetRotation.ShortestRotation(currentRotation);
+
+            goalRotation.ToAngleAxis(out var rotDegrees, out var rotAxis);
+            rotAxis.Normalize();
+
+            var rotRadians = rotDegrees * Mathf.Deg2Rad;
+        
+            _rb.AddTorque((rotAxis * (rotRadians * uprightJointSpring.strength * angularSpeedFactor) - _rb.angularVelocity * (uprightJointSpring.damping / angularSpeedFactor)) * elapsedTime);
+        }
+        
+        public void DisableGroundCheckForSeconds(float delay)
+        {
+            _groundCheckDisabledTimer = delay;
         }
 
         private void OnDrawGizmos()
