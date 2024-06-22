@@ -7,7 +7,6 @@ namespace Game.Scripts.Grab
     public class StaticObject : MonoBehaviour, IGrabbable
     {
         private Rigidbody _rb;
-        private GameObject _configurableJointObject;
         private static Dictionary<GameObject, ConfigurableJoint> playerJoints = new Dictionary<GameObject, ConfigurableJoint>();
 
         private void Awake()
@@ -16,7 +15,6 @@ namespace Game.Scripts.Grab
             {
                 _rb = gameObject.AddComponent<Rigidbody>();
             }
-
             _rb.isKinematic = true;
         }
 
@@ -28,15 +26,20 @@ namespace Game.Scripts.Grab
                 return;
             }
 
-            _configurableJointObject = new GameObject("ConfigurableJointObject");
-            _configurableJointObject.transform.position = playerGrabPoint.position;
-            _configurableJointObject.transform.SetParent(transform);
+            var configurableJointObject = CreateConfigurableJointObject(playerGrabPoint.position);
+            AttachConfigurableJoint(player, configurableJointObject.GetComponent<Rigidbody>());
+        }
 
-            var jointRb = _configurableJointObject.AddComponent<Rigidbody>();
+        private GameObject CreateConfigurableJointObject(Vector3 position)
+        {
+            var configurableJointObject = new GameObject("ConfigurableJointObject");
+            configurableJointObject.transform.position = position;
+            configurableJointObject.transform.SetParent(transform);
+
+            var jointRb = configurableJointObject.AddComponent<Rigidbody>();
             jointRb.isKinematic = true;
 
-            AttachConfigurableJoint(player, jointRb);
-
+            return configurableJointObject;
         }
 
         private void AttachConfigurableJoint(GameObject player, Rigidbody connectedBody)
@@ -55,7 +58,6 @@ namespace Game.Scripts.Grab
                 configurableJoint.angularZMotion = ConfigurableJointMotion.Locked;
 
                 playerJoints[player] = configurableJoint;
-
             }
         }
 
@@ -64,30 +66,31 @@ namespace Game.Scripts.Grab
             var player = playerGrabPoint.GetComponentInParent<PlayerController>().gameObject;
             if (playerJoints.TryGetValue(player, out var joint))
             {
-                Destroy(joint);
-                playerJoints.Remove(player);
+                DestroyJointAndConnectedBody(player, joint);
             }
+        }
 
-            if (_configurableJointObject != null)
-            {
-                Destroy(_configurableJointObject);
-                _configurableJointObject = null;
-            }
+        private void DestroyJointAndConnectedBody(GameObject player, ConfigurableJoint joint)
+        {
+            var connectedBody = joint.connectedBody.gameObject;
+
+            Destroy(joint);
+            playerJoints.Remove(player);
+
+            Destroy(connectedBody);
         }
 
         public void ReleaseAll()
         {
-            foreach (var joint in playerJoints.Values)
+            foreach (var kvp in playerJoints)
             {
+                var joint = kvp.Value;
+                var connectedBody = joint.connectedBody.gameObject;
+
                 Destroy(joint);
+                Destroy(connectedBody);
             }
             playerJoints.Clear();
-
-            if (_configurableJointObject != null)
-            {
-                Destroy(_configurableJointObject);
-                _configurableJointObject = null;
-            }
         }
     }
 }
