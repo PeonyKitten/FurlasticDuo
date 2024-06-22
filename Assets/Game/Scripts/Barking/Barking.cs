@@ -8,27 +8,17 @@ namespace Game.Scripts.Barking
     public class Bark : MonoBehaviour
     {
         public float barkRadius = 5f;
-        public AudioClip barkSound;
         [SerializeField] private float barkDelay = 0.5f;
         [SerializeField] private GameObject barkEffect;
 
-        private AudioSource _audioSource;
         private float _barkTimer = 0f;
-
-        private void Awake()
-        {
-            _audioSource = GetComponent<AudioSource>();
-        }
 
         private void OnBark()
         {
             if (_barkTimer > 0) return;
             
             Debug.Log("woof woof");
-            if (barkSound != null && _audioSource != null)
-            {
-                _audioSource.PlayOneShot(barkSound); 
-            }
+            FMODUnity.RuntimeManager.PlayOneShot("event:/Bark"); 
 
             if (barkEffect)
             {
