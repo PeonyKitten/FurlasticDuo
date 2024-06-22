@@ -91,7 +91,7 @@ namespace Game.Scripts.Grab
             fixedJoint.connectedBody = _rb;
             fixedJoint.breakForce = float.MaxValue;
             fixedJoint.breakTorque = float.MaxValue;
-            fixedJoint.enableCollision = false;
+            fixedJoint.enableCollision = true;
             fixedJoint.enablePreprocessing = false;
 
             fixedJoint.anchor = playerGrabPoint.InverseTransformPoint(hitPoint);
