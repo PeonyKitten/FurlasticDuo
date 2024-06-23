@@ -6,91 +6,83 @@ namespace Game.Scripts.Grab
 {
     public class StaticObject : MonoBehaviour, IGrabbable
     {
-        private Rigidbody _rb;
-        private static Dictionary<GameObject, ConfigurableJoint> playerJoints = new Dictionary<GameObject, ConfigurableJoint>();
+        private static readonly Dictionary<GameObject, FixedJoint> PlayerJoints = new();
 
         private void Awake()
         {
-            if (!TryGetComponent<Rigidbody>(out _rb))
+            if (!TryGetComponent(out Rigidbody rb))
             {
-                _rb = gameObject.AddComponent<Rigidbody>();
+                rb = gameObject.AddComponent<Rigidbody>();
             }
-            _rb.isKinematic = true;
+            rb.isKinematic = true;
         }
 
         public void OnGrab(Transform playerGrabPoint)
         {
             var player = playerGrabPoint.GetComponentInParent<PlayerController>().gameObject;
-            if (playerJoints.ContainsKey(player))
+            if (PlayerJoints.ContainsKey(player))
             {
                 return;
             }
 
-            var configurableJointObject = CreateConfigurableJointObject(playerGrabPoint.position);
-            AttachConfigurableJoint(player, configurableJointObject.GetComponent<Rigidbody>());
+            var connectionBody = CreateConnectionBody(playerGrabPoint.position);
+            AttachJointToPlayer(player, connectionBody);
         }
 
-        private GameObject CreateConfigurableJointObject(Vector3 position)
+        private Rigidbody CreateConnectionBody(Vector3 position)
         {
-            var configurableJointObject = new GameObject("ConfigurableJointObject");
+            var configurableJointObject = new GameObject("Connection Point");
             configurableJointObject.transform.position = position;
             configurableJointObject.transform.SetParent(transform);
 
             var jointRb = configurableJointObject.AddComponent<Rigidbody>();
             jointRb.isKinematic = true;
 
-            return configurableJointObject;
+            return jointRb;
         }
 
-        private void AttachConfigurableJoint(GameObject player, Rigidbody connectedBody)
+        private static void AttachJointToPlayer(GameObject player, Rigidbody connectedBody)
         {
             var playerController = player.GetComponent<PlayerController>();
-            if (playerController != null)
-            {
-                var configurableJoint = player.AddComponent<ConfigurableJoint>();
-                configurableJoint.connectedBody = connectedBody;
+            if (playerController == null) return;
+            
+            var fixedJoint = player.AddComponent<FixedJoint>();
+            fixedJoint.connectedBody = connectedBody;
 
-                configurableJoint.xMotion = ConfigurableJointMotion.Locked;
-                configurableJoint.yMotion = ConfigurableJointMotion.Locked;
-                configurableJoint.zMotion = ConfigurableJointMotion.Locked;
-                configurableJoint.angularXMotion = ConfigurableJointMotion.Locked;
-                configurableJoint.angularYMotion = ConfigurableJointMotion.Locked;
-                configurableJoint.angularZMotion = ConfigurableJointMotion.Locked;
+            fixedJoint.breakForce = float.MaxValue;
+            fixedJoint.breakTorque = float.MaxValue;
+            fixedJoint.enableCollision = true;
+            fixedJoint.enablePreprocessing = false;
 
-                playerJoints[player] = configurableJoint;
-            }
+            PlayerJoints.Add(player, fixedJoint);
         }
 
         public void OnRelease(Transform playerGrabPoint)
         {
             var player = playerGrabPoint.GetComponentInParent<PlayerController>().gameObject;
-            if (playerJoints.TryGetValue(player, out var joint))
+
+            // Make sure we found a matching joint
+            if (PlayerJoints.Remove(player, out var joint))
             {
-                DestroyJointAndConnectedBody(player, joint);
+                DestroyJointAndConnectedBody(joint);
             }
         }
 
-        private void DestroyJointAndConnectedBody(GameObject player, ConfigurableJoint joint)
+        private static void DestroyJointAndConnectedBody(Joint joint)
         {
             var connectedBody = joint.connectedBody.gameObject;
 
             Destroy(joint);
-            playerJoints.Remove(player);
-
             Destroy(connectedBody);
         }
 
         public void ReleaseAll()
         {
-            foreach (var kvp in playerJoints)
+            foreach (var joint in PlayerJoints.Values)
             {
-                var joint = kvp.Value;
-                var connectedBody = joint.connectedBody.gameObject;
-
-                Destroy(joint);
-                Destroy(connectedBody);
+                DestroyJointAndConnectedBody(joint);
             }
-            playerJoints.Clear();
+            PlayerJoints.Clear();
         }
     }
 }
