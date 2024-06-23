@@ -34,7 +34,7 @@ namespace Game.Scripts.Game.States
 
         private  IEnumerator LoadPlaygroundScene(GameManager state)
         {
-            var asyncLoad = SceneManager.LoadSceneAsync("Playground-core", LoadSceneMode.Additive);
+            var asyncLoad = SceneManager.LoadSceneAsync("level-1-lab", LoadSceneMode.Additive);
 
             if (asyncLoad == null) yield break;
             
