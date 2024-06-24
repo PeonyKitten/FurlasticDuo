@@ -1,8 +1,14 @@
+// PlayerInputHandler.cs
+// Alvin Philips
+// 2024-06-20
+// Acts as an interface between a PlayerInput and either both or one of the PlayerControllers.
+
 using System;
+using Game.Scripts.Game.States;
 using Game.Scripts.Grab;
+using Game.Scripts.Patterns;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
 namespace Game.Scripts.Player
 {
@@ -50,6 +56,10 @@ namespace Game.Scripts.Player
             playerInput = GetComponent<PlayerInput>();
             playerInputType = playerType;
             
+            // Subscribe to pause and unpause events
+            EventBus<GameEvents>.Subscribe(GameEvents.Paused, () => playerInput.DeactivateInput());
+            EventBus<GameEvents>.Subscribe(GameEvents.Unpaused, () => playerInput.ActivateInput());
+            
             switch (playerInputType)
             {
                 case PlayerInputType.Cat:
@@ -77,8 +87,6 @@ namespace Game.Scripts.Player
 
         private void OnBark()
         {
-            Debug.Assert(playerInputType == PlayerInputType.Dog, $"Wrong PlayerInputType - Expected 'Dog', got: {playerInputType}");
-
             if (player)
             {
                 player.SendMessage("OnBark");
@@ -95,7 +103,6 @@ namespace Game.Scripts.Player
         
         private void OnDogBark()
         {
-            Debug.Log("Bark");
             if (dog)
             {
                 dog.SendMessage("OnBark");
@@ -105,7 +112,6 @@ namespace Game.Scripts.Player
 
         private void OnDogMovement(InputValue value)
         {
-            Debug.Log("Dog Move");
             if (dog)
             {
                 dog.SendMessage("OnMovement", value);
@@ -114,7 +120,6 @@ namespace Game.Scripts.Player
         
         private void OnCatJump()
         {
-            Debug.Log("Cat Jump");
             if (cat)
             {
                 cat.SendMessage("OnJump");
@@ -123,7 +128,6 @@ namespace Game.Scripts.Player
 
         private void OnCatMovement(InputValue value)
         {
-            Debug.Log("Cat Move");
             if (cat)
             {
                 cat.SendMessage("OnMovement", value);

@@ -18,7 +18,10 @@ namespace Game.Scripts.Levels.Checkpoints
         public void SaveCheckpoint(Checkpoint savePoint)
         {
             ForceGrabValues();
-            savingIcon.Play();
+            if (savingIcon)
+            {
+                savingIcon.Play();
+            }
             _lastCheckpoint = savePoint;
         }
 

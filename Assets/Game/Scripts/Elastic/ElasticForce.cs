@@ -1,3 +1,8 @@
+// ElasticForce.cs
+// Dhruv Saikia, Alvin Philips
+// 2024-06-21
+// Controls the elastic force between the players, along with snapping back. 
+
 using Game.Scripts;
 using Game.Scripts.Player;
 using UnityEngine;
@@ -14,12 +19,14 @@ namespace Game.Scripts.Elastic
         [SerializeField, Range(0, 1)] private float midpointAdjustment = 0.5f;
         [SerializeField] private float maxDistance = 10;
         
+        // Forces to be applied. forceApplied is the normalized distance of the maxDistance where it will continously apply a force
         [Header("Force Settings")]
         [SerializeField] private float baseForce = 1500;
         [SerializeField] private float maxForce = 100000;
         [SerializeField] private AnimationCurve forceCurve;
         [SerializeField, Range(0, 1)] private float forceApplied = 0.5f;
         [SerializeField] private AnimationCurve yAxisForceFactorDot;
+        
         
         [Header("Snapback Settings")]
         [SerializeField, Range(0, 1)] private float snapbackThreshold = 0.9f;
@@ -97,6 +104,7 @@ namespace Game.Scripts.Elastic
             var snapbackPlayer1 = ApplySnapbackForce(player1, _rb1, _controller1, normalizedDistance1, midpoint);
             var snapbackPlayer2 = ApplySnapbackForce(player2, _rb2, _controller2, normalizedDistance2, midpoint);
 
+            // The OR here is used to prevent lazy evaluation of the ApplySnapbackForce
             if (snapbackPlayer1 || snapbackPlayer2)
             {
                 _snapbackTimer = snapbackDelay;
@@ -128,19 +136,17 @@ namespace Game.Scripts.Elastic
         private bool ApplySnapbackForce(Transform player, Rigidbody rb, PlayerController controller, float normalizedDistance, Vector3 midpoint)
         {
             if (normalizedDistance < snapbackThreshold) return false;
-            
-            // Debug.Log($"{player.name} is in the snapback range");
             if (controller.IsGrabbing || controller.Movement != Vector3.zero) return false;
             
             Vector3 snapbackForce = (midpoint - player.position).normalized * snapbackForceMagnitude;
             rb.AddForce(snapbackForce, ForceMode.Impulse);
 
             return true;
-            // Debug.Log($"Snapback Force Applied to {player.name}: {snapbackForce}");
         }
         
         private void AdjustAccelerationFactor(PlayerController controller, float normalizedDistance)
         {
+            //To prevent players from moving further than max distance (TO BE CHANGED TO A BETTER METHOD)
             if (normalizedDistance > 0.99)
             {
                 controller.accelerationFactor = 0.5f; 

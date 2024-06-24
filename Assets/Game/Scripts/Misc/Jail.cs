@@ -1,9 +1,8 @@
 using System;
 using Game.Scripts.Utils;
-using UnityEditor;
 using UnityEngine;
 
-namespace Game.Scripts
+namespace Game.Scripts.Misc
 {
     public class Jail : MonoBehaviour
     {
