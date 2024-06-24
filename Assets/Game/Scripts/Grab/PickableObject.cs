@@ -15,12 +15,20 @@ namespace Game.Scripts.Grab
 
         public void OnGrab(Transform grabPoint)
         {
+            // We've stolen the Pickable Object :P
+            // if (_grabPoint is not null && _grabPoint != grabPoint)
+            // {
+            //     
+            // }
             _grabPoint = grabPoint;
             _rb.useGravity = false;
         }
 
         public void OnRelease(Transform grabPoint)
         {
+            // We're releasing a different Grab than our current one
+            if (grabPoint != _grabPoint) return;
+            
             _grabPoint = null;
             _rb.useGravity = true;
         }
@@ -38,7 +46,7 @@ namespace Game.Scripts.Grab
             _rb.MovePosition(newPosition);
         }
 
-        bool IGrabbable.ShouldAffectElastcForce()
+        bool IGrabbable.ShouldAffectElasticForce()
         {
             return false;
         }

@@ -4,7 +4,7 @@ namespace Game.Scripts.Grab
 {
     public interface IGrabbable
     {
-        bool ShouldAffectElastcForce()
+        bool ShouldAffectElasticForce()
         {
             return true;
         }

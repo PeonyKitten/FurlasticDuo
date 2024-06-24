@@ -108,7 +108,7 @@ namespace Game.Scripts.Grab
 
             AdjustPlayerSpeed();
                     
-            IsGrabbing = grabbable.ShouldAffectElastcForce();
+            IsGrabbing = grabbable.ShouldAffectElasticForce();
 
             return true;
         }
