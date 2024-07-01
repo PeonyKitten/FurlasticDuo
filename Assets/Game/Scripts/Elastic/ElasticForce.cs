@@ -84,6 +84,9 @@ namespace Game.Scripts.Elastic
             float normalizedDistance1 = distance1 / (maxDistance * midpointAdjustment);
             float normalizedDistance2 = distance2 / (maxDistance * (1 - midpointAdjustment));
 
+            ClampVelocityAtMaxDistance(_rb1, player1.position, player2.position, normalizedDistance1);
+            ClampVelocityAtMaxDistance(_rb2, player2.position, player1.position, normalizedDistance2);
+
             const float forceAppliedAdjustmentFactor = 0.05f;
             var adjustedForceApplied = forceApplied - forceAppliedAdjustmentFactor;
 
@@ -105,9 +108,6 @@ namespace Game.Scripts.Elastic
             {
                 _rb2.AddForce(force2);
             }
-
-            AdjustAccelerationFactor(_controller1, normalizedDistance1);
-            AdjustAccelerationFactor(_controller2, normalizedDistance2);
 
             if (_snapbackTimer > 0) return;
 
@@ -193,15 +193,35 @@ namespace Game.Scripts.Elastic
             }
         }
 
-        private void AdjustAccelerationFactor(PlayerController controller, float normalizedDistance)
+        // TODO: Re-check for redundancy & efficiency
+        private void ClampVelocityAtMaxDistance(Rigidbody rb, Vector3 playerPosition, Vector3 otherPlayerPosition, float normalizedDistance)
         {
-            if (normalizedDistance > 0.99)
+            if (normalizedDistance > 0.90f) // We start restricting the movement of the player once we reach 90% of the max distance
             {
-                controller.accelerationFactor = 0.5f;
-            }
-            else
-            {
-                controller.accelerationFactor = 1f;
+                Vector3 toOtherPlayer = otherPlayerPosition - playerPosition;
+                Vector3 directionToOtherPlayer = toOtherPlayer.normalized;
+
+                Vector3 velocityTowardsOtherPlayer = Vector3.Project(rb.velocity, directionToOtherPlayer);
+
+                // Debug.Log($"normalizedDistance: {normalizedDistance}");
+
+                if (Vector3.Dot(velocityTowardsOtherPlayer, directionToOtherPlayer) < 0)
+                {
+                    velocityTowardsOtherPlayer = Vector3.zero;
+                }
+
+                Vector3 perpendicularVelocity = rb.velocity - velocityTowardsOtherPlayer;
+
+                // Here the max perpendicular speed is gradually reduced as we move towards the max distance
+                float stretchFactor = Mathf.Clamp01((normalizedDistance - 0.90f) / 0.10f);
+                float maxPerpendicularSpeed = Mathf.Lerp(rb.velocity.magnitude, rb.velocity.magnitude * 0.2f, stretchFactor);
+
+                if (perpendicularVelocity.magnitude > maxPerpendicularSpeed)
+                {
+                    perpendicularVelocity = perpendicularVelocity.normalized * maxPerpendicularSpeed;
+                }
+
+                rb.velocity = velocityTowardsOtherPlayer + perpendicularVelocity;
             }
         }
     }
