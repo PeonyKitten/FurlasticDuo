@@ -75,6 +75,9 @@ namespace Game.Scripts.Elastic
         private bool _canSnapJump = false;
         private float _snapJumpTimer = 0f;
         private const float SnapJumpTimeout = 1f;
+        private bool _player1Snapped = false;
+        private bool _player2Snapped = false;
+        private Vector3 _snapbackDirection;
 
         public Transform Player1 => player1;
         public Transform Player2 => player2;
@@ -144,6 +147,18 @@ namespace Game.Scripts.Elastic
                 _canSnapJump = true;
                 _snapJumpTimer = SnapJumpTimeout;
 
+                _player1Snapped = snapbackPlayer1;
+                _player2Snapped = snapbackPlayer2;
+
+                if (_player1Snapped)
+                {
+                    _snapbackDirection = (player2.position - player1.position).normalized;
+                }
+                else if (_player2Snapped)
+                {
+                    _snapbackDirection = (player1.position - player2.position).normalized;
+                }
+
                 // Use good ol' Impulses
                 if (snapbackMode == SnapbackMode.Impulse)
                 {
@@ -183,7 +198,7 @@ namespace Game.Scripts.Elastic
 
             Vector3 startPos1 = player1.position;
             Vector3 startPos2 = player2.position;
-            Vector3 jumpDirection = (player2.position - player1.position).normalized;
+            Vector3 jumpDirection = _snapbackDirection;
 
             for (float t = 0; t < snapJumpDuration; t += Time.fixedDeltaTime)
             {
@@ -191,13 +206,23 @@ namespace Game.Scripts.Elastic
                 Vector3 newPos1 = CalculateSnapJumpPoint(startPos1, jumpDirection, normalizedTime);
                 Vector3 newPos2 = CalculateSnapJumpPoint(startPos2, jumpDirection, normalizedTime);
 
-                player1.position = newPos1;
-                player2.position = newPos2;
+                if (_player1Snapped)
+                {
+                    player1.position = newPos1;
+                    player2.position = startPos2 + (newPos1 - startPos1);
+                }
+                else if (_player2Snapped)
+                {
+                    player2.position = newPos2;
+                    player1.position = startPos1 + (newPos2 - startPos2);
+                }
 
                 yield return new WaitForFixedUpdate();
             }
 
             _isSnapping = false;
+            _player1Snapped = false;
+            _player2Snapped = false;
         }
 
         private void ApplySnapbackImpulse(bool snapbackPlayer1, bool snapbackPlayer2, Vector3 forceDirection1, Vector3 forceDirection2)
@@ -307,9 +332,31 @@ namespace Game.Scripts.Elastic
         {
             if (!showSnapJumpCurve || player1 == null || player2 == null) return;
 
-            Vector3 startPos = player1.position;
-            Vector3 endPos = player2.position;
-            Vector3 jumpDirection = (endPos - startPos).normalized;
+            Vector3 startPos;
+            Vector3 jumpDirection;
+
+            if (Application.isPlaying)
+            {
+                if (_player1Snapped)
+                {
+                    startPos = player1.position;
+                    jumpDirection = _snapbackDirection;
+                }
+                else if (_player2Snapped)
+                {
+                    startPos = player2.position;
+                    jumpDirection = _snapbackDirection;
+                }
+                else
+                {
+                    return; 
+                }
+            }
+            else
+            {
+                startPos = player1.position;
+                jumpDirection = (player2.position - player1.position).normalized;
+            }
 
             Gizmos.color = snapJumpCurveColor;
 
