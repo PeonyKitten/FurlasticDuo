@@ -36,7 +36,7 @@ namespace Game.Scripts.Utils
                 _ => throw new ArgumentOutOfRangeException(nameof(axis), axis, "Invalid Axis")
             };
         }
-        
+
         public static Vector3 Bulk(this Vector2 input, Axis3D zeroedAxis = Axis3D.Y)
         {
             return zeroedAxis switch
@@ -57,7 +57,7 @@ namespace Game.Scripts.Utils
                 _ => throw new ArgumentOutOfRangeException(nameof(axis), axis, "Invalid Axis")
             };
         }
-        
+
         public static float Single(this Vector3 input, Axis3D axis)
         {
             return axis switch
@@ -67,6 +67,31 @@ namespace Game.Scripts.Utils
                 Axis3D.Z => input.z,
                 _ => throw new ArgumentOutOfRangeException(nameof(axis), axis, "Invalid Axis")
             };
+        }
+
+        /// <summary>
+        /// Normalizes a Vector3 and outputs its magnitude prior to being normalized.
+        /// </summary>
+        /// <param name="value">Vector3 to Normalize</param>
+        /// <param name="magnitude">Magnitude of the input Vector</param>
+        public static void NormalizeWithMagnitude(this ref Vector3 value, out float magnitude)
+        {
+            magnitude = Vector3.Magnitude(value);
+
+            value = magnitude > 0.00001 ? value / magnitude : Vector3.zero;
+        }
+
+        /// <summary>
+        /// Given a Vector3, return a normalized vector (direction) and its magnitude.
+        /// </summary>
+        /// <param name="value">Input Vector3</param>
+        /// <param name="magnitude">Magnitude of the input Vector</param>
+        /// <returns></returns>
+        public static Vector3 NormalizedWithMagnitude(this Vector3 value, out float magnitude)
+        {
+            magnitude = Vector3.Magnitude(value);
+
+            return magnitude > 0.00001 ? value / magnitude : Vector3.zero;
         }
 
         /// <summary>
@@ -93,7 +118,7 @@ namespace Game.Scripts.Utils
 
             return (center2D - target2D).IsWithinCircle(radius);
         }
-        
+
         public static bool IsWithinCylinder(this Vector3 center, Vector3 target, float radius, float height,
             Axis3D flattenedAxis = Axis3D.Y)
         {
@@ -106,7 +131,7 @@ namespace Game.Scripts.Utils
         {
             return transform.rotation * offset + transform.position;
         }
-        
+
         // Quaternion helper functions, courtesy of Toyful Games
         public static Quaternion ShortestRotation(this Quaternion to, Quaternion from)
         {

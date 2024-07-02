@@ -3,8 +3,10 @@
 // 2024-06-30
 // Controls the elastic force between the players, along with snapping back. 
 
+using System;
 using Game.Scripts;
 using Game.Scripts.Player;
+using Game.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,14 +15,13 @@ namespace Game.Scripts.Elastic
 {
     public class ElasticForce : MonoBehaviour
     {
-
-        [System.Serializable]
+        [Serializable]
         public enum SnapbackMode
         {
+            Impulse,
             Duration,
             Distance
         }
-
 
         [Header("Anchor settings")]
         [SerializeField] private Transform player1;
@@ -35,13 +36,13 @@ namespace Game.Scripts.Elastic
         [SerializeField, Range(0, 1)] private float forceApplied = 0.5f;
         [SerializeField] private AnimationCurve yAxisForceFactorDot;
 
-
         [Header("Snapback Settings")]
         [SerializeField] private SnapbackMode snapbackMode = SnapbackMode.Duration;
         [SerializeField, Range(0, 1)] private float snapbackThreshold = 0.9f;
         [SerializeField] private float snapbackForceMagnitude = 150;
+        [SerializeField] private float snapbackDuration = 0.1f;
         [SerializeField] private float snapbackDelay = 0.5f;
-        [SerializeField] private float snapbackDuration = 0.5f;
+        [SerializeField] private float stopSnapbackDistance = 0.5f;
 
         [Header("Rumble Settings")]
         [SerializeField] private bool useRumble = true;
@@ -55,6 +56,8 @@ namespace Game.Scripts.Elastic
         private float _snapbackTimer;
         private float _snapbackDurationTimer;
         private bool _isApplyingSnapback;
+        private bool _applySnapbackPlayer1;
+        private bool _applySnapbackPlayer2;
 
         public Transform Player1 => player1;
         public Transform Player2 => player2;
@@ -74,18 +77,19 @@ namespace Game.Scripts.Elastic
         {
             _snapbackTimer -= Time.deltaTime;
 
-            if (player1 is null || player2 is null || _controller1 is null || _controller2 is null) return;
+            var player1Position = player1.position;
+            var player2Position = player2.position;
 
-            Vector3 midpoint = Vector3.Lerp(player1.position, player2.position, midpointAdjustment);
+            Vector3 midpoint = Vector3.Lerp(player1Position, player2Position, midpointAdjustment);
 
-            float distance1 = (player1.position - midpoint).magnitude;
-            float distance2 = (player2.position - midpoint).magnitude;
+            var forceDirection1 = (midpoint - player1Position).NormalizedWithMagnitude(out var distance1);
+            var forceDirection2 = (midpoint - player2Position).NormalizedWithMagnitude(out var distance2);
 
             float normalizedDistance1 = distance1 / (maxDistance * midpointAdjustment);
             float normalizedDistance2 = distance2 / (maxDistance * (1 - midpointAdjustment));
 
-            ClampVelocityAtMaxDistance(_rb1, player1.position, player2.position, normalizedDistance1);
-            ClampVelocityAtMaxDistance(_rb2, player2.position, player1.position, normalizedDistance2);
+            ClampVelocityAtMaxDistance(_rb1, forceDirection1, normalizedDistance1);
+            ClampVelocityAtMaxDistance(_rb2, forceDirection2, normalizedDistance2);
 
             const float forceAppliedAdjustmentFactor = 0.05f;
             var adjustedForceApplied = forceApplied - forceAppliedAdjustmentFactor;
@@ -99,17 +103,15 @@ namespace Game.Scripts.Elastic
             float forceMagnitude1 = Mathf.Min(forceMultiplier1 * baseForce, maxForce);
             float forceMagnitude2 = Mathf.Min(forceMultiplier2 * baseForce, maxForce);
 
-            if (CalculateBindingForce(normalizedDistance1, player1, midpoint, forceMagnitude1, out var force1, forceAppliedDistance1))
+            if (CalculateBindingForce(normalizedDistance1, forceDirection1, forceMagnitude1, out var force1, forceAppliedDistance1))
             {
                 _rb1.AddForce(force1);
             }
 
-            if (CalculateBindingForce(normalizedDistance2, player2, midpoint, forceMagnitude2, out var force2, forceAppliedDistance2))
+            if (CalculateBindingForce(normalizedDistance2, forceDirection2, forceMagnitude2, out var force2, forceAppliedDistance2))
             {
                 _rb2.AddForce(force2);
             }
-
-            if (_snapbackTimer > 0) return;
 
             var snapbackPlayer1 = ShouldApplySnapback(_controller1, normalizedDistance1);
             var snapbackPlayer2 = ShouldApplySnapback(_controller2, normalizedDistance2);
@@ -117,18 +119,44 @@ namespace Game.Scripts.Elastic
             // The OR here is used to prevent lazy evaluation of the ApplySnapbackForce
             if (snapbackPlayer1 || snapbackPlayer2)
             {
-                _snapbackTimer = snapbackDelay;
                 _snapbackDurationTimer = snapbackDuration;
+                _applySnapbackPlayer1 = snapbackPlayer1;
+                _applySnapbackPlayer2 = snapbackPlayer2;
                 _isApplyingSnapback = true;
+
+                // Use good ol' Impulses
+                if (snapbackMode == SnapbackMode.Impulse)
+                {
+                    ApplySnapbackImpulse(snapbackPlayer1, snapbackPlayer2, forceDirection1, forceDirection2);
+                }
             }
 
             if (_isApplyingSnapback)
             {
-                ContinueSnapbackForce(snapbackPlayer1, snapbackPlayer2, normalizedDistance1, normalizedDistance2);
+                ContinueSnapbackForce(_applySnapbackPlayer1, _applySnapbackPlayer2, forceDirection1, forceDirection2);
             }
         }
 
-        private bool CalculateBindingForce(float normalizedDistance, Transform player, Vector3 midpoint, float forceMagnitude, out Vector3 force, float forceAppliedNormalizedDistance)
+        private void ApplySnapbackImpulse(bool snapbackPlayer1, bool snapbackPlayer2, Vector3 forceDirection1, Vector3 forceDirection2)
+        {
+            if (_snapbackTimer > 0) return;
+
+            _isApplyingSnapback = false;
+
+            if (snapbackPlayer1)
+            {
+                _rb1.AddForce(forceDirection1 * snapbackForceMagnitude, ForceMode.Impulse);
+            }
+
+            if (snapbackPlayer2)
+            {
+                _rb2.AddForce(forceDirection2 * snapbackForceMagnitude, ForceMode.Impulse);
+            }
+
+            _snapbackTimer = snapbackDelay;
+        }
+
+        private bool CalculateBindingForce(float normalizedDistance, Vector3 forceDirection, float forceMagnitude, out Vector3 force, float forceAppliedNormalizedDistance)
         {
             if (normalizedDistance <= forceApplied)
             {
@@ -143,7 +171,7 @@ namespace Game.Scripts.Elastic
                 Gamepad.current.SetMotorSpeeds(rumble, rumble);
             }
 
-            force = (midpoint - player.position).normalized * forceMagnitude;
+            force = forceDirection * forceMagnitude;
             var yFactor = Mathf.Abs(Vector3.Dot(force.normalized, Vector3.up));
             force.y *= yAxisForceFactorDot.Evaluate(yFactor);
 
@@ -153,76 +181,65 @@ namespace Game.Scripts.Elastic
         private bool ShouldApplySnapback(PlayerController controller, float normalizedDistance)
         {
             if (normalizedDistance < snapbackThreshold) return false;
-            if (controller.IsGrabbing || controller.Movement != Vector3.zero) return false;
-
-            return true;
+            return !controller.IsGrabbing && controller.Movement == Vector3.zero;
         }
 
-        private void ContinueSnapbackForce(bool applyToPlayer1, bool applyToPlayer2, float normalizedDistance1, float normalizedDistance2)
+        private bool ShouldStopApplyingSnapbackForce()
         {
-            if (snapbackMode == SnapbackMode.Duration)
+            switch (snapbackMode)
             {
-                _snapbackDurationTimer -= Time.fixedDeltaTime;
-                if (_snapbackDurationTimer <= 0)
-                {
-                    _isApplyingSnapback = false;
-                    return;
-                }
+                case SnapbackMode.Duration when _snapbackDurationTimer <= 0:
+                case SnapbackMode.Distance when
+                    (player1.position - player2.position).magnitude <= stopSnapbackDistance * maxDistance:
+                case SnapbackMode.Impulse:
+                    return true;
+                default:
+                    return false;
             }
-
-            if (applyToPlayer1) ApplySnapbackForceToPlayer(_rb1, player1.position, normalizedDistance1);
-            if (applyToPlayer2) ApplySnapbackForceToPlayer(_rb2, player2.position, normalizedDistance2);
         }
 
-        private void ApplySnapbackForceToPlayer(Rigidbody rb, Vector3 playerPosition, float normalizedDistance)
+        private void ContinueSnapbackForce(bool applyToPlayer1, bool applyToPlayer2, Vector3 forceDirection1, Vector3 forceDirection2)
         {
-            Vector3 midpoint = Vector3.Lerp(player1.position, player2.position, midpointAdjustment);
-            Vector3 toMidpoint = midpoint - playerPosition;
+            _snapbackDurationTimer -= Time.deltaTime;
 
-            bool shouldApplyForce = snapbackMode == SnapbackMode.Duration ||
-                                    (snapbackMode == SnapbackMode.Distance && normalizedDistance > snapbackThreshold);
-
-            if (shouldApplyForce)
-            {
-                Vector3 snapbackForce = toMidpoint.normalized * snapbackForceMagnitude;
-                rb.AddForce(snapbackForce, ForceMode.Force);
-            }
-            else if (snapbackMode == SnapbackMode.Distance)
+            if (ShouldStopApplyingSnapbackForce())
             {
                 _isApplyingSnapback = false;
+                return;
             }
+
+            if (applyToPlayer1) ApplySnapbackForceToPlayer(_rb1, forceDirection1);
+            if (applyToPlayer2) ApplySnapbackForceToPlayer(_rb2, forceDirection2);
+        }
+
+        private void ApplySnapbackForceToPlayer(Rigidbody rb, Vector3 forceDirection)
+        {
+            Vector3 snapbackForce = forceDirection * snapbackForceMagnitude;
+            rb.AddForce(snapbackForce, ForceMode.Acceleration);
         }
 
         // TODO: Re-check for redundancy & efficiency
-        private void ClampVelocityAtMaxDistance(Rigidbody rb, Vector3 playerPosition, Vector3 otherPlayerPosition, float normalizedDistance)
+        private void ClampVelocityAtMaxDistance(Rigidbody rb, Vector3 directionToOtherPlayer, float normalizedDistance)
         {
-            if (normalizedDistance > 0.90f) // We start restricting the movement of the player once we reach 90% of the max distance
+            // We start restricting the movement of the player once we exceed 90% of the max distance
+            if (normalizedDistance <= 0.90f) return;
+
+            Vector3 velocityTowardsOtherPlayer = Vector3.Project(rb.velocity, directionToOtherPlayer);
+
+            // Ignore force if we are moving away from the other player
+            if (Vector3.Dot(velocityTowardsOtherPlayer, directionToOtherPlayer) < 0)
             {
-                Vector3 toOtherPlayer = otherPlayerPosition - playerPosition;
-                Vector3 directionToOtherPlayer = toOtherPlayer.normalized;
-
-                Vector3 velocityTowardsOtherPlayer = Vector3.Project(rb.velocity, directionToOtherPlayer);
-
-                // Debug.Log($"normalizedDistance: {normalizedDistance}");
-
-                if (Vector3.Dot(velocityTowardsOtherPlayer, directionToOtherPlayer) < 0)
-                {
-                    velocityTowardsOtherPlayer = Vector3.zero;
-                }
-
-                Vector3 perpendicularVelocity = rb.velocity - velocityTowardsOtherPlayer;
-
-                // Here the max perpendicular speed is gradually reduced as we move towards the max distance
-                float stretchFactor = Mathf.Clamp01((normalizedDistance - 0.90f) / 0.10f);
-                float maxPerpendicularSpeed = Mathf.Lerp(rb.velocity.magnitude, rb.velocity.magnitude * 0.2f, stretchFactor);
-
-                if (perpendicularVelocity.magnitude > maxPerpendicularSpeed)
-                {
-                    perpendicularVelocity = perpendicularVelocity.normalized * maxPerpendicularSpeed;
-                }
-
-                rb.velocity = velocityTowardsOtherPlayer + perpendicularVelocity;
+                velocityTowardsOtherPlayer = Vector3.zero;
             }
+
+            // NOTE: perpendicular velocity includes the velocity in the opposite direction, i.e. away from the other player as well
+            Vector3 perpendicularVelocity = rb.velocity - velocityTowardsOtherPlayer;
+
+            // Here the max perpendicular speed is gradually reduced as we move towards the max distance
+            float stretchFactor = (normalizedDistance - 0.90f) * 10f;
+            var adjustedPerpendicularVelocity = perpendicularVelocity * Mathf.Lerp(1f, 0.2f, stretchFactor);
+
+            rb.velocity = velocityTowardsOtherPlayer + adjustedPerpendicularVelocity;
         }
     }
 }
