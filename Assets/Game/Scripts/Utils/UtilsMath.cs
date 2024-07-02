@@ -70,6 +70,31 @@ namespace Game.Scripts.Utils
         }
 
         /// <summary>
+        /// Normalizes a Vector3 and outputs its magnitude prior to being normalized.
+        /// </summary>
+        /// <param name="value">Vector3 to Normalize</param>
+        /// <param name="magnitude">Magnitude of the input Vector</param>
+        public static void NormalizeWithMagnitude(this ref Vector3 value, out float magnitude)
+        {
+            magnitude = Vector3.Magnitude(value);
+            
+            value = magnitude > 0.00001 ? value / magnitude : Vector3.zero;
+        }
+        
+        /// <summary>
+        /// Given a Vector3, return a normalized vector (direction) and its magnitude.
+        /// </summary>
+        /// <param name="value">Input Vector3</param>
+        /// <param name="magnitude">Magnitude of the input Vector</param>
+        /// <returns></returns>
+        public static Vector3 NormalizedWithMagnitude(this Vector3 value, out float magnitude)
+        {
+            magnitude = Vector3.Magnitude(value);
+            
+            return magnitude > 0.00001 ? value / magnitude : Vector3.zero;
+        }
+
+        /// <summary>
         /// Check if a given point is within a specified radius.
         /// </summary>
         /// <param name="displacement"></param>
