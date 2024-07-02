@@ -4,6 +4,7 @@
 // Controls the elastic force between the players, along with snapping back. 
 
 using System;
+using System.Collections;
 using Game.Scripts;
 using Game.Scripts.Player;
 using Game.Scripts.Utils;
@@ -44,6 +45,17 @@ namespace Game.Scripts.Elastic
         [SerializeField] private float snapbackDelay = 0.5f;
         [SerializeField] private float stopSnapbackDistance = 0.5f;
 
+        [Header("Snap-Jump Settings")]
+        [SerializeField] private float snapJumpHeight = 5f;
+        [SerializeField] private float snapJumpDistance = 10f;
+        [SerializeField] private float snapJumpDuration = 0.5f;
+        [SerializeField, Range(0, 1)] private float snapJumpTriggerThreshold = 0.1f;
+
+        [Header("Gizmo Settings")]
+        [SerializeField] private bool showSnapJumpCurve = true;
+        [SerializeField] private Color snapJumpCurveColor = Color.yellow;
+        [SerializeField] private int curveResolution = 20;
+
         [Header("Rumble Settings")]
         [SerializeField] private bool useRumble = true;
         [SerializeField, Range(0, 1)] private float rumbleAmount = 0.5f;
@@ -58,6 +70,11 @@ namespace Game.Scripts.Elastic
         private bool _isApplyingSnapback;
         private bool _applySnapbackPlayer1;
         private bool _applySnapbackPlayer2;
+
+        private bool _isSnapping = false;
+        private bool _canSnapJump = false;
+        private float _snapJumpTimer = 0f;
+        private const float SnapJumpTimeout = 1f;
 
         public Transform Player1 => player1;
         public Transform Player2 => player2;
@@ -76,7 +93,8 @@ namespace Game.Scripts.Elastic
         private void FixedUpdate()
         {
             _snapbackTimer -= Time.deltaTime;
-            
+            _snapJumpTimer -= Time.deltaTime;
+
             var player1Position = player1.position;
             var player2Position = player2.position;
             
@@ -123,7 +141,9 @@ namespace Game.Scripts.Elastic
                 _applySnapbackPlayer1 = snapbackPlayer1;
                 _applySnapbackPlayer2 = snapbackPlayer2;
                 _isApplyingSnapback = true;
-                
+                _canSnapJump = true;
+                _snapJumpTimer = SnapJumpTimeout;
+
                 // Use good ol' Impulses
                 if (snapbackMode == SnapbackMode.Impulse)
                 {
@@ -135,6 +155,49 @@ namespace Game.Scripts.Elastic
             {
                 ContinueSnapbackForce(_applySnapbackPlayer1, _applySnapbackPlayer2, forceDirection1, forceDirection2);
             }
+
+            if (_canSnapJump)
+            {
+                CheckForSnapJumpTrigger(normalizedDistance1, normalizedDistance2);
+            }
+        }
+
+        private void CheckForSnapJumpTrigger(float normalizedDistance1, float normalizedDistance2)
+        {
+            float averageDistance = (normalizedDistance1 + normalizedDistance2) / 2;
+            if (averageDistance <= snapJumpTriggerThreshold && !_isSnapping && _snapJumpTimer > 0)
+            {
+                StartCoroutine(PerformSnapJump());
+            }
+            else if (_snapJumpTimer <= 0)
+            {
+                _canSnapJump = false;
+            }
+        }
+
+        private IEnumerator PerformSnapJump()
+        {
+            _isSnapping = true;
+            _canSnapJump = false;
+            _isApplyingSnapback = false;
+
+            Vector3 startPos1 = player1.position;
+            Vector3 startPos2 = player2.position;
+            Vector3 jumpDirection = (player2.position - player1.position).normalized;
+
+            for (float t = 0; t < snapJumpDuration; t += Time.fixedDeltaTime)
+            {
+                float normalizedTime = t / snapJumpDuration;
+                Vector3 newPos1 = CalculateSnapJumpPoint(startPos1, jumpDirection, normalizedTime);
+                Vector3 newPos2 = CalculateSnapJumpPoint(startPos2, jumpDirection, normalizedTime);
+
+                player1.position = newPos1;
+                player2.position = newPos2;
+
+                yield return new WaitForFixedUpdate();
+            }
+
+            _isSnapping = false;
         }
 
         private void ApplySnapbackImpulse(bool snapbackPlayer1, bool snapbackPlayer2, Vector3 forceDirection1, Vector3 forceDirection2)
@@ -239,6 +302,33 @@ namespace Game.Scripts.Elastic
             var adjustedPerpendicularVelocity = perpendicularVelocity * Mathf.Lerp(1f, 0.2f, stretchFactor);
             
             rb.velocity = velocityTowardsOtherPlayer + adjustedPerpendicularVelocity;
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (!showSnapJumpCurve || player1 == null || player2 == null) return;
+
+            Vector3 startPos = player1.position;
+            Vector3 endPos = player2.position;
+            Vector3 jumpDirection = (endPos - startPos).normalized;
+
+            Gizmos.color = snapJumpCurveColor;
+
+            Vector3 previousPoint = startPos;
+            for (int i = 1; i <= curveResolution; i++)
+            {
+                float t = i / (float)curveResolution;
+                Vector3 point = CalculateSnapJumpPoint(startPos, jumpDirection, t);
+                Gizmos.DrawLine(previousPoint, point);
+                previousPoint = point;
+            }
+        }
+
+        private Vector3 CalculateSnapJumpPoint(Vector3 startPos, Vector3 jumpDirection, float t)
+        {
+            float heightOffset = Mathf.Sin(t * Mathf.PI) * snapJumpHeight;
+            Vector3 offset = jumpDirection * (t * snapJumpDistance) + Vector3.up * heightOffset;
+            return startPos + offset;
         }
     }
 }
