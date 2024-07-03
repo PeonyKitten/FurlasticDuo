@@ -54,7 +54,6 @@ namespace Game.Scripts.Player
         public float angularSpeedFactor = 1f;
         public bool ignoreGroundVelocity;
 
-        private Rigidbody _rb;
         private Vector2 _movement;
         private Vector3 _goalVel;
         private float _movementControlDisabledTimer;
@@ -64,7 +63,8 @@ namespace Game.Scripts.Player
 
         /// Camera to be used for camera-relative movement
         public Camera PrimaryCamera { get => primaryCamera; set => primaryCamera = value; }
-        public float Mass => _rb.mass;
+        public Rigidbody Rigidbody { get; private set; }
+        public float Mass => Rigidbody.mass;
         public Quaternion TargetRotation { get; private set; } = Quaternion.identity;
         public float GroundCheckLength => groundCheckLength;
         public float MaximumSpeed => maxSpeed * speedFactor;
@@ -75,7 +75,7 @@ namespace Game.Scripts.Player
 
         private void Start()
         {
-            _rb = GetComponent<Rigidbody>();
+            Rigidbody = GetComponent<Rigidbody>();
             _grabbing = GetComponent<Grabbing>();
 
             if (!primaryCamera)
@@ -138,7 +138,7 @@ namespace Game.Scripts.Player
             }
             
             // Apply gravity
-            _rb.AddForce(effectiveGravity, ForceMode.Acceleration);
+            Rigidbody.AddForce(effectiveGravity, ForceMode.Acceleration);
         }
 
         private bool FloatPlayerAboveGround(out RaycastHit hitInfo, out Vector3 groundVel)
@@ -151,7 +151,7 @@ namespace Game.Scripts.Player
 
             if (!hitGround || _groundCheckDisabledTimer > 0) return false;
             
-            var velocity = _rb.velocity;
+            var velocity = Rigidbody.velocity;
             var rayDir = -hitInfo.normal;
 
             var otherVelocity = Vector3.zero;
@@ -170,7 +170,7 @@ namespace Game.Scripts.Player
 
             var springForce = rideSpring.CalculateSpringForce(displacement, relativeVelocity);
 
-            _rb.AddForce(rayDir * springForce);
+            Rigidbody.AddForce(rayDir * springForce);
 
             // Apply force to the Rigidbody we're standing on
             if (hitBody)
@@ -206,11 +206,11 @@ namespace Game.Scripts.Player
                 totalVel,
                 accel * Time.deltaTime);
 
-            var neededAccel = (_goalVel - _rb.velocity) / Time.deltaTime * accelerationFactor;
+            var neededAccel = (_goalVel - Rigidbody.velocity) / Time.deltaTime * accelerationFactor;
             var maxAccel = maxAcceleration * maxAccelerationFactorDot.Evaluate(velDot);
 
             neededAccel = Vector3.ClampMagnitude(neededAccel, maxAccel);
-            _rb.AddForce(Vector3.Scale(neededAccel * _rb.mass, forceScale));
+            Rigidbody.AddForce(Vector3.Scale(neededAccel * Rigidbody.mass, forceScale));
         }
 
         private void HandleStickingToSlopes(float groundAngle, Vector3 gravity, Vector3 groundNormal)
@@ -220,7 +220,7 @@ namespace Game.Scripts.Player
             var gravityComponent = Vector3.ProjectOnPlane(gravity, groundNormal);
             var counterForce = -gravityComponent;
             
-            _rb.AddForce(counterForce, ForceMode.Acceleration);
+            Rigidbody.AddForce(counterForce, ForceMode.Acceleration);
             
             Debug.DrawRay(transform.position, counterForce.normalized);
         }
@@ -235,7 +235,7 @@ namespace Game.Scripts.Player
 
             var rotRadians = rotDegrees * Mathf.Deg2Rad;
         
-            _rb.AddTorque((rotAxis * (rotRadians * uprightJointSpring.strength * angularSpeedFactor) - _rb.angularVelocity * (uprightJointSpring.damping / angularSpeedFactor)) * elapsedTime);
+            Rigidbody.AddTorque((rotAxis * (rotRadians * uprightJointSpring.strength * angularSpeedFactor) - Rigidbody.angularVelocity * (uprightJointSpring.damping / angularSpeedFactor)) * elapsedTime);
         }
         
         public void DisableGroundCheckForSeconds(float delay)

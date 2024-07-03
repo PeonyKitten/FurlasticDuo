@@ -22,6 +22,13 @@ namespace Game.Scripts.Elastic
             Duration,
             Distance
         }
+
+        [Serializable]
+        private enum LimitPlayerMovementMode
+        {
+            AccelerationFactor,
+            RigidbodyVelocityClamp,
+        }
         
         [Header("Anchor settings")]
         [SerializeField] private Transform player1;
@@ -35,6 +42,7 @@ namespace Game.Scripts.Elastic
         [SerializeField] private AnimationCurve forceCurve;
         [SerializeField, Range(0, 1)] private float forceApplied = 0.5f;
         [SerializeField] private AnimationCurve yAxisForceFactorDot;
+        [SerializeField] private LimitPlayerMovementMode limitPlayerMovementMode = LimitPlayerMovementMode.AccelerationFactor;
         
         [Header("Snapback Settings")]
         [SerializeField] private SnapbackMode snapbackMode = SnapbackMode.Duration;
@@ -88,8 +96,8 @@ namespace Game.Scripts.Elastic
             float normalizedDistance1 = distance1 / (maxDistance * midpointAdjustment);
             float normalizedDistance2 = distance2 / (maxDistance * (1 - midpointAdjustment));
 
-            ClampVelocityAtMaxDistance(_rb1, forceDirection1, normalizedDistance1);
-            ClampVelocityAtMaxDistance(_rb2, forceDirection2, normalizedDistance2);
+            LimitPlayerVelocityWhenStretched(_controller1, forceDirection1, normalizedDistance1);
+            LimitPlayerVelocityWhenStretched(_controller2, forceDirection2, normalizedDistance2);
 
             const float forceAppliedAdjustmentFactor = 0.05f;
             var adjustedForceApplied = forceApplied - forceAppliedAdjustmentFactor;
@@ -217,9 +225,16 @@ namespace Game.Scripts.Elastic
             rb.AddForce(snapbackForce, ForceMode.Acceleration);
         }
 
-        // TODO: Re-check for redundancy & efficiency
-        private void ClampVelocityAtMaxDistance(Rigidbody rb, Vector3 directionToOtherPlayer, float normalizedDistance)
+        private void LimitPlayerVelocityWhenStretched(PlayerController player, Vector3 directionToOtherPlayer, float normalizedDistance)
         {
+            if (limitPlayerMovementMode == LimitPlayerMovementMode.AccelerationFactor)
+            {
+                player.accelerationFactor = normalizedDistance > 0.99f ? 0.5f : 1;
+                return;
+            }
+
+            var rb = player.Rigidbody;
+            
             // We start restricting the movement of the player once we exceed 90% of the max distance
             if (normalizedDistance <= 0.90f) return;
 
