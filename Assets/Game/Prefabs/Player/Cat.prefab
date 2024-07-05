@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4188644144579273269}
   - component: {fileID: 1339250856150797778}
   - component: {fileID: 7529903641611467527}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cat
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -228,6 +228,9 @@ MonoBehaviour:
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 8
+  slopeCheckLayerMask:
+    serializedVersion: 2
+    m_Bits: 136
   maxSlopeAngleDeg: 40
   rideSpring:
     strength: 2000
@@ -293,8 +296,6 @@ MonoBehaviour:
   objectCheckOffset: {x: 0, y: 0, z: 0}
   playerSpeedModifier: 1
   holdToGrab: 1
-  selectedMaterial: {fileID: 2100000, guid: b467894b8d12b554aa46d913716c9ffe, type: 2}
-  defaultMaterial: {fileID: 2100000, guid: 9a5f22af76595a741bbb8ea7ab9781c1, type: 2}
   sphereRadius: 0.6
   grabLayerMask:
     serializedVersion: 2
@@ -316,7 +317,7 @@ GameObject:
   - component: {fileID: 8082760431368776838}
   - component: {fileID: 3142634709733094542}
   - component: {fileID: 1237422523531431429}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -482,10 +483,45 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
       objectReference: {fileID: 0}
+    - target: {fileID: -5187421674925575761, guid: 110cde5d4e29c0b4b844502016112d4a,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -422001121474522753, guid: 110cde5d4e29c0b4b844502016112d4a,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 110cde5d4e29c0b4b844502016112d4a,
         type: 3}
       propertyPath: m_Name
       value: Character_Cat
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 110cde5d4e29c0b4b844502016112d4a,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3154392399204251901, guid: 110cde5d4e29c0b4b844502016112d4a,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4763186099734554057, guid: 110cde5d4e29c0b4b844502016112d4a,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6171315824605353525, guid: 110cde5d4e29c0b4b844502016112d4a,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6180640845926911598, guid: 110cde5d4e29c0b4b844502016112d4a,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

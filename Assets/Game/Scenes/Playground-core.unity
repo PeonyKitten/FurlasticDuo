@@ -982,6 +982,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  limitPlayerMovementMode: 0
   snapbackMode: 0
   snapbackThreshold: 0.85
   snapbackForceMagnitude: 500
@@ -4872,31 +4873,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dog
       objectReference: {fileID: 0}
-    - target: {fileID: 813081530204185311, guid: 37cfd9086b5b49f4295a4f4469b1eb88,
-        type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 813081530204185311, guid: 37cfd9086b5b49f4295a4f4469b1eb88,
-        type: 3}
-      propertyPath: m_TagString
-      value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 1690287902842901167, guid: 37cfd9086b5b49f4295a4f4469b1eb88,
-        type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4816813077906774694, guid: 37cfd9086b5b49f4295a4f4469b1eb88,
-        type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 6036622362639545263, guid: 37cfd9086b5b49f4295a4f4469b1eb88,
-        type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
     - target: {fileID: 6092545895263983126, guid: 37cfd9086b5b49f4295a4f4469b1eb88,
         type: 3}
       propertyPath: primaryCamera
@@ -4951,16 +4927,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7298423790042487262, guid: 37cfd9086b5b49f4295a4f4469b1eb88,
-        type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 8668188789587349232, guid: 37cfd9086b5b49f4295a4f4469b1eb88,
-        type: 3}
-      propertyPath: m_Layer
-      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5126,21 +5092,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 965029677183927671, guid: 0b4e1318fa738a44c814942584d1919d,
-        type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 1925370203659431632, guid: 0b4e1318fa738a44c814942584d1919d,
-        type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 1935051327970932363, guid: 0b4e1318fa738a44c814942584d1919d,
-        type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
     - target: {fileID: 2175853420528947700, guid: 0b4e1318fa738a44c814942584d1919d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -5196,41 +5147,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cat
       objectReference: {fileID: 0}
-    - target: {fileID: 2939195943113883930, guid: 0b4e1318fa738a44c814942584d1919d,
-        type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 3844532372396732865, guid: 0b4e1318fa738a44c814942584d1919d,
-        type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
     - target: {fileID: 4188644144579273269, guid: 0b4e1318fa738a44c814942584d1919d,
         type: 3}
       propertyPath: primaryCamera
       value: 
       objectReference: {fileID: 1070034886}
-    - target: {fileID: 4881669124948663791, guid: 0b4e1318fa738a44c814942584d1919d,
-        type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257800153350887491, guid: 0b4e1318fa738a44c814942584d1919d,
-        type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 8609992557799510289, guid: 0b4e1318fa738a44c814942584d1919d,
-        type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 8693839150040586101, guid: 0b4e1318fa738a44c814942584d1919d,
-        type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
