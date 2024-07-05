@@ -1,7 +1,7 @@
 // <GhostAnimation.cs>
 // <Kai Yiu Shum>, <Alvin Philips>
 // <04 July 2024>
-// <Script base animation for ghost>
+// <Script-based animation for ghost>
 
 using System.Collections.Generic;
 using UnityEngine;
