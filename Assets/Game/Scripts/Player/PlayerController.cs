@@ -41,6 +41,7 @@ namespace Game.Scripts.Player
         [SerializeField] private float rideHeight = 0.5f;
         [SerializeField] private float groundCheckLength = 1f;
         [SerializeField] private LayerMask groundLayerMask;
+        [SerializeField] private LayerMask slopeCheckLayerMask;
         [SerializeField, Range(0, 90)] private float maxSlopeAngleDeg = 45;
         [SerializeField] private Spring rideSpring = new() { strength = 100, damping = 10 };
         [SerializeField] private Spring uprightJointSpring = new() { strength = 100, damping = 10 };
@@ -113,12 +114,17 @@ namespace Game.Scripts.Player
         private void FixedUpdate()
         {
             _groundCheckDisabledTimer -= Time.deltaTime;
+            
+            
+            var groundRay = new Ray(transform.position, Vector3.down);
 
-            var hitGround = FloatPlayerAboveGround(out var hitInfo, out var groundVel);
+            var hitGround = FloatPlayerAboveGround(groundRay, out var hitInfo, out var groundVel);
 
             HoldPlayerUpright(Time.deltaTime);
-            
-            var groundAngle = Vector3.Angle(Vector3.up, hitInfo.normal);
+
+            var onSlope = Physics.Raycast(groundRay, out var slopeHitInfo, groundCheckLength, slopeCheckLayerMask.value, QueryTriggerInteraction.Ignore);
+
+            var groundAngle = Vector3.Angle(Vector3.up, slopeHitInfo.normal);
             
             // TODO: speed factor bad. fix @alvin
             if (speedFactor > 1)
@@ -130,22 +136,20 @@ namespace Game.Scripts.Player
             HandleMovement(groundVel, groundAngle);
 
             var effectiveGravity = Vector3.Scale(Physics.gravity, gravityMultiplier);
-
+            
             // Slopes
-            if (hitGround)
+            if (onSlope)
             {
-                HandleStickingToSlopes(groundAngle, effectiveGravity, hitInfo.normal);
+                HandleStickingToSlopes(groundAngle, effectiveGravity, slopeHitInfo.normal);
             }
             
             // Apply gravity
             Rigidbody.AddForce(effectiveGravity, ForceMode.Acceleration);
         }
 
-        private bool FloatPlayerAboveGround(out RaycastHit hitInfo, out Vector3 groundVel)
+        private bool FloatPlayerAboveGround(Ray groundRay, out RaycastHit hitInfo, out Vector3 groundVel)
         {
             groundVel = Vector3.zero;
-            
-            var groundRay = new Ray(transform.position, Vector3.down);
             
             var hitGround = Physics.Raycast(groundRay, out hitInfo, groundCheckLength, groundLayerMask.value, QueryTriggerInteraction.Ignore);
 
@@ -183,10 +187,10 @@ namespace Game.Scripts.Player
             return true;
         }
 
-        private void HandleMovement(Vector3 groundVel, float groundAngle)
+        private void HandleMovement(Vector3 groundVel, float groundSlopeAngle)
         {
             // Do not move if we're on too steep of a slope
-            if (disableSteepSlopeMovement && groundAngle > maxSlopeAngleDeg) return;
+            if (disableSteepSlopeMovement && groundSlopeAngle > maxSlopeAngleDeg) return;
 
             var movement = _movement.Bulk();
             var velDot = Vector3.Dot(movement, _goalVel.normalized);

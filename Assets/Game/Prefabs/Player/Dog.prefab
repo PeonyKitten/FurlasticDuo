@@ -18,9 +18,9 @@ GameObject:
   - component: {fileID: 7156274775594864634}
   - component: {fileID: 3213289812625190971}
   - component: {fileID: 6505845640361679730}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Dog
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -230,6 +230,9 @@ MonoBehaviour:
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 8
+  slopeCheckLayerMask:
+    serializedVersion: 2
+    m_Bits: 136
   maxSlopeAngleDeg: 40
   rideSpring:
     strength: 2000
@@ -277,8 +280,6 @@ MonoBehaviour:
   objectCheckOffset: {x: 0, y: 0, z: 0}
   playerSpeedModifier: 1
   holdToGrab: 1
-  selectedMaterial: {fileID: 2100000, guid: b467894b8d12b554aa46d913716c9ffe, type: 2}
-  defaultMaterial: {fileID: 2100000, guid: 9a5f22af76595a741bbb8ea7ab9781c1, type: 2}
   sphereRadius: 0.6
   grabLayerMask:
     serializedVersion: 2
@@ -431,7 +432,7 @@ GameObject:
   - component: {fileID: 8844429048582246030}
   - component: {fileID: 2368159731852265735}
   - component: {fileID: 3679567943689145118}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -597,10 +598,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
       objectReference: {fileID: 0}
+    - target: {fileID: -7943281213256258945, guid: b26c6be2c8438b142abd0591b28aebf3,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -6391564339431440370, guid: b26c6be2c8438b142abd0591b28aebf3,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -5309110712310994681, guid: b26c6be2c8438b142abd0591b28aebf3,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b26c6be2c8438b142abd0591b28aebf3,
         type: 3}
       propertyPath: m_Name
       value: Character_Dog_square
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b26c6be2c8438b142abd0591b28aebf3,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
