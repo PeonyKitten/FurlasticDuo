@@ -400,6 +400,66 @@ namespace Game.Scripts.Utils
 		{
 			DebugCircle(position, Vector3.up, Color.white, radius, duration, depthTest);
 		}
+
+		/// <summary>Draws an arc.</summary>
+		/// <param name='center'>Where the center of the arc will be positioned.</param>
+		/// <param name='normal'>The direction perpendicular to the surface of the arc.</param>
+		/// <param name="forward">The direction the arc should be drawn around.</param>
+		/// <param name="angle">The angle of the arc to subtend.</param>
+		/// <param name='color'>The color of the arc.</param>
+		/// <param name='radius'>The radius of the arc.</param>
+		/// <param name="drawEdges">Whether to draw a line from the center to the start and end of the arc.</param>
+		/// <param name="duration">How long to draw the circle.</param>
+		/// <param name='depthTest'>Whether the circle should be faded when behind other objects.</param>
+		public static void DebugArc(Vector3 center, Vector3 normal, Vector3 forward, float angle, Color color, float radius = 1.0f, bool drawEdges = true, float duration = 0, bool depthTest = true)
+		{
+			var up = (normal == Vector3.zero ? Vector3.up : normal).normalized * radius;
+			
+			Vector3 _forward = forward * radius;
+			Vector3 _right = Vector3.Cross(up, _forward).normalized*radius;
+		
+			Matrix4x4 matrix = new Matrix4x4
+			{
+				[0] = _right.x,
+				[1] = _right.y,
+				[2] = _right.z,
+				[4] = up.x,
+				[5] = up.y,
+				[6] = up.z,
+				[8] = _forward.x,
+				[9] = _forward.y,
+				[10] = _forward.z
+			};
+
+			var offset = (Mathf.PI - angle * Mathf.Deg2Rad) * 0.5f;
+
+			var lastPoint = center + matrix.MultiplyPoint3x4(new Vector3(Mathf.Cos(offset), 0, Mathf.Sin(offset)));
+			var nextPoint = Vector3.zero;
+		
+			color = color == default ? Color.white : color;
+			
+			if (drawEdges)
+			{
+				Debug.DrawLine(center, lastPoint, color, duration, depthTest);
+			}
+
+			for(var i = 0; i < Mathf.CeilToInt(angle * 0.25f); i++){
+				nextPoint.x = Mathf.Cos((i*4)*Mathf.Deg2Rad + offset);
+				nextPoint.z = Mathf.Sin((i*4)*Mathf.Deg2Rad + offset);
+				nextPoint.y = 0;
+			
+				nextPoint = center + matrix.MultiplyPoint3x4(nextPoint);
+			
+				Debug.DrawLine(lastPoint, nextPoint, color, duration, depthTest);
+				lastPoint = nextPoint;
+			}
+			var endPoint = center + Quaternion.AngleAxis(-angle/2f, normal) * _forward;
+			Debug.DrawLine(lastPoint, endPoint, color, duration, depthTest);
+			if (drawEdges)
+			{
+				Debug.DrawLine(center, endPoint, color, duration, depthTest);
+			}
+		}
 	
 		/// <summary>
 		/// 	- Debugs a wire sphere.
@@ -1116,6 +1176,66 @@ namespace Game.Scripts.Utils
 		public static void DrawCircle(Vector3 position, float radius = 1.0f)
 		{
 			DrawCircle(position, Vector3.up, Color.white, radius);
+		}
+
+		/// <summary>Draws an arc.</summary>
+		/// <param name='center'>Where the center of the arc will be positioned.</param>
+		/// <param name='normal'>The direction perpendicular to the surface of the arc.</param>
+		/// <param name="forward">The direction the arc should be drawn around.</param>
+		/// <param name="angle">The angle of the arc to subtend.</param>
+		/// <param name='color'>The color of the arc.</param>
+		/// <param name='radius'>The radius of the arc.</param>
+		/// <param name="drawEdges">Whether to draw a line from the center to the start and end of the arc.</param>
+		public static void DrawArc(Vector3 center, Vector3 normal, Vector3 forward, float angle, Color color, float radius = 1.0f, bool drawEdges = true)
+		{
+			var up = (normal == Vector3.zero ? Vector3.up : normal).normalized * radius;
+			
+			Vector3 _forward = forward * radius;
+			Vector3 _right = Vector3.Cross(up, _forward).normalized*radius;
+		
+			Matrix4x4 matrix = new Matrix4x4
+			{
+				[0] = _right.x,
+				[1] = _right.y,
+				[2] = _right.z,
+				[4] = up.x,
+				[5] = up.y,
+				[6] = up.z,
+				[8] = _forward.x,
+				[9] = _forward.y,
+				[10] = _forward.z
+			};
+
+			var offset = (Mathf.PI - angle * Mathf.Deg2Rad) * 0.5f;
+
+			var lastPoint = center + matrix.MultiplyPoint3x4(new Vector3(Mathf.Cos(offset), 0, Mathf.Sin(offset)));
+			var nextPoint = Vector3.zero;
+		
+			var oldColor = Gizmos.color;
+			Gizmos.color = color == default ? Color.white : color;
+			
+			if (drawEdges)
+			{
+				Gizmos.DrawLine(center, lastPoint);
+			}
+
+			for(var i = 0; i < Mathf.CeilToInt(angle * 0.25f); i++){
+				nextPoint.x = Mathf.Cos((i*4)*Mathf.Deg2Rad + offset);
+				nextPoint.z = Mathf.Sin((i*4)*Mathf.Deg2Rad + offset);
+				nextPoint.y = 0;
+			
+				nextPoint = center + matrix.MultiplyPoint3x4(nextPoint);
+			
+				Gizmos.DrawLine(lastPoint, nextPoint);
+				lastPoint = nextPoint;
+			}
+			var endPoint = center + Quaternion.AngleAxis(-angle/2f, normal) * _forward;
+			Gizmos.DrawLine(lastPoint, endPoint);
+			if (drawEdges)
+			{
+				Gizmos.DrawLine(center, endPoint);
+			}
+			Gizmos.color = oldColor;
 		}
 	
 		//Wiresphere already exists
