@@ -1101,7 +1101,7 @@ namespace Game.Scripts.Utils
 		/// </param>
 		public static void DrawCircle(Vector3 position, Vector3 up, float radius = 1.0f)
 		{
-			DrawCircle(position, position, Color.white, radius);
+			DrawCircle(position, up, Color.white, radius);
 		}
 	
 		/// <summary>
