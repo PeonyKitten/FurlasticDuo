@@ -142,12 +142,12 @@ namespace Game.Scripts.SteeringBehaviours
             var angle = Vector3.Angle(transform.forward, Velocity);
             if (Mathf.Abs(angle) < deadZone)
             {
-                transform.LookAt(transform.position + Velocity.Flatten(UtilsMath.FlattenAxis3D.Y).Bulk());
+                transform.LookAt(transform.position + Velocity.Flatten().Bulk());
             }
             else
             {
                 transform.rotation = Quaternion.Slerp(transform.rotation, 
-                    Quaternion.LookRotation(Velocity.Flatten(UtilsMath.FlattenAxis3D.Y).Bulk()), 
+                    Quaternion.LookRotation(Velocity.Flatten().Bulk()), 
                     Time.deltaTime * angularDampeningTime);
             }
             
