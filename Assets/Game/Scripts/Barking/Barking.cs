@@ -24,7 +24,6 @@ namespace Game.Scripts.Barking
         {
             if (_barkTimer > 0) return;
             
-            Debug.Log("woof woof");
             if (barkSound != null && _audioSource != null)
             {
                 _audioSource.PlayOneShot(barkSound); 

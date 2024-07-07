@@ -3,6 +3,7 @@ using Game.Scripts.Barking;
 using Game.Scripts.SteeringBehaviours;
 using System.Collections;
 using System;
+using Game.Scripts.Utils;
 
 namespace Game.Scripts.NPC
 {
@@ -18,7 +19,8 @@ namespace Game.Scripts.NPC
         [Header("Bark Attract Settings")]
         [SerializeField] private AttractStrategy attractStrategy = AttractStrategy.AttractForDuration;
         [SerializeField] private float attractTime = 3f;
-        [SerializeField] private float attractSpeedMultiplier = 0.5f;
+        [Tooltip("When it is the only active SteeringBehaviour, should we keep running after we stop reacting?")]
+        [SerializeField] private bool shouldRunAwayForever = true;
 
         public bool IsReacting { get; set; }
         private Coroutine _barkCoroutine;
@@ -28,7 +30,6 @@ namespace Game.Scripts.NPC
             IsReacting = true;
             Target = bark.transform.position;
             steeringAgent.reachedGoal = false;
-            steeringAgent.maxSpeed *= attractSpeedMultiplier;
 
             if (attractStrategy == AttractStrategy.AttractByDistance) return;
 
@@ -47,27 +48,23 @@ namespace Game.Scripts.NPC
                 return Vector3.zero;
             }
 
-            if (attractStrategy == AttractStrategy.AttractByDistance)
-            {
-                var attractForce = CalculateArriveForce();
-                if (attractForce == Vector3.zero)
-                {
-                    Debug.Log("Attract force = 0");
-                    StopReacting();
-                }
-                return attractForce;
+            var attractForce = CalculateArriveForce();
+            
+            if (attractStrategy == AttractStrategy.AttractByDistance && attractForce == Vector3.zero) {
+                StopReacting();
             }
 
-            CalculateArriveForce();
-
-            return DesiredVelocity;
+            return attractForce;
         }
 
         private void StopReacting()
         {
             IsReacting = false;
-            steeringAgent.maxSpeed /= attractSpeedMultiplier;
-            //steeringAgent.reachedGoal = true;
+            IsReacting = false;
+            if (steeringAgent.SteeringBehaviourCount == 1 && !shouldRunAwayForever)
+            {
+                steeringAgent.reachedGoal = true;
+            }
         }
 
         private IEnumerator StopReactingAfterTime(float time)
