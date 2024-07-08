@@ -23,14 +23,7 @@ namespace Game.Scripts.Elastic
             Duration,
             Distance
         }
-
-        [Serializable]
-        public enum SnapJumpType
-        {
-            Curve,
-            Force
-        }
-
+        
         [Header("Anchor settings")]
         [SerializeField] private Transform player1;
         [SerializeField] private Transform player2;
@@ -53,12 +46,10 @@ namespace Game.Scripts.Elastic
         [SerializeField] private float stopSnapbackDistance = 0.5f;
 
         [Header("Snap-Jump Settings")]
-        [SerializeField] private SnapJumpType snapJumpType = SnapJumpType.Curve;
         [SerializeField] private float snapJumpHeight = 5f;
         [SerializeField] private float snapJumpDistance = 10f;
         [SerializeField] private float snapJumpDuration = 0.5f;
         [SerializeField, Range(0, 1)] private float snapJumpTriggerThreshold = 0.1f;
-        [SerializeField] private float snapJumpForceMagnitude = 20f;
 
         [Header("Gizmo Settings")]
         [SerializeField] private bool showSnapJumpCurve = true;
@@ -209,22 +200,6 @@ namespace Game.Scripts.Elastic
             Vector3 startPos2 = player2.position;
             Vector3 jumpDirection = _snapbackDirection;
 
-            if (snapJumpType == SnapJumpType.Curve)
-            {
-                yield return PerformCurveJump(startPos1, startPos2, jumpDirection);
-            }
-            else
-            {
-                yield return PerformForceJump(jumpDirection);
-            }
-
-            _isSnapping = false;
-            _player1Snapped = false;
-            _player2Snapped = false;
-        }
-
-        private IEnumerator PerformCurveJump(Vector3 startPos1, Vector3 startPos2, Vector3 jumpDirection)
-        {
             for (float t = 0; t < snapJumpDuration; t += Time.fixedDeltaTime)
             {
                 float normalizedTime = t / snapJumpDuration;
@@ -244,34 +219,10 @@ namespace Game.Scripts.Elastic
 
                 yield return new WaitForFixedUpdate();
             }
-        }
 
-        private IEnumerator PerformForceJump(Vector3 jumpDirection)
-        {
-            Rigidbody rb = _player1Snapped ? _rb1 : _rb2;
-            Vector3 upwardForce = Vector3.up * snapJumpForceMagnitude;
-            Vector3 forwardForce = jumpDirection * snapJumpForceMagnitude;
-
-            rb.AddForce(upwardForce + forwardForce, ForceMode.VelocityChange);
-
-            float elapsedTime = 0f;
-            while (elapsedTime < snapJumpDuration)
-            {
-                rb.AddForce(forwardForce * Time.fixedDeltaTime, ForceMode.VelocityChange);
-
-                if (_player1Snapped)
-                {
-                    player2.position = player2.position + (player1.position - player2.position).normalized * (rb.velocity.magnitude * Time.fixedDeltaTime);
-                }
-                else
-                {
-                    player1.position = player1.position + (player2.position - player1.position).normalized * (rb.velocity.magnitude * Time.fixedDeltaTime);
-                }
-
-                elapsedTime += Time.fixedDeltaTime;
-                yield return new WaitForFixedUpdate();
-            }
-            rb.velocity = Vector3.zero;
+            _isSnapping = false;
+            _player1Snapped = false;
+            _player2Snapped = false;
         }
 
         private void ApplySnapbackImpulse(bool snapbackPlayer1, bool snapbackPlayer2, Vector3 forceDirection1, Vector3 forceDirection2)
