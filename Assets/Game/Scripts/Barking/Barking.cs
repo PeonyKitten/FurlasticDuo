@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Game.Scripts.Player;
 using UnityEngine;
 
 namespace Game.Scripts.Barking
@@ -12,16 +13,20 @@ namespace Game.Scripts.Barking
         [SerializeField] private float barkDelay = 0.5f;
         [SerializeField] private GameObject barkEffect;
 
+        private PlayerController _controller;
         private AudioSource _audioSource;
         private float _barkTimer = 0f;
+        private static readonly int AnimHashBark = Animator.StringToHash("Bark");
 
         private void Awake()
         {
+            _controller = GetComponent<PlayerController>();
             _audioSource = GetComponent<AudioSource>();
         }
 
         private void OnBark()
         {
+            _controller.animator?.ResetTrigger(AnimHashBark);
             if (_barkTimer > 0) return;
             
             if (barkSound != null && _audioSource != null)
@@ -29,6 +34,7 @@ namespace Game.Scripts.Barking
                 _audioSource.PlayOneShot(barkSound); 
             }
 
+            _controller.animator?.SetTrigger(AnimHashBark);
             if (barkEffect)
             {
                 var effect = Instantiate(barkEffect, transform.position, Quaternion.identity);

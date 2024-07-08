@@ -48,6 +48,7 @@ namespace Game.Scripts.Player
         [SerializeField] private Camera primaryCamera;
         [SerializeField] private bool disableSteepSlopeMovement = true;
 
+        public Animator animator;
         public Player playerType = Player.Cat;
         public Vector3 gravityMultiplier = Vector3.one;
         public float speedFactor = 1f;
@@ -61,6 +62,7 @@ namespace Game.Scripts.Player
         private float _groundCheckDisabledTimer;
 
         private Grabbing _grabbing;
+        private static readonly int AnimHashSpeed = Animator.StringToHash("Speed");
 
         /// Camera to be used for camera-relative movement
         public Camera PrimaryCamera { get => primaryCamera; set => primaryCamera = value; }
@@ -115,15 +117,12 @@ namespace Game.Scripts.Player
         {
             _groundCheckDisabledTimer -= Time.deltaTime;
             
-            
             var groundRay = new Ray(transform.position, Vector3.down);
-
             var hitGround = FloatPlayerAboveGround(groundRay, out var hitInfo, out var groundVel);
 
             HoldPlayerUpright(Time.deltaTime);
 
             var onSlope = Physics.Raycast(groundRay, out var slopeHitInfo, groundCheckLength, slopeCheckLayerMask.value, QueryTriggerInteraction.Ignore);
-
             var groundAngle = Vector3.Angle(Vector3.up, slopeHitInfo.normal);
             
             // TODO: speed factor bad. fix @alvin
@@ -194,6 +193,11 @@ namespace Game.Scripts.Player
 
             var movement = _movement.Bulk();
             var velDot = Vector3.Dot(movement, _goalVel.normalized);
+
+            if (animator)
+            {
+                animator.SetFloat(AnimHashSpeed, velDot);
+            }
             
             var accel = acceleration * accelerationFactorDot.Evaluate(velDot);
 
