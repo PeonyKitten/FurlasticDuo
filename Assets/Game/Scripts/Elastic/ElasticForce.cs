@@ -200,25 +200,48 @@ namespace Game.Scripts.Elastic
             Vector3 startPos2 = player2.position;
             Vector3 jumpDirection = _snapbackDirection;
 
-            for (float t = 0; t < snapJumpDuration; t += Time.fixedDeltaTime)
+            CollisionDetectionMode originalMode1 = _rb1.collisionDetectionMode;
+            CollisionDetectionMode originalMode2 = _rb2.collisionDetectionMode;
+            bool originalGravity1 = _rb1.useGravity;
+            bool originalGravity2 = _rb2.useGravity;
+
+            _rb1.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            _rb2.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            _rb1.useGravity = false;
+            _rb2.useGravity = false;
+
+            float elapsedTime = 0f;
+            bool collisionDetected = false;
+
+            while (elapsedTime < snapJumpDuration && !collisionDetected)
             {
-                float normalizedTime = t / snapJumpDuration;
+                float normalizedTime = elapsedTime / snapJumpDuration;
                 Vector3 newPos1 = CalculateSnapJumpPoint(startPos1, jumpDirection, normalizedTime);
-                Vector3 newPos2 = CalculateSnapJumpPoint(startPos2, jumpDirection, normalizedTime);
+                Vector3 newPos2 = startPos2 + (newPos1 - startPos1);
 
-                if (_player1Snapped)
+                Vector3 velocity1 = (newPos1 - _rb1.position) / Time.fixedDeltaTime;
+                Vector3 velocity2 = (newPos2 - _rb2.position) / Time.fixedDeltaTime;
+
+                _rb1.velocity = velocity1;
+                _rb2.velocity = velocity2;
+
+                if (_rb1.velocity.magnitude < velocity1.magnitude * 0.9f ||
+                    _rb2.velocity.magnitude < velocity2.magnitude * 0.9f)
                 {
-                    player1.position = newPos1;
-                    player2.position = startPos2 + (newPos1 - startPos1);
-                }
-                else if (_player2Snapped)
-                {
-                    player2.position = newPos2;
-                    player1.position = startPos1 + (newPos2 - startPos2);
+                    collisionDetected = true;
                 }
 
+                elapsedTime += Time.fixedDeltaTime;
                 yield return new WaitForFixedUpdate();
             }
+
+            _rb1.velocity = Vector3.zero;
+            _rb2.velocity = Vector3.zero;
+
+            _rb1.collisionDetectionMode = originalMode1;
+            _rb2.collisionDetectionMode = originalMode2;
+            _rb1.useGravity = originalGravity1;
+            _rb2.useGravity = originalGravity2;
 
             _isSnapping = false;
             _player1Snapped = false;
