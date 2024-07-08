@@ -48,6 +48,8 @@ namespace Game.Scripts.Player
         [SerializeField] private Camera primaryCamera;
         [SerializeField] private bool disableSteepSlopeMovement = true;
 
+        [SerializeField, Range(0, 1)] private float meiyisSlider;
+
         public Animator animator;
         public Player playerType = Player.Cat;
         public Vector3 gravityMultiplier = Vector3.one;
@@ -196,7 +198,7 @@ namespace Game.Scripts.Player
 
             if (animator)
             {
-                animator.SetFloat(AnimHashSpeed, velDot);
+                animator.SetFloat(AnimHashSpeed, Mathf.Lerp(animator.GetFloat(AnimHashSpeed), velDot, meiyisSlider));
             }
             
             var accel = acceleration * accelerationFactorDot.Evaluate(velDot);
