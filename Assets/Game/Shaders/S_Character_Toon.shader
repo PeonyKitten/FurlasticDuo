@@ -9,9 +9,6 @@ Shader "FD/Character_Toon"
 		_scale("scale", Float) = 1
 		_offSet("offSet", Float) = 0.5
 		_mainTex("main Tex", 2D) = "white" {}
-		_outline("outline", Color) = (0,0,0,0)
-		_outlineThickness("outlineThickness", Range( 0 , 0.3)) = 0
-		_distance("distance", Float) = 0.1
 		_rimoffSet("rim offSet", Float) = 0
 		_rim("rim", Color) = (0.4556154,1,0.2216981,0)
 		_Vector0("Vector 0", Vector) = (0,0.1,0,0)
@@ -162,269 +159,6 @@ Shader "FD/Character_Toon"
 		
 		Pass
 		{
-			Name "ExtraPrePass"
-			
-
-			Blend One Zero
-			Cull Front
-			ZWrite On
-			ZTest LEqual
-			Offset 0 , 0
-			ColorMask RGBA
-
-			
-
-			HLSLPROGRAM
-
-			#define ASE_FOG 1
-			#define ASE_SRP_VERSION 140010
-
-
-			#pragma vertex vert
-			#pragma fragment frag
-
-			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
-			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
-			#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl"
-			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl"
-
-			#if defined(LOD_FADE_CROSSFADE)
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
-            #endif
-
-			#define ASE_NEEDS_VERT_NORMAL
-
-
-			struct VertexInput
-			{
-				float4 positionOS : POSITION;
-				float3 normalOS : NORMAL;
-				float4 ase_texcoord : TEXCOORD0;
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-			};
-
-			struct VertexOutput
-			{
-				float4 positionCS : SV_POSITION;
-				#if defined(ASE_NEEDS_FRAG_WORLD_POSITION)
-					float3 positionWS : TEXCOORD0;
-				#endif
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					float4 shadowCoord : TEXCOORD1;
-				#endif
-				#ifdef ASE_FOG
-					float fogFactor : TEXCOORD2;
-				#endif
-				float4 ase_texcoord3 : TEXCOORD3;
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-				UNITY_VERTEX_OUTPUT_STEREO
-			};
-
-			CBUFFER_START(UnityPerMaterial)
-			float4 _outline;
-			float4 _mainTex_ST;
-			float4 _rim;
-			float2 _Vector0;
-			float _outlineThickness;
-			float _distance;
-			float _scale;
-			float _offSet;
-			float _rimoffSet;
-			#ifdef ASE_TESSELLATION
-				float _TessPhongStrength;
-				float _TessValue;
-				float _TessMin;
-				float _TessMax;
-				float _TessEdgeLength;
-				float _TessMaxDisp;
-			#endif
-			CBUFFER_END
-
-			sampler2D _mainTex;
-
-
-			
-			VertexOutput VertexFunction( VertexInput v  )
-			{
-				VertexOutput o = (VertexOutput)0;
-				UNITY_SETUP_INSTANCE_ID(v);
-				UNITY_TRANSFER_INSTANCE_ID(v, o);
-				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
-
-				float4 unityObjectToClipPos151 = TransformWorldToHClip(TransformObjectToWorld(float3( 0,0,0 )));
-				
-				o.ase_texcoord3.xy = v.ase_texcoord.xy;
-				
-				//setting value to unused interpolator channels and avoid initialization warnings
-				o.ase_texcoord3.zw = 0;
-
-				#ifdef ASE_ABSOLUTE_VERTEX_POS
-					float3 defaultVertexValue = v.positionOS.xyz;
-				#else
-					float3 defaultVertexValue = float3(0, 0, 0);
-				#endif
-
-				float3 vertexValue = ( v.normalOS * _outlineThickness * min( unityObjectToClipPos151.w , _distance ) );
-
-				#ifdef ASE_ABSOLUTE_VERTEX_POS
-					v.positionOS.xyz = vertexValue;
-				#else
-					v.positionOS.xyz += vertexValue;
-				#endif
-
-				v.normalOS = v.normalOS;
-
-				float3 positionWS = TransformObjectToWorld( v.positionOS.xyz );
-				float4 positionCS = TransformWorldToHClip( positionWS );
-
-				#if defined(ASE_NEEDS_FRAG_WORLD_POSITION)
-					o.positionWS = positionWS;
-				#endif
-
-				#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR) && defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					VertexPositionInputs vertexInput = (VertexPositionInputs)0;
-					vertexInput.positionWS = positionWS;
-					vertexInput.positionCS = positionCS;
-					o.shadowCoord = GetShadowCoord( vertexInput );
-				#endif
-
-				#ifdef ASE_FOG
-					o.fogFactor = ComputeFogFactor( positionCS.z );
-				#endif
-
-				o.positionCS = positionCS;
-
-				return o;
-			}
-
-			#if defined(ASE_TESSELLATION)
-			struct VertexControl
-			{
-				float4 vertex : INTERNALTESSPOS;
-				float3 normalOS : NORMAL;
-				float4 ase_texcoord : TEXCOORD0;
-
-				UNITY_VERTEX_INPUT_INSTANCE_ID
-			};
-
-			struct TessellationFactors
-			{
-				float edge[3] : SV_TessFactor;
-				float inside : SV_InsideTessFactor;
-			};
-
-			VertexControl vert ( VertexInput v )
-			{
-				VertexControl o;
-				UNITY_SETUP_INSTANCE_ID(v);
-				UNITY_TRANSFER_INSTANCE_ID(v, o);
-				o.vertex = v.positionOS;
-				o.normalOS = v.normalOS;
-				o.ase_texcoord = v.ase_texcoord;
-				return o;
-			}
-
-			TessellationFactors TessellationFunction (InputPatch<VertexControl,3> v)
-			{
-				TessellationFactors o;
-				float4 tf = 1;
-				float tessValue = _TessValue; float tessMin = _TessMin; float tessMax = _TessMax;
-				float edgeLength = _TessEdgeLength; float tessMaxDisp = _TessMaxDisp;
-				#if defined(ASE_FIXED_TESSELLATION)
-				tf = FixedTess( tessValue );
-				#elif defined(ASE_DISTANCE_TESSELLATION)
-				tf = DistanceBasedTess(v[0].vertex, v[1].vertex, v[2].vertex, tessValue, tessMin, tessMax, GetObjectToWorldMatrix(), _WorldSpaceCameraPos );
-				#elif defined(ASE_LENGTH_TESSELLATION)
-				tf = EdgeLengthBasedTess(v[0].vertex, v[1].vertex, v[2].vertex, edgeLength, GetObjectToWorldMatrix(), _WorldSpaceCameraPos, _ScreenParams );
-				#elif defined(ASE_LENGTH_CULL_TESSELLATION)
-				tf = EdgeLengthBasedTessCull(v[0].vertex, v[1].vertex, v[2].vertex, edgeLength, tessMaxDisp, GetObjectToWorldMatrix(), _WorldSpaceCameraPos, _ScreenParams, unity_CameraWorldClipPlanes );
-				#endif
-				o.edge[0] = tf.x; o.edge[1] = tf.y; o.edge[2] = tf.z; o.inside = tf.w;
-				return o;
-			}
-
-			[domain("tri")]
-			[partitioning("fractional_odd")]
-			[outputtopology("triangle_cw")]
-			[patchconstantfunc("TessellationFunction")]
-			[outputcontrolpoints(3)]
-			VertexControl HullFunction(InputPatch<VertexControl, 3> patch, uint id : SV_OutputControlPointID)
-			{
-				return patch[id];
-			}
-
-			[domain("tri")]
-			VertexOutput DomainFunction(TessellationFactors factors, OutputPatch<VertexControl, 3> patch, float3 bary : SV_DomainLocation)
-			{
-				VertexInput o = (VertexInput) 0;
-				o.positionOS = patch[0].vertex * bary.x + patch[1].vertex * bary.y + patch[2].vertex * bary.z;
-				o.normalOS = patch[0].normalOS * bary.x + patch[1].normalOS * bary.y + patch[2].normalOS * bary.z;
-				o.ase_texcoord = patch[0].ase_texcoord * bary.x + patch[1].ase_texcoord * bary.y + patch[2].ase_texcoord * bary.z;
-				#if defined(ASE_PHONG_TESSELLATION)
-				float3 pp[3];
-				for (int i = 0; i < 3; ++i)
-					pp[i] = o.positionOS.xyz - patch[i].normalOS * (dot(o.positionOS.xyz, patch[i].normalOS) - dot(patch[i].vertex.xyz, patch[i].normalOS));
-				float phongStrength = _TessPhongStrength;
-				o.positionOS.xyz = phongStrength * (pp[0]*bary.x + pp[1]*bary.y + pp[2]*bary.z) + (1.0f-phongStrength) * o.positionOS.xyz;
-				#endif
-				UNITY_TRANSFER_INSTANCE_ID(patch[0], o);
-				return VertexFunction(o);
-			}
-			#else
-			VertexOutput vert ( VertexInput v )
-			{
-				return VertexFunction( v );
-			}
-			#endif
-
-			half4 frag ( VertexOutput IN  ) : SV_Target
-			{
-				UNITY_SETUP_INSTANCE_ID( IN );
-				UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX( IN );
-
-				#if defined(ASE_NEEDS_FRAG_WORLD_POSITION)
-					float3 WorldPosition = IN.positionWS;
-				#endif
-
-				float4 ShadowCoords = float4( 0, 0, 0, 0 );
-
-				#if defined(ASE_NEEDS_FRAG_SHADOWCOORDS)
-					#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
-						ShadowCoords = IN.shadowCoord;
-					#elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)
-						ShadowCoords = TransformWorldToShadowCoord( WorldPosition );
-					#endif
-				#endif
-
-				float2 uv_mainTex = IN.ase_texcoord3.xy * _mainTex_ST.xy + _mainTex_ST.zw;
-				float4 tex2DNode60 = tex2D( _mainTex, uv_mainTex );
-				
-
-				float3 Color = ( _outline * tex2DNode60 ).rgb;
-				float Alpha = 1;
-				float AlphaClipThreshold = 0.5;
-
-				#ifdef _ALPHATEST_ON
-					clip( Alpha - AlphaClipThreshold );
-				#endif
-
-				#ifdef ASE_FOG
-					Color = MixFog( Color, IN.fogFactor );
-				#endif
-
-				#ifdef LOD_FADE_CROSSFADE
-					LODFadeCrossFade( IN.positionCS );
-				#endif
-
-				return half4( Color, Alpha );
-			}
-			ENDHLSL
-		}
-
-		
-		Pass
-		{
 			
 			Name "Forward"
 			Tags { "LightMode"="UniversalForwardOnly" }
@@ -542,12 +276,9 @@ Shader "FD/Character_Toon"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _outline;
 			float4 _mainTex_ST;
 			float4 _rim;
 			float2 _Vector0;
-			float _outlineThickness;
-			float _distance;
 			float _scale;
 			float _offSet;
 			float _rimoffSet;
@@ -945,12 +676,9 @@ Shader "FD/Character_Toon"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _outline;
 			float4 _mainTex_ST;
 			float4 _rim;
 			float2 _Vector0;
-			float _outlineThickness;
-			float _distance;
 			float _scale;
 			float _offSet;
 			float _rimoffSet;
@@ -1216,12 +944,9 @@ Shader "FD/Character_Toon"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _outline;
 			float4 _mainTex_ST;
 			float4 _rim;
 			float2 _Vector0;
-			float _outlineThickness;
-			float _distance;
 			float _scale;
 			float _offSet;
 			float _rimoffSet;
@@ -1455,12 +1180,9 @@ Shader "FD/Character_Toon"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _outline;
 			float4 _mainTex_ST;
 			float4 _rim;
 			float2 _Vector0;
-			float _outlineThickness;
-			float _distance;
 			float _scale;
 			float _offSet;
 			float _rimoffSet;
@@ -1686,12 +1408,9 @@ Shader "FD/Character_Toon"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _outline;
 			float4 _mainTex_ST;
 			float4 _rim;
 			float2 _Vector0;
-			float _outlineThickness;
-			float _distance;
 			float _scale;
 			float _offSet;
 			float _rimoffSet;
@@ -1932,12 +1651,9 @@ Shader "FD/Character_Toon"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _outline;
 			float4 _mainTex_ST;
 			float4 _rim;
 			float2 _Vector0;
-			float _outlineThickness;
-			float _distance;
 			float _scale;
 			float _offSet;
 			float _rimoffSet;
@@ -2213,7 +1929,7 @@ Node;AmplifyShaderEditor.SimpleMultiplyOpNode;147;-160,-944;Inherit;False;2;2;0;
 Node;AmplifyShaderEditor.GetLocalVarNode;167;-1712,32;Inherit;False;166;SRP AddLight;1;0;OBJECT;;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.SimpleMaxOpNode;233;-2144,800;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;236;-2160,912;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;45;672,-272;Float;False;True;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;FD/Character_Toon;2992e84f91cbeb14eab234972e07ea9d;True;Forward;0;1;Forward;8;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;True;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Unlit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;1;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalForwardOnly;False;False;0;;0;0;Standard;21;Surface;0;0;  Blend;0;0;Two Sided;1;0;Forward Only;0;0;Cast Shadows;1;0;  Use Shadow Threshold;0;0;GPU Instancing;1;0;LOD CrossFade;1;0;Built-in Fog;1;0;Meta Pass;0;0;Extra Pre Pass;1;638513821270901356;Tessellation;0;0;  Phong;0;0;  Strength;0.5,False,;0;  Type;0;0;  Tess;16,False,;0;  Min;10,False,;0;  Max;25,False,;0;  Edge Length;16,False,;0;  Max Displacement;25,False,;0;Vertex Position,InvertActionOnDeselection;1;0;0;10;True;True;True;True;False;False;True;True;True;False;False;;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;45;672,-272;Float;False;True;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;FD/Character_Toon;2992e84f91cbeb14eab234972e07ea9d;True;Forward;0;1;Forward;8;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;True;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Unlit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;1;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalForwardOnly;False;False;0;;0;0;Standard;21;Surface;0;0;  Blend;0;0;Two Sided;1;0;Forward Only;0;0;Cast Shadows;1;0;  Use Shadow Threshold;0;0;GPU Instancing;1;0;LOD CrossFade;1;0;Built-in Fog;1;0;Meta Pass;0;0;Extra Pre Pass;0;638561460446766168;Tessellation;0;0;  Phong;0;0;  Strength;0.5,False,;0;  Type;0;0;  Tess;16,False,;0;  Min;10,False,;0;  Max;25,False,;0;  Edge Length;16,False,;0;  Max Displacement;25,False,;0;Vertex Position,InvertActionOnDeselection;1;0;0;10;False;True;True;True;False;False;True;True;True;False;False;;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;44;672,-912;Float;False;False;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;New Amplify Shader;2992e84f91cbeb14eab234972e07ea9d;True;ExtraPrePass;0;0;ExtraPrePass;5;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Unlit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;0;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;True;True;1;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;0;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;46;0,0;Float;False;False;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;New Amplify Shader;2992e84f91cbeb14eab234972e07ea9d;True;ShadowCaster;0;2;ShadowCaster;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Unlit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;False;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;True;3;False;;False;True;1;LightMode=ShadowCaster;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;47;0,0;Float;False;False;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;New Amplify Shader;2992e84f91cbeb14eab234972e07ea9d;True;DepthOnly;0;3;DepthOnly;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Unlit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;True;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;False;False;True;1;LightMode=DepthOnly;False;False;0;;0;0;Standard;0;False;0
@@ -2308,7 +2024,5 @@ WireConnection;233;1;237;0
 WireConnection;236;0;232;0
 WireConnection;236;1;237;0
 WireConnection;45;2;220;0
-WireConnection;44;0;147;0
-WireConnection;44;3;143;0
 ASEEND*/
-//CHKSM=A3A68404D37300284551C93F12D5D15D17C27E25
+//CHKSM=538BF6320CC63B82E460FD8343C25F376FD751D7
