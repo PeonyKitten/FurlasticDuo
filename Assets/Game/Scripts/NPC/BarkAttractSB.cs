@@ -4,6 +4,7 @@ using Game.Scripts.SteeringBehaviours;
 using System.Collections;
 using System;
 using Game.Scripts.Utils;
+using UnityEngine.Events;
 
 namespace Game.Scripts.NPC
 {
@@ -22,14 +23,20 @@ namespace Game.Scripts.NPC
         [Tooltip("When it is the only active SteeringBehaviour, should we keep running after we stop reacting?")]
         [SerializeField] private bool shouldRunAwayForever = true;
 
+        [Header("Callbacks")]
+        public UnityEvent onBarkReact;
+        public UnityEvent onBarkStopReact;
+            
         public bool IsReacting { get; set; }
         private Coroutine _barkCoroutine;
 
         public void React(Bark bark)
         {
             IsReacting = true;
-            Target = bark.transform.position;
+            Target = bark.transform.position.Flatten().Bulk(transform.position.y);
             steeringAgent.reachedGoal = false;
+            
+            onBarkReact?.Invoke();
 
             if (attractStrategy == AttractStrategy.AttractByDistance) return;
 
@@ -49,8 +56,9 @@ namespace Game.Scripts.NPC
             }
 
             var attractForce = CalculateArriveForce();
+            Debug.Log(attractForce);
             
-            if (attractStrategy == AttractStrategy.AttractByDistance && attractForce == Vector3.zero) {
+            if (attractStrategy == AttractStrategy.AttractByDistance && steeringAgent.reachedGoal) {
                 StopReacting();
             }
 
@@ -65,6 +73,8 @@ namespace Game.Scripts.NPC
             {
                 steeringAgent.reachedGoal = true;
             }
+            
+            onBarkStopReact?.Invoke();
         }
 
         private IEnumerator StopReactingAfterTime(float time)
@@ -75,11 +85,11 @@ namespace Game.Scripts.NPC
 
         protected override void OnDrawGizmos()
         {
+            if (!IsReacting) return;
+            
             base.OnDrawGizmos();
-            if (IsReacting)
-            {
-                DebugExtension.DrawCircle(transform.position, Vector3.up, Color.blue);
-            }
+            DebugExtension.DrawCircle(transform.position, Vector3.up, Color.blue);
+            Gizmos.DrawLine(transform.position, Target);
         }
     }
 }
