@@ -36,16 +36,21 @@ namespace Game.Scripts.Utils
                 _ => throw new ArgumentOutOfRangeException(nameof(axis), axis, "Invalid Axis")
             };
         }
-        
-        public static Vector3 Bulk(this Vector2 input, Axis3D zeroedAxis = Axis3D.Y)
+
+        public static Vector3 Bulk(this Vector2 input, float value, Axis3D zeroedAxis = Axis3D.Y)
         {
             return zeroedAxis switch
             {
-                Axis3D.X => new Vector3(0, input.x, input.y),
-                Axis3D.Y => new Vector3(input.x, 0, input.y),
-                Axis3D.Z => new Vector3(input.x, input.y, 0),
+                Axis3D.X => new Vector3(value, input.x, input.y),
+                Axis3D.Y => new Vector3(input.x, value, input.y),
+                Axis3D.Z => new Vector3(input.x, input.y, value),
                 _ => throw new ArgumentOutOfRangeException(nameof(zeroedAxis), zeroedAxis, "Invalid Axis")
             };
+        }
+        
+        public static Vector3 Bulk(this Vector2 input, Axis3D zeroedAxis = Axis3D.Y)
+        {
+            return input.Bulk(0, zeroedAxis);
         }
 
         public static float Single(this Vector2 input, Axis3D axis)
