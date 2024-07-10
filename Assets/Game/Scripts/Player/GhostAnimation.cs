@@ -19,12 +19,13 @@ namespace Game.Scripts.Player
         [Header("Ghost Body Joint Setting")]
         [SerializeField] private GameObject ghostBodyParent;
         [SerializeField] private float jointPositionOffset;
-        [SerializeField] private AnimationCurve scaleFactorCurve;
+        [SerializeField] private AnimationCurve bodyScaleFactorCurve;
 
         [Header("Ghost Effect Joint Setting")]
         [SerializeField] private GameObject ghostEffectParent;
         [SerializeField] private float maxRotation = 90f;
         [SerializeField] private AnimationCurve rotationCurve;
+        [SerializeField] private AnimationCurve effectScaleFactorCurve;
 
         [Header("Debug Settings")]
         [SerializeField] private bool debugJointDirections;
@@ -79,16 +80,22 @@ namespace Game.Scripts.Player
             Vector3 ghostLengthVec = ghostBodyJoints[ghostBodyJoints.Count - 1].position - ghostBodyJoints[0].position;
             float currentGhostBodyLength = ghostLengthVec.magnitude;
 
-            // Calculate the scale factor for the in-between Body joints
+            // Calculate the scale factor for the in-between joints
             float ghostLength = Map(currentGhostBodyLength, origGhostBodyLength, maxDistance, 0, 1);
-            float scaleFactor = scaleFactorCurve.Evaluate(ghostLength);
+            float bodyScaleFactor = bodyScaleFactorCurve.Evaluate(ghostLength);
+            float effectScaleFactor = effectScaleFactorCurve.Evaluate(ghostLength);
 
             // Set the scale of the in-between Body joints
             for (int i = 1; i < ghostBodyJoints.Count - 1; i++)
             {
-                    Vector3 targetScale = new Vector3(1, scaleFactor, scaleFactor);
+                    Vector3 targetScale = new Vector3(1, bodyScaleFactor, bodyScaleFactor);
                     ghostBodyJoints[i].localScale = targetScale;
             }
+
+            ghostEffectJoints[1].localScale = new Vector3(1, effectScaleFactor, effectScaleFactor);
+            ghostEffectJoints[2].localScale = new Vector3(1, effectScaleFactor, effectScaleFactor);
+            ghostEffectJoints[3].localScale = new Vector3(1, 1 / effectScaleFactor, 1 / effectScaleFactor);
+            ghostEffectJoints[4].localScale = new Vector3(1, 1 / effectScaleFactor, 1 / effectScaleFactor);
 
             CalculateNormalAndBitangent(playerVec.normalized, out var forward, out var up);
             var right = Vector3.Cross(up, forward);
@@ -108,6 +115,8 @@ namespace Game.Scripts.Player
 
             // Calculate the rotation for the in-between Effect joints
             float targetRotation = rotationCurve.Evaluate(ghostLength) * maxRotation;
+            Quaternion rootRotation = Quaternion.Euler(-targetRotation * 2, 0, 0);
+            ghostEffectJoints[0].localRotation = rootRotation;
 
             // Set the rotation of the in-between Effect joints
             for (int i = 1; i < ghostEffectJoints.Count; i++)
