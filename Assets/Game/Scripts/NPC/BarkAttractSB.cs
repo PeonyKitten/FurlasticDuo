@@ -56,7 +56,6 @@ namespace Game.Scripts.NPC
             }
 
             var attractForce = CalculateArriveForce();
-            Debug.Log(attractForce);
             
             if (attractStrategy == AttractStrategy.AttractByDistance && steeringAgent.reachedGoal) {
                 StopReacting();

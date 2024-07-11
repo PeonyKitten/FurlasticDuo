@@ -1,5 +1,6 @@
 using Game.Scripts.Utils;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Game.Scripts.SteeringBehaviours
 {
@@ -8,9 +9,14 @@ namespace Game.Scripts.SteeringBehaviours
         [Header("Steering Behaviour")]
         [SerializeField] protected float weight = 1f;
         public bool useMouseInput = true;
+        private Vector3 _target;
 
         public float Weight { get => weight; set => weight = value; }
-        public Vector3 Target { get; set; } = Vector3.zero;
+        public Vector3 Target
+        {
+            get => _target;
+            set => _target = value;
+        }
 
         [HideInInspector] public SteeringAgent steeringAgent;
 
@@ -22,9 +28,9 @@ namespace Game.Scripts.SteeringBehaviours
 
         protected bool CheckMouseInput()
         {
-            if (Input.GetMouseButton(0) && useMouseInput)
+            if (useMouseInput && Mouse.current.leftButton.isPressed)
             {
-                var ray = CameraUtils.Main.ScreenPointToRay(Input.mousePosition);
+                var ray = CameraUtils.Main.ScreenPointToRay(Mouse.current.position.value);
                 if (Physics.Raycast(ray, out var hit, 100))
                 {
                     Target = hit.point;
