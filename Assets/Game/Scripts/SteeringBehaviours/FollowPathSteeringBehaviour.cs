@@ -10,6 +10,7 @@ namespace Game.Scripts.SteeringBehaviours
         [SerializeField] private bool generateWaypointsFromChildren = true;
         [SerializeField] private Transform waypointsParent; 
         [SerializeField] protected List<Transform> waypoints = new();
+        [SerializeField] protected bool resetAgentReachedGoal = true;
         
         protected Queue<Vector3> QueuedPoints = new();
 
@@ -48,9 +49,13 @@ namespace Game.Scripts.SteeringBehaviours
                     return Vector3.zero;
                 }
             }
+            
+            if (resetAgentReachedGoal)
+            {
+                steeringAgent.reachedGoal = false;
+            }
 
             Target = currentTarget;
-
             return CalculateArriveForce();
         }
 
