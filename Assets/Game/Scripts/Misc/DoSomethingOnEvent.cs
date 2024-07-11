@@ -13,6 +13,7 @@ namespace Game.Scripts.Misc
             None,
             ObjectStart,
             ObjectDestroy,
+            ObjectUpdate,
             TriggerEnter,
             TriggerExit,
             CollisionEnter,
@@ -30,7 +31,14 @@ namespace Game.Scripts.Misc
             
             onAction?.Invoke();
         }
-        
+
+        private void Update()
+        {
+            if (performActionOnEvent != ListenableEvent.ObjectUpdate) return;
+            
+            onAction?.Invoke();
+        }
+
         private void OnDestroy()
         {
             if (performActionOnEvent != ListenableEvent.ObjectDestroy) return;

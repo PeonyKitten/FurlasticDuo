@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Game.Scripts.Player;
 using UnityEngine;
@@ -14,6 +15,7 @@ namespace Game.Scripts.Grab
         private Renderer[] _renderers;
         private int _grabCount = 0;
         private Rigidbody _rb;
+        private static readonly int AnimHashIsDragging = Animator.StringToHash("IsDragging");
 
         private void Awake()
         {

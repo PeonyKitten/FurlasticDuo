@@ -26,6 +26,7 @@ namespace Game.Scripts.Grab
 
         private InputAction _grabAction;
         private readonly Collider[] _colliders = new Collider[10];
+        private static readonly int AnimHashMoveDirectionDot = Animator.StringToHash("MoveDirectionDot");
 
         public bool IsGrabbing { get; private set; } 
 
