@@ -4,6 +4,7 @@ using System.Linq;
 using Game.Scripts.Patterns;
 using Game.Scripts.Player;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Game.Scripts.Levels.Checkpoints
 {
@@ -14,6 +15,16 @@ namespace Game.Scripts.Levels.Checkpoints
         
         private Checkpoint _lastCheckpoint;
         private bool _shouldSpawn;
+
+        private void Update()
+        {
+#if UNITY_EDITOR
+            if (Keyboard.current[Key.R].wasPressedThisFrame)
+            {
+                Respawn();
+            }
+#endif
+        }
 
         public void SaveCheckpoint(Checkpoint savePoint)
         {
@@ -31,7 +42,6 @@ namespace Game.Scripts.Levels.Checkpoints
             players = FindObjectsOfType<PlayerController>().ToList();
             savingIcon = FindObjectOfType<SaveCheckpointIcon>();
         }
-
 
         public void Respawn()
         {
