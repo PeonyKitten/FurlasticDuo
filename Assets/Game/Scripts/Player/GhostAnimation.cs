@@ -27,6 +27,9 @@ namespace Game.Scripts.Player
         [SerializeField] private AnimationCurve rotationCurve;
         [SerializeField] private AnimationCurve effectScaleFactorCurve;
 
+        [Header("Ghost Material")]
+        [SerializeField] private Material ghostEffectMaterial;
+
         [Header("Debug Settings")]
         [SerializeField] private bool debugJointDirections;
 
@@ -92,11 +95,6 @@ namespace Game.Scripts.Player
                     ghostBodyJoints[i].localScale = targetScale;
             }
 
-            ghostEffectJoints[1].localScale = new Vector3(1, effectScaleFactor, effectScaleFactor);
-            ghostEffectJoints[2].localScale = new Vector3(1, effectScaleFactor, effectScaleFactor);
-            ghostEffectJoints[3].localScale = new Vector3(1, 1 / effectScaleFactor, 1 / effectScaleFactor);
-            ghostEffectJoints[4].localScale = new Vector3(1, 1 / effectScaleFactor, 1 / effectScaleFactor);
-
             CalculateNormalAndBitangent(playerVec.normalized, out var forward, out var up);
             var right = Vector3.Cross(up, forward);
 
@@ -123,6 +121,17 @@ namespace Game.Scripts.Player
             {
                 Quaternion newRotation = Quaternion.Euler(targetRotation, 0, 0);
                 ghostEffectJoints[i].localRotation = newRotation;
+            }
+
+            ghostEffectJoints[1].localScale = new Vector3(1, effectScaleFactor, effectScaleFactor);
+            ghostEffectJoints[2].localScale = new Vector3(1, effectScaleFactor, effectScaleFactor);
+            ghostEffectJoints[3].localScale = new Vector3(1, 1 / effectScaleFactor, 1 / effectScaleFactor);
+            ghostEffectJoints[4].localScale = new Vector3(1, 1 / effectScaleFactor, 1 / effectScaleFactor);
+
+            // Set the stages for effect material
+            if (ghostEffectMaterial != null)
+            {
+                ghostEffectMaterial.SetFloat("_Stages", ghostLength);
             }
         }
 
