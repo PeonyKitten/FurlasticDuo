@@ -5,7 +5,7 @@ namespace Game.Scripts.NPC
 {
     public class ChasePlayerSteeringBehaviour: ArriveSteeringBehaviour
     {
-        private Transform _player;
+        public Transform _player;
 
         public void SetPlayer(Transform player)
         {
