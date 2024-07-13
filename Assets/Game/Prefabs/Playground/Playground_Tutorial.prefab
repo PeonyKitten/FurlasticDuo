@@ -527,7 +527,7 @@ PrefabInstance:
     - target: {fileID: 2220486295202853053, guid: e92e02a29f9c2b24b94419f21ba985ab,
         type: 3}
       propertyPath: m_Name
-      value: Save Point Tutorial 1
+      value: PlayerStart
       objectReference: {fileID: 0}
     - target: {fileID: 3408898216380198011, guid: e92e02a29f9c2b24b94419f21ba985ab,
         type: 3}
@@ -584,14 +584,52 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3408898216380198011, guid: e92e02a29f9c2b24b94419f21ba985ab, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2220486295202853053, guid: e92e02a29f9c2b24b94419f21ba985ab,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8648690725754030979}
   m_SourcePrefab: {fileID: 100100000, guid: e92e02a29f9c2b24b94419f21ba985ab, type: 3}
 --- !u!4 &1434750620996865952 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6869858663757027848, guid: e92e02a29f9c2b24b94419f21ba985ab,
+    type: 3}
+  m_PrefabInstance: {fileID: 5530391862208796072}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5940008892390630677 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2220486295202853053, guid: e92e02a29f9c2b24b94419f21ba985ab,
+    type: 3}
+  m_PrefabInstance: {fileID: 5530391862208796072}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8648690725754030979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5940008892390630677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4194c66460476ea47b5500f53fe9c15d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnPositions:
+  - {fileID: 5963816342909436269}
+  - {fileID: 9094699246603960351}
+--- !u!4 &5963816342909436269 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2196733269979157701, guid: e92e02a29f9c2b24b94419f21ba985ab,
+    type: 3}
+  m_PrefabInstance: {fileID: 5530391862208796072}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &9094699246603960351 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3641506505363887543, guid: e92e02a29f9c2b24b94419f21ba985ab,
     type: 3}
   m_PrefabInstance: {fileID: 5530391862208796072}
   m_PrefabAsset: {fileID: 0}

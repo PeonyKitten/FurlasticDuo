@@ -41,6 +41,7 @@ namespace Game.Scripts.Levels.Checkpoints
             }
         }
 
+        #if UNITY_EDITOR
         [DrawGizmo(GizmoType.NonSelected)]
         private static void DrawCheckpointZone(Checkpoint checkpoint, GizmoType gizmoType)
         {
@@ -48,10 +49,11 @@ namespace Game.Scripts.Levels.Checkpoints
             Gizmos.color = Color.magenta;
             DebugExtension.DrawLocalCube(checkpoint.transform.localToWorldMatrix, collider.size, Color.cyan);
         }
+        #endif
 
         private void OnDrawGizmos()
         {
-            Gizmos.DrawIcon(transform.position, "Game/Scripts/Levels/Checkpoints/PlayerStart Icon", true);
+            Gizmos.DrawIcon(transform.position, "Game/Scripts/Levels/Checkpoints/Checkpoint", true);
         }
 
         private void OnDrawGizmosSelected()
