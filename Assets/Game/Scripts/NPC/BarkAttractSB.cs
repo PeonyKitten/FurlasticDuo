@@ -29,6 +29,12 @@ namespace Game.Scripts.NPC
             
         public bool IsReacting { get; set; }
         private Coroutine _barkCoroutine;
+        private SecurityNPC securityNPC;
+
+        private void Awake()
+        {
+            securityNPC = GetComponentInParent<SecurityNPC>();
+        }
 
         public void React(Bark bark)
         {
@@ -37,6 +43,11 @@ namespace Game.Scripts.NPC
             steeringAgent.reachedGoal = false;
             
             onBarkReact?.Invoke();
+
+            if (securityNPC != null)
+            {
+                securityNPC.ReactToBark(Target);
+            }
 
             if (attractStrategy == AttractStrategy.AttractByDistance) return;
 

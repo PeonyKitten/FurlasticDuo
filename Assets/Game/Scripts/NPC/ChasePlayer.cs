@@ -3,25 +3,25 @@ using UnityEngine;
 
 namespace Game.Scripts.NPC
 {
-    public class ChasePlayerSteeringBehaviour: ArriveSteeringBehaviour
+    public class ChasePlayerSteeringBehaviour : ArriveSteeringBehaviour
     {
-        public Transform _player;
+        public Transform player; //setplayer resetplayer not needed
 
         public void SetPlayer(Transform player)
         {
-            _player = player;
+            this.player = player;
         }
 
         public void ResetPlayer()
         {
-            _player = null;
+            player = null;
         }
 
         public override Vector3 CalculateForce()
         {
-            if (_player is null) return Vector3.zero;
+            if (player == null) return Vector3.zero;
 
-            Target = _player.position;
+            Target = player.position;
 
             return base.CalculateForce();
         }

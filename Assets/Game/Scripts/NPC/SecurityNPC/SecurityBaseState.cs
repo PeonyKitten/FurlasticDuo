@@ -10,4 +10,6 @@ public abstract class SecurityNPCBaseState : FSMBaseState
         securityNPC = owner.GetComponent<SecurityNPC>();
         Debug.Assert(securityNPC != null, $"{owner.name} must have a SecurityNPC Component");
     }
+
+    public virtual void OnIdleComplete() { }
 }

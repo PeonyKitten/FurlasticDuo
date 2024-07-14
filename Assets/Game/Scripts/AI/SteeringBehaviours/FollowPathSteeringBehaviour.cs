@@ -1,8 +1,15 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Game.Scripts.SteeringBehaviours
 {
+    [System.Serializable]
+    public class WaypointEvent : UnityEvent<Vector3>
+    {
+
+    }
+
     public class FollowPathSteeringBehaviour: ArriveSteeringBehaviour
     {
         [Header("Follow Path Behaviour")]
@@ -11,7 +18,10 @@ namespace Game.Scripts.SteeringBehaviours
         [SerializeField] private Transform waypointsParent; 
         [SerializeField] protected List<Transform> waypoints = new();
         [SerializeField] protected bool resetAgentReachedGoal = true;
-        
+
+        //unity event that you can listen to when you reach waypoints
+        public WaypointEvent onReachWaypoint;
+
         protected Queue<Vector3> QueuedPoints = new();
 
         protected virtual void Start()
@@ -42,6 +52,7 @@ namespace Game.Scripts.SteeringBehaviours
             if (Vector3.Distance(currentTarget, transform.position) < ehCloseEnoughDistance)
             {
                 QueuedPoints.Dequeue();
+                onReachWaypoint?.Invoke(currentTarget);
 
                 if (!QueuedPoints.TryPeek(out currentTarget))
                 {
