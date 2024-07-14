@@ -31,8 +31,8 @@ namespace Game.Scripts.Elastic
         }
         
         [Header("Anchor settings")]
-        [SerializeField] private Transform player1;
-        [SerializeField] private Transform player2;
+        [SerializeField] public Transform player1;
+        [SerializeField] public Transform player2;
         [SerializeField, Range(0, 1)] private float midpointAdjustment = 0.5f;
         [SerializeField] private float maxDistance = 10;
 
@@ -75,6 +75,11 @@ namespace Game.Scripts.Elastic
 
         private void Start()
         {
+            GrabValues();
+        }
+
+        public void GrabValues()
+        {
             _rb1 = player1.GetComponent<Rigidbody>();
             _rb2 = player2.GetComponent<Rigidbody>();
             _controller1 = player1.GetComponent<PlayerController>();
@@ -83,6 +88,8 @@ namespace Game.Scripts.Elastic
 
         private void FixedUpdate()
         {
+            if (player1 is null || player2 is null) return;
+            
             _snapbackTimer -= Time.deltaTime;
             
             var player1Position = player1.position;

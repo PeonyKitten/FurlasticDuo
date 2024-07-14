@@ -6,6 +6,7 @@ using Game.Scripts.UI.Components;
 using Game.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.UIElements;
+using PlayMode = Game.Scripts.Game.PlayMode;
 
 namespace Game.Scripts.UI.Menus
 {
@@ -26,7 +27,7 @@ namespace Game.Scripts.UI.Menus
             coopPlayButton.Focus();
             coopPlayButton.ApplyClickCallbacks(() =>
             {
-                GameManager.Instance.ChangeState(new PlayState(PlayState.PlayMode.LocalCoop));
+                GameManager.Instance.ChangeState(new PlayState(PlayMode.LocalCoop));
                 coopPlayButton.SetEnabled(false);
             });
             
@@ -34,7 +35,7 @@ namespace Game.Scripts.UI.Menus
             soloPlayButton.text = "Singleplayer";
             soloPlayButton.ApplyClickCallbacks(() =>
             {
-                GameManager.Instance.ChangeState(new PlayState(PlayState.PlayMode.SinglePlayer));
+                GameManager.Instance.ChangeState(new PlayState(PlayMode.SinglePlayer));
                 soloPlayButton.SetEnabled(false);
             });
             

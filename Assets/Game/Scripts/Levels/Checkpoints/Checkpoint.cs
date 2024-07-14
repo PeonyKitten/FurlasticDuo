@@ -31,13 +31,18 @@ namespace Game.Scripts.Levels.Checkpoints
             }
         }
 
+        public void Spawn(PlayerController player, int index)
+        {
+            var position = spawnPositions.Count > index ? spawnPositions[index].position : transform.position; 
+            player.transform.SetPositionAndRotation(position, Quaternion.identity);
+        }
+
         public void Spawn(List<PlayerController> players)
         {
             Debug.Log($"Spawning {players.Count} at {name}");
             for (var index = 0; index < players.Count; index++)
             {
-                var position = spawnPositions.Count > index ? spawnPositions[index].position : transform.position; 
-                players[index].transform.SetPositionAndRotation(position, Quaternion.identity);
+                Spawn(players[index], index);
             }
         }
 
