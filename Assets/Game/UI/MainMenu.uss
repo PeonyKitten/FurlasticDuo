@@ -1,23 +1,30 @@
 .main-button {
-    -unity-font-style: bold;
-    color: rgb(255, 255, 255);
-    -unity-text-align: middle-center;
+    background-color: rgba(0, 0, 0, 0);
+    color: rgb(0, 0, 0);
+    -unity-text-align: middle-left;
     padding-top: 10px;
-    padding-right: 10px;
-    padding-bottom: 10px;
-    padding-left: 10px;
-    background-color: rgb(174, 66, 0);
+    padding-right: 60px;
+    padding-bottom: 0;
+    padding-left: 40px;
     border-top-width: 0;
     border-right-width: 0;
     border-bottom-width: 0;
     border-left-width: 0;
-    font-size: 300%;
+    font-size: 64px;
     width: auto;
     min-width: 200px;
     white-space: nowrap;
+    -unity-font: url("project://database/Assets/Game/Fonts/Staatliches/Staatliches-Regular.ttf?fileID=12800000&guid=de76ae79157774ce6a07b6f922f88162&type=3#Staatliches-Regular");
+    -unity-font-definition: initial;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .main-button:focus {
-    background-color: rgb(255, 22, 0);
-    font-size: 350%;
+    background-image: url("project://database/Assets/Game/Textures/Skewed_Rect.png?fileID=21300000&guid=d8ae3466ed71e4398815f17307b7b0cd&type=3#Skewed_Rect");
+    color: rgb(255, 255, 255);
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-background-image-tint-color: rgb(0, 0, 0);
 }
