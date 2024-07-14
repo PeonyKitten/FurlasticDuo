@@ -9,21 +9,23 @@ public class SecurityNPCPatrolState : SecurityNPCBaseState
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         Debug.Log("Security NPC is patrolling.");
-        securityNPC.SetSteeringBehaviourWeight(securityNPC.followPathBehaviour, 1);
+        securityNPC.followPathBehaviour.Weight = 1;
         securityNPC.followPathBehaviour.onReachWaypoint.AddListener(OnReachWaypoint);
     }
 
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (securityNPC.IsPlayerInFOV())
+        Transform detectedPlayer;
+        if (securityNPC.playerDetection.IsPlayerInFOV(out detectedPlayer))
         {
+            securityNPC.chasePlayerBehaviour.player = detectedPlayer;
             fsm.ChangeState(GoToChaseStateName);
         }
     }
 
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        securityNPC.SetSteeringBehaviourWeight(securityNPC.followPathBehaviour, 0);
+        securityNPC.followPathBehaviour.Weight = 0;
         securityNPC.followPathBehaviour.onReachWaypoint.RemoveListener(OnReachWaypoint);
     }
 

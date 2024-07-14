@@ -4713,6 +4713,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ec76638f57d3864799110952212f8c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fov: {fileID: 592187231}
 --- !u!1001 &528755717212156134
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5030,8 +5031,7 @@ MonoBehaviour:
   followPathBehaviour: {fileID: 1901580611}
   barkAttractBehaviour: {fileID: 528755717212156136}
   chasePlayerBehaviour: {fileID: 191817144}
-  fov: {fileID: 592187231}
-  chaseRadius: 10
+  playerDetection: {fileID: 2126405411}
 --- !u!95 &528755717212156141
 Animator:
   serializedVersion: 5

@@ -11,10 +11,10 @@ public class NPCInvestigateState : SecurityNPCBaseState
     {
         Debug.Log("Security NPC is investigating a sound.");
         securityNPC.PlayAnimation("Alert");
-        securityNPC.SetSteeringBehaviourWeight(securityNPC.barkAttractBehaviour, 1);
+        securityNPC.barkAttractBehaviour.Weight = 1;
         securityNPC.barkAttractBehaviour.Target = securityNPC.barkOrigin;
         securityNPC.barkAttractBehaviour.IsReacting = true;
-    }   
+    }
 
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -23,15 +23,20 @@ public class NPCInvestigateState : SecurityNPCBaseState
             securityNPC.PlayAnimation("Alert");
             fsm.ChangeState(GoToPatrolStateName);
         }
-        else if (securityNPC.IsPlayerInFOV())
+        else
         {
-            fsm.ChangeState(GoToChaseStateName);
+            Transform detectedPlayer;
+            if (securityNPC.playerDetection.IsPlayerInFOV(out detectedPlayer))
+            {
+                securityNPC.chasePlayerBehaviour.player = detectedPlayer;
+                fsm.ChangeState(GoToChaseStateName);
+            }
         }
     }
 
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        securityNPC.SetSteeringBehaviourWeight(securityNPC.barkAttractBehaviour, 0);
+        securityNPC.barkAttractBehaviour.Weight = 0;
         securityNPC.IsReacting = false;
     }
 }
