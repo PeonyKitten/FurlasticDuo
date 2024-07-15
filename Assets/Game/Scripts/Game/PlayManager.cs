@@ -14,6 +14,7 @@ namespace Game.Scripts.Game
     [Serializable]
     public enum PlayMode
     {
+        Unassigned,
         SinglePlayer,
         LocalCoop,
     }
@@ -37,6 +38,8 @@ namespace Game.Scripts.Game
         
         private PlayerStart _playerStart;
 
+        public PlayMode Mode { get; private set; } = PlayMode.Unassigned;
+
         private void Start()
         {
             playerInputManager = GetComponent<PlayerInputManager>();
@@ -44,6 +47,7 @@ namespace Game.Scripts.Game
         
         public void PlayGame(PlayMode mode, Scene scene)
         {
+            Mode = mode;
             _playerStart = FindFirstObjectByType<PlayerStart>(); 
             if (_playerStart is null)
             {
@@ -113,9 +117,6 @@ namespace Game.Scripts.Game
 
         public void ResetGame()
         {
-            _playerStart = null;
-            _playerIndex = 0;
-            
             ClearInputHandlers();
             playerInputManager.DisableJoining();
 
@@ -123,10 +124,17 @@ namespace Game.Scripts.Game
 
             cat = null;
             dog = null;
+            
+            _playerStart = null;
+            _playerIndex = 0;
+
+            Mode = PlayMode.Unassigned;
         }
         
         private void OnPlayerJoined(PlayerInput playerInput)
         {
+            if (Mode != PlayMode.LocalCoop) return;
+            
             Debug.Assert(_playerIndex <= 1, $"Invalid Player Index {_playerIndex}");
 
             var inputHandler = playerInput.GetComponent<PlayerInputHandler>();
@@ -155,6 +163,8 @@ namespace Game.Scripts.Game
 
         private void OnPlayerLeft(PlayerInput playerInput)
         {
+            if (Mode != PlayMode.LocalCoop) return;
+            
             _playerIndex = Math.Max(_playerIndex - 1, 0);
 
             if (_playerIndex < 2)
