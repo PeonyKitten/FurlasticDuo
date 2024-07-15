@@ -7,7 +7,6 @@ using FD.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-using Scene = UnityEngine.SceneManagement.Scene;
 
 namespace FD.Game
 {
@@ -131,6 +130,7 @@ namespace FD.Game
             Mode = PlayMode.Unassigned;
         }
         
+        // ReSharper disable once UnusedMember.Local
         private void OnPlayerJoined(PlayerInput playerInput)
         {
             if (Mode != PlayMode.LocalCoop) return;
@@ -161,7 +161,8 @@ namespace FD.Game
             inputHandlers.Add(inputHandler);
         }
 
-        private void OnPlayerLeft(PlayerInput playerInput)
+        // ReSharper disable once UnusedMember.Local
+        private void OnPlayerLeft(PlayerInput _)
         {
             if (Mode != PlayMode.LocalCoop) return;
             
