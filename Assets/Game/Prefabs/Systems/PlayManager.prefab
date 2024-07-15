@@ -48,7 +48,7 @@ MonoBehaviour:
   m_NotificationBehavior: 0
   m_MaxPlayerCount: 2
   m_AllowJoining: 0
-  m_JoinBehavior: 0
+  m_JoinBehavior: 1
   m_PlayerJoinedEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -56,9 +56,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_JoinAction:
-    m_UseReference: 0
+    m_UseReference: 1
     m_Action:
-      m_Name: 
+      m_Name: Join
       m_Type: 0
       m_ExpectedControlType: 
       m_Id: 33a6e03d-8bfa-4796-bb50-898dd1b1109b
@@ -66,7 +66,8 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 0}
+    m_Reference: {fileID: 2446866082233356891, guid: 764bc45e107093347baa45c8fe10b1b1,
+      type: 3}
   m_PlayerPrefab: {fileID: 5158904645978587220, guid: a77c1427e4428ba408c629056e51af2b,
     type: 3}
   m_SplitScreen: 0
@@ -98,7 +99,7 @@ MonoBehaviour:
     type: 3}
   ghostPrefab: {fileID: 8575567253837766898, guid: ebdc938333b89c74d8fdf4ca98cd4ec0,
     type: 3}
-  playerInputManager: {fileID: 0}
+  playerInputManager: {fileID: 3846332775707657528}
   cat: {fileID: 0}
   dog: {fileID: 0}
   ghost: {fileID: 0}
