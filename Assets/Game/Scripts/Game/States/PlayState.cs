@@ -7,20 +7,14 @@ using Game.Scripts.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+
 namespace Game.Scripts.Game.States
 {
     public class PlayState : IState<GameManager>
     {
-        [Serializable]
-        public enum PlayMode
-        {
-            SinglePlayer,
-            LocalCoop,
-        }
+        private readonly PlayMode _mode;
 
-        private PlayMode _mode;
-
-        public PlayState(PlayMode mode = PlayMode.SinglePlayer)
+        public PlayState(PlayMode mode)
         {
             _mode = mode;
         }
@@ -32,9 +26,9 @@ namespace Game.Scripts.Game.States
             GameManager.Instance.StartCoroutine(LoadPlaygroundScene(state));
         }
 
-        private  IEnumerator LoadPlaygroundScene(GameManager state)
+        private IEnumerator LoadPlaygroundScene(GameManager state)
         {
-            var asyncLoad = SceneManager.LoadSceneAsync("level-1-lab", LoadSceneMode.Additive);
+            var asyncLoad = SceneManager.LoadSceneAsync(state.gameScene, LoadSceneMode.Additive);
 
             if (asyncLoad == null) yield break;
             
@@ -45,21 +39,12 @@ namespace Game.Scripts.Game.States
             
             state.uiCamera.enabled = false;
             MenuManager.Instance.PopMenu();
+            PlayManager.Instance.PlayGame(_mode, SceneManager.GetSceneByName(state.gameScene));
             MenuManager.Instance.HideDummy();
             
             state.pauseGameAction.Enable();
             state.pauseGameAction.performed += OpenPauseGameMenu;
 
-            CheckpointSystem.Instance.ForceGrabValues();
-
-            if (_mode == PlayMode.LocalCoop)
-            {
-                state.playerInputManager.EnableJoining();
-            }
-            else
-            {
-                state.SpawnDefaultInputHandler();
-            }
         }
 
         public void OnStateResume(GameManager state)
@@ -83,9 +68,8 @@ namespace Game.Scripts.Game.States
         {
             state.pauseGameAction.performed -= OpenPauseGameMenu;
             state.pauseGameAction.Disable();
-            state.ClearInputHandlers();
+            PlayManager.Instance.ResetGame();
             InputSystem.ResetHaptics();
-            state.playerInputManager.DisableJoining();
             // EventBus<GameStates>.Publish(GameStates.Paused);
         }
     }
