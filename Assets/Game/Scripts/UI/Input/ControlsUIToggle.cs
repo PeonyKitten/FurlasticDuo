@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace FD.UI
+namespace FD.UI.Input
 {
     public class ControlsUIToggle : MonoBehaviour
     {
