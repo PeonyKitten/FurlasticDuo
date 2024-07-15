@@ -41,6 +41,12 @@ namespace Game.Scripts.SteeringBehaviours
             }
         }
 
+        public float MaxSpeed
+        {
+            get => maxSpeed;
+            set => maxSpeed = value;
+        }
+
         public float InverseMass { get; private set; }
         public Vector3 Velocity { get; private set; } = Vector3.zero;
 
