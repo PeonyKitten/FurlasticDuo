@@ -3,7 +3,7 @@
     <Style src="project://database/Assets/Game/UI/MainMenu.uss?fileID=7433441132597879392&amp;guid=a4b6357d704177641bf9f52865a00078&amp;type=3#MainMenu" />
     <ui:VisualElement name="Background" style="background-image: url(&quot;project://database/Assets/Game/Art/Menu/menu_blur_bg.png?fileID=2800000&amp;guid=2e7e61791c0af0d43b4772a6507ac9cd&amp;type=3#menu_blur_bg&quot;); flex-grow: 1; justify-content: center; align-items: center; padding-top: 10%; padding-right: 10%; padding-bottom: 10%; padding-left: 10%;">
         <ui:VisualElement style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Game/Art/Menu/menu_pause_paw.png?fileID=2800000&amp;guid=197b9e8ea028e9f48b81b992e2b48e2c&amp;type=3#menu_pause_paw&quot;); -unity-background-scale-mode: scale-to-fit; align-self: stretch;">
-            <ui:Label tabindex="-1" text="Paused" parse-escape-sequences="true" display-tooltip-when-elided="true" name="PausedLabel" style="font-size: 120px; color: rgb(255, 255, 255); -unity-font-style: bold; -unity-text-align: middle-center; margin-bottom: 50px;" />
+            <ui:Label tabindex="-1" text="Paused" parse-escape-sequences="true" display-tooltip-when-elided="true" name="PausedLabel" class="title" style="color: rgb(255, 255, 255); -unity-text-align: middle-center;" />
             <ui:VisualElement name="Buttons" style="flex-grow: 1; justify-content: space-around; align-items: center;" />
         </ui:VisualElement>
     </ui:VisualElement>

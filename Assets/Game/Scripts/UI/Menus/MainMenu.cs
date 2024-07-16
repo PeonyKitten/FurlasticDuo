@@ -32,7 +32,7 @@ namespace Game.Scripts.UI.Menus
             });
             
             var soloPlayButton = options.Create<Button>("main-button");
-            soloPlayButton.text = "Singleplayer";
+            soloPlayButton.text = "SinglePlayer";
             soloPlayButton.ApplyClickCallbacks(() =>
             {
                 GameManager.Instance.ChangeState(new PlayState(PlayMode.SinglePlayer));
@@ -43,12 +43,13 @@ namespace Game.Scripts.UI.Menus
             optionsButton.text = "Options";
             optionsButton.ApplyClickCallbacks(() => MenuManager.Instance.PushMenu(MenuManager.Instance.optionsMenu));
             
-            var creditsButton = options.Create<Button>("main-button");
-            creditsButton.text = "Credits";
+            var collectiblesButton = options.Create<Button>("main-button");
+            collectiblesButton.SetEnabled(false);
+            collectiblesButton.text = "Collectibles";
             // creditsButton.RegisterCallback<ClickEvent>(_ => MenuManager.Instance.PushMenu(MenuManager.Instance.creditsPage));
 
             var quitButton = options.Create<Button>("main-button");
-            quitButton.text = "Quit";
+            quitButton.text = "Exit to Desktop";
             quitButton.ApplyClickCallbacks(Application.Quit);
             
             if (preventOverflowNavigation)

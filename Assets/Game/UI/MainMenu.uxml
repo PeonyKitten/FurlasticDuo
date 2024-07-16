@@ -1,6 +1,10 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/Game/UI/MainMenu.uss?fileID=7433441132597879392&amp;guid=a4b6357d704177641bf9f52865a00078&amp;type=3#MainMenu" />
-    <ui:VisualElement name="Background" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Game/Textures/Concept/menu_main_bg_rough_no_title.png?fileID=2800000&amp;guid=ff0f5b5f3a96927458d341e8a9593a94&amp;type=3#menu_main_bg_rough_no_title&quot;); align-items: flex-end; justify-content: flex-end;">
-        <ui:VisualElement name="Buttons" style="flex-grow: 1; align-items: center; align-self: flex-end; justify-content: flex-end; padding-right: 10%; padding-bottom: 5%; padding-top: 15%; padding-left: 10%; width: 50%;" />
+    <ui:VisualElement name="Container" style="flex-grow: 1; align-items: stretch; justify-content: space-around; background-color: rgb(255, 255, 255); flex-direction: row;">
+        <ui:VisualElement name="Background" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Game/Art/Menu/Main_Menu_BG.png?fileID=21300000&amp;guid=b0f8b52ec5146374fb43279d4a76abe1&amp;type=3#Main_Menu_BG&quot;); -unity-background-scale-mode: scale-and-crop; position: absolute; right: 250px; bottom: 0; top: 0; left: auto; width: 700px; -unity-background-image-tint-color: rgb(243, 243, 243);" />
+        <ui:VisualElement name="Buttons" style="flex-grow: 1; align-items: flex-start; justify-content: flex-end; margin-top: 40px; margin-right: 40px; margin-bottom: 80px; margin-left: 80px;" />
+        <ui:VisualElement name="TitleContainer" style="flex-grow: 1; align-items: stretch; justify-content: flex-start;">
+            <ui:Label tabindex="-1" text="Furlastic\nDuo" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Title" class="title" style="-unity-text-align: upper-right; white-space: normal; margin-top: 41px; margin-right: 53px; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
