@@ -1399,6 +1399,11 @@ PrefabInstance:
       propertyPath: primaryCamera
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6092545895263983126, guid: 37cfd9086b5b49f4295a4f4469b1eb88,
+        type: 3}
+      propertyPath: slopeCheckLayerMask.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 6126244026842820377, guid: 37cfd9086b5b49f4295a4f4469b1eb88,
         type: 3}
       propertyPath: m_LocalRotation.w
@@ -5035,6 +5040,9 @@ MonoBehaviour:
   barkAttractBehaviour: {fileID: 528755717212156136}
   chasePlayerBehaviour: {fileID: 191817144}
   playerDetection: {fileID: 2126405411}
+  patrolSpeed: 2
+  investigateSpeed: 2
+  chaseSpeed: 2
 --- !u!95 &528755717212156141
 Animator:
   serializedVersion: 5

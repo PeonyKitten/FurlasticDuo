@@ -11,6 +11,7 @@ namespace FD.NPC.Security
         {
             Debug.Log("Security NPC is patrolling.");
             Security.followPathBehaviour.Weight = 1;
+            Security.SetSpeedForState("Patrolling");
             Security.followPathBehaviour.onReachWaypoint.AddListener(OnReachWaypoint);
         }
 

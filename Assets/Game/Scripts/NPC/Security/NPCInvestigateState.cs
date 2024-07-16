@@ -12,9 +12,11 @@ namespace FD.NPC.Security
         {
             Debug.Log("Security NPC is investigating a sound.");
             Security.PlayAnimation("Alert");
+            Security.SetSpeedForState("Investigate");
             Security.barkAttractBehaviour.Weight = 1;
             Security.barkAttractBehaviour.Target = Security.barkOrigin;
             Security.barkAttractBehaviour.IsReacting = true;
+            
         }
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

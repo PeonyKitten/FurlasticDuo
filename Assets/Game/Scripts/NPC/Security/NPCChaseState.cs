@@ -11,6 +11,7 @@ namespace FD.NPC.Security
         {
             Debug.Log("Security NPC is chasing.");
             Security.chasePlayerBehaviour.Weight = 1;
+            Security.SetSpeedForState("Chasing");
         }
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
