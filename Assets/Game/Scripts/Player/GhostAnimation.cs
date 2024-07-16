@@ -27,6 +27,9 @@ namespace Game.Scripts.Player
         [SerializeField] private AnimationCurve rotationCurve;
         [SerializeField] private AnimationCurve effectScaleFactorCurve;
 
+        [Header("Ghost Mouth")]
+        [SerializeField] private Animator ghostMouthAnimator;
+
         [Header("Ghost Material")]
         [SerializeField] private Material ghostEffectMaterial;
 
@@ -132,6 +135,12 @@ namespace Game.Scripts.Player
             if (ghostEffectMaterial != null)
             {
                 ghostEffectMaterial.SetFloat("_Stages", ghostLength);
+            }
+
+            // Set the ghost mouth deformation
+            if (ghostMouthAnimator != null)
+            {
+                ghostMouthAnimator.SetFloat("MouthShapeBlend", ghostLength);
             }
         }
 
