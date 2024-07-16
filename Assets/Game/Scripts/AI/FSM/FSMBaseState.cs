@@ -1,15 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class FSMBaseState : StateMachineBehaviour
+namespace FD.AI.FSM
 {
-    protected FSM fsm { get; private set; }
-    public GameObject owner { get; private set; }
-
-    public virtual void Init(GameObject _owner, FSM _fsm)
+    public abstract class FSMBaseState : StateMachineBehaviour
     {
-        owner = _owner;
-        fsm = _fsm;
+        protected FSM fsm { get; private set; }
+        public GameObject owner { get; private set; }
+
+        public virtual void Init(GameObject _owner, FSM _fsm)
+        {
+            owner = _owner;
+            fsm = _fsm;
+        }
     }
 }

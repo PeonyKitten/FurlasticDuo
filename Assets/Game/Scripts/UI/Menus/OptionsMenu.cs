@@ -1,10 +1,10 @@
 using System.Collections;
-using Game.Scripts.Utils;
+using FD.Utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
-namespace Game.Scripts.UI.Menus
+namespace FD.UI.Menus
 {
     public class OptionsMenu: Menu
     {

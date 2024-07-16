@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Game.Scripts.SteeringBehaviours
+namespace FD.AI.SteeringBehaviours
 {
     [System.Serializable]
     public class WaypointEvent : UnityEvent<Vector3>

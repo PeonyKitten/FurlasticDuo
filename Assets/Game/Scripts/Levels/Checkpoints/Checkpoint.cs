@@ -1,10 +1,8 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using Game.Scripts.Player;
+using FD.Player;
 using UnityEngine;
 
-namespace Game.Scripts.Levels.Checkpoints
+namespace FD.Levels.Checkpoints
 {
     [RequireComponent(typeof(BoxCollider))]
     public class Checkpoint: MonoBehaviour

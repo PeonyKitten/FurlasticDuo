@@ -1,10 +1,9 @@
-using System;
-using Game.Scripts.Levels.Checkpoints;
-using Game.Scripts.Player;
+using FD.Levels.Checkpoints;
+using FD.Player;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Game.Scripts.Levels
+namespace FD.Levels
 {
     public class KillFloor : MonoBehaviour
     {

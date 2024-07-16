@@ -1,8 +1,8 @@
 using System;
-using Game.Scripts.Utils;
+using FD.Utils;
 using UnityEngine;
 
-namespace Game.Scripts.Misc
+namespace FD.Misc
 {
     public class Jail : MonoBehaviour
     {

@@ -1,13 +1,11 @@
-using System;
 using System.Collections;
-using Game.Scripts.Game;
-using Game.Scripts.Game.States;
-using Game.Scripts.UI.Components;
-using Game.Scripts.Utils;
+using FD.Game;
+using FD.Game.States;
+using FD.Utils;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Game.Scripts.UI.Menus
+namespace FD.UI.Menus
 {
     public class MainMenu : Menu
     {

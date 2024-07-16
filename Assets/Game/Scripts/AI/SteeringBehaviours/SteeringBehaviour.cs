@@ -1,8 +1,8 @@
-using Game.Scripts.Utils;
+using FD.Utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Game.Scripts.SteeringBehaviours
+namespace FD.AI.SteeringBehaviours
 {
     public abstract class SteeringBehaviour : MonoBehaviour
     {

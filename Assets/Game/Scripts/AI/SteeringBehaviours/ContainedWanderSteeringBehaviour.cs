@@ -1,8 +1,8 @@
-using Game.Scripts.Misc;
-using Game.Scripts.Utils;
+using FD.Misc;
+using FD.Utils;
 using UnityEngine;
 
-namespace Game.Scripts.SteeringBehaviours
+namespace FD.AI.SteeringBehaviours
 {
     public class ContainedWanderSteeringBehaviour : WanderSteeringBehaviour
     {

@@ -1,13 +1,11 @@
 using System;
-using Game.Scripts.Game.States;
-using Game.Scripts.Grab;
-using Game.Scripts.Misc;
-using Game.Scripts.Patterns;
-using Game.Scripts.Utils;
+using FD.Grab;
+using FD.Misc;
+using FD.Utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Game.Scripts.Player
+namespace FD.Player
 {
     [Serializable]
     public enum Player

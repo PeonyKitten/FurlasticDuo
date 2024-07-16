@@ -1,13 +1,12 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using Game.Scripts.Levels.Checkpoints;
-using Game.Scripts.Patterns;
-using Game.Scripts.UI;
-using UnityEngine;
+using FD.Levels.Checkpoints;
+using FD.Patterns;
+using FD.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-namespace Game.Scripts.Game.States
+
+namespace FD.Game.States
 {
     public class PlayState : IState<GameManager>
     {

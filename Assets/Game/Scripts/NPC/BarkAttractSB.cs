@@ -1,12 +1,12 @@
-using UnityEngine;
-using Game.Scripts.Barking;
-using Game.Scripts.SteeringBehaviours;
-using System.Collections;
 using System;
-using Game.Scripts.Utils;
+using System.Collections;
+using FD.AI.SteeringBehaviours;
+using FD.Barking;
+using FD.Utils;
+using UnityEngine;
 using UnityEngine.Events;
 
-namespace Game.Scripts.NPC
+namespace FD.NPC
 {
     public class BarkAttractSB : ArriveSteeringBehaviour, IBarkReaction
     {
@@ -29,11 +29,11 @@ namespace Game.Scripts.NPC
             
         public bool IsReacting { get; set; }
         private Coroutine _barkCoroutine;
-        private SecurityNPC securityNPC;
+        private Security.Security _security;
 
         private void Awake()
         {
-            securityNPC = GetComponentInParent<SecurityNPC>();
+            _security = GetComponentInParent<Security.Security>();
         }
 
         public void React(Bark bark)
@@ -44,9 +44,9 @@ namespace Game.Scripts.NPC
             
             onBarkReact?.Invoke();
 
-            if (securityNPC != null)
+            if (_security != null)
             {
-                securityNPC.ReactToBark(Target);
+                _security.ReactToBark(Target);
             }
 
             if (attractStrategy == AttractStrategy.AttractByDistance) return;

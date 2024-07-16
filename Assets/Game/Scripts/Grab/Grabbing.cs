@@ -1,8 +1,8 @@
-using Game.Scripts.Player;
+using FD.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Game.Scripts.Grab
+namespace FD.Grab
 {
     [RequireComponent(typeof(PlayerController))]
     public class Grabbing : MonoBehaviour

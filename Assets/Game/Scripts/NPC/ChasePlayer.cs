@@ -1,7 +1,7 @@
-using Game.Scripts.SteeringBehaviours;
+using FD.AI.SteeringBehaviours;
 using UnityEngine;
 
-namespace Game.Scripts.NPC
+namespace FD.NPC
 {
     public class ChasePlayerSteeringBehaviour : ArriveSteeringBehaviour
     {

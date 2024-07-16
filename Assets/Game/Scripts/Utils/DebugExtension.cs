@@ -1,7 +1,7 @@
 using System.Reflection;
 using UnityEngine;
 
-namespace Game.Scripts.Utils
+namespace FD.Utils
 {
 	/// <summary>
 	/// Debug Extension

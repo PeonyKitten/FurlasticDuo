@@ -1,7 +1,7 @@
-﻿using Game.Scripts.Utils;
+﻿using FD.Utils;
 using UnityEngine;
 
-namespace Game.Scripts.SteeringBehaviours
+namespace FD.AI.SteeringBehaviours
 {
     public class SeekSteeringBehaviour: SteeringBehaviour
     {

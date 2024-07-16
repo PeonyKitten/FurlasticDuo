@@ -4699,7 +4699,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 15
+  m_Radius: 25
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &2126405411
 MonoBehaviour:
@@ -4714,6 +4714,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fov: {fileID: 592187231}
+  wallLayerMask:
+    serializedVersion: 2
+    m_Bits: 201
 --- !u!1001 &528755717212156134
 PrefabInstance:
   m_ObjectHideFlags: 0

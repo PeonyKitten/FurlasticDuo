@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game.Scripts.Misc
+namespace FD.Misc
 {
     public class DummyRigidbody : MonoBehaviour
     {

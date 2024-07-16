@@ -1,11 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Game.Scripts.Patterns;
-using Game.Scripts.Player;
+using FD.Patterns;
+using FD.Player;
 using UnityEngine;
 
-namespace Game.Scripts.Levels.Checkpoints
+namespace FD.Levels.Checkpoints
 {
     public class CheckpointSystem: Singleton<CheckpointSystem>
     {

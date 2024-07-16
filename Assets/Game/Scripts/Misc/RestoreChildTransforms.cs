@@ -6,7 +6,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Game.Scripts.Misc
+namespace FD.Misc
 {
     public class RestoreChildTransforms: MonoBehaviour
     {
