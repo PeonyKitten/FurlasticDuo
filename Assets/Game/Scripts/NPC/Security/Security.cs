@@ -20,6 +20,9 @@ namespace FD.NPC.Security
         public float investigateSpeed;
         public float chaseSpeed;
 
+        [Header("Investigation Settings")]
+        public float investigationResetTime = 5f;
+
         private static readonly int IdleTrigger = Animator.StringToHash("IdleTrigger");
         private static readonly int AlertTrigger = Animator.StringToHash("AlertTrigger");
 
