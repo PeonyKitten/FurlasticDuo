@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
-namespace Game.Scripts.Game.Editor
+namespace FD.Game.Scripts.Game.Editor
 {
     [CustomEditor(typeof(GameManager))]
     public class GameManagerInspector : UnityEditor.Editor

@@ -11,7 +11,6 @@ namespace FD.Levels.Checkpoints
     public class Checkpoint: MonoBehaviour
     {
         [SerializeField] private List<Transform> spawnPositions = new();
-        [SerializeField] private bool initialSavePoint = false;
         [SerializeField] private bool resetPlayers = true;
 
         [Header("Callbacks")]
@@ -41,7 +40,7 @@ namespace FD.Levels.Checkpoints
             player.transform.SetPositionAndRotation(position, Quaternion.identity);
             if (resetPlayers)
             {
-                players[index].Reset();
+                player.Reset();
             }
         }
 

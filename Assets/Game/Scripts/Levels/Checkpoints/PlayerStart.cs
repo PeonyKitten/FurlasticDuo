@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game.Scripts.Levels.Checkpoints
+namespace FD.Levels.Checkpoints
 {
     public class PlayerStart : Checkpoint
     {

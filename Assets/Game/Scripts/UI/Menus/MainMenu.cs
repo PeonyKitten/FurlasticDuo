@@ -4,7 +4,7 @@ using FD.Game.States;
 using FD.Utils;
 using UnityEngine;
 using UnityEngine.UIElements;
-using PlayMode = Game.Scripts.Game.PlayMode;
+using PlayMode = FD.Game.PlayMode;
 
 namespace FD.UI.Menus
 {
