@@ -4,6 +4,7 @@ using FD.Game.States;
 using FD.Utils;
 using UnityEngine;
 using UnityEngine.UIElements;
+using PlayMode = Game.Scripts.Game.PlayMode;
 
 namespace FD.UI.Menus
 {
@@ -24,15 +25,15 @@ namespace FD.UI.Menus
             coopPlayButton.Focus();
             coopPlayButton.ApplyClickCallbacks(() =>
             {
-                GameManager.Instance.ChangeState(new PlayState(PlayState.PlayMode.LocalCoop));
+                GameManager.Instance.ChangeState(new PlayState(PlayMode.LocalCoop));
                 coopPlayButton.SetEnabled(false);
             });
             
             var soloPlayButton = options.Create<Button>("main-button");
-            soloPlayButton.text = "Singleplayer";
+            soloPlayButton.text = "SinglePlayer";
             soloPlayButton.ApplyClickCallbacks(() =>
             {
-                GameManager.Instance.ChangeState(new PlayState(PlayState.PlayMode.SinglePlayer));
+                GameManager.Instance.ChangeState(new PlayState(PlayMode.SinglePlayer));
                 soloPlayButton.SetEnabled(false);
             });
             
@@ -40,12 +41,13 @@ namespace FD.UI.Menus
             optionsButton.text = "Options";
             optionsButton.ApplyClickCallbacks(() => MenuManager.Instance.PushMenu(MenuManager.Instance.optionsMenu));
             
-            var creditsButton = options.Create<Button>("main-button");
-            creditsButton.text = "Credits";
+            var collectiblesButton = options.Create<Button>("main-button");
+            collectiblesButton.SetEnabled(false);
+            collectiblesButton.text = "Collectibles";
             // creditsButton.RegisterCallback<ClickEvent>(_ => MenuManager.Instance.PushMenu(MenuManager.Instance.creditsPage));
 
             var quitButton = options.Create<Button>("main-button");
-            quitButton.text = "Quit";
+            quitButton.text = "Exit to Desktop";
             quitButton.ApplyClickCallbacks(Application.Quit);
             
             if (preventOverflowNavigation)

@@ -4,13 +4,14 @@
 // Acts as an interface between a PlayerInput and either both or one of the PlayerControllers.
 
 using System;
-using FD.Game.States;
-using FD.Grab;
-using FD.Patterns;
+using Game.Scripts.Game;
+using Game.Scripts.Game.States;
+using Game.Scripts.Grab;
+using Game.Scripts.Patterns;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace FD.Player
+namespace Game.Scripts.Player
 {
     [RequireComponent(typeof(PlayerInput))]
     public class PlayerInputHandler: MonoBehaviour
@@ -38,18 +39,26 @@ namespace FD.Player
         }
         
         public void SetupPlayer(PlayerInputType playerType)
-        { 
-            var players = FindObjectsOfType<PlayerController>();
-            foreach (var playerController in players)
+        {
+            if (PlayManager.HasInstance())
             {
-                if (playerController.IsCat)
+                cat = PlayManager.Instance.cat;
+                dog = PlayManager.Instance.dog;
+            }
+            else
+            {
+                var players = FindObjectsOfType<PlayerController>();
+                foreach (var playerController in players)
                 {
-                    cat = playerController;
-                }
+                    if (playerController.IsCat)
+                    {
+                        cat = playerController;
+                    }
 
-                if (playerController.IsDog)
-                {
-                    dog = playerController;
+                    if (playerController.IsDog)
+                    {
+                        dog = playerController;
+                    }
                 }
             }
             

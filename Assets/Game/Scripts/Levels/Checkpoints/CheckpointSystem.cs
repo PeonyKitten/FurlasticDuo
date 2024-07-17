@@ -3,6 +3,7 @@ using System.Linq;
 using FD.Patterns;
 using FD.Player;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace FD.Levels.Checkpoints
 {
@@ -13,6 +14,16 @@ namespace FD.Levels.Checkpoints
         
         private Checkpoint _lastCheckpoint;
         private bool _shouldSpawn;
+
+        private void Update()
+        {
+#if UNITY_EDITOR
+            if (Keyboard.current[Key.R].wasPressedThisFrame)
+            {
+                Respawn();
+            }
+#endif
+        }
 
         public void SaveCheckpoint(Checkpoint savePoint)
         {
@@ -30,7 +41,6 @@ namespace FD.Levels.Checkpoints
             players = FindObjectsOfType<PlayerController>().ToList();
             savingIcon = FindObjectOfType<SaveCheckpointIcon>();
         }
-
 
         public void Respawn()
         {

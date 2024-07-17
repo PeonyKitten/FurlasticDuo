@@ -77,11 +77,14 @@ namespace FD.Player
         public bool IsDog => playerType == Player.Dog;
         public bool IsCat => playerType == Player.Cat;
 
-        private void Start()
+        private void Awake()
         {
             Rigidbody = GetComponent<Rigidbody>();
             _grabbing = GetComponent<Grabbing>();
-
+        }
+        
+        private void Start()
+        {
             if (!primaryCamera)
             {
                 primaryCamera = Camera.main;

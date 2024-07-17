@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using FD.Player;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEditor;
+using FD.Utils;
 
 namespace FD.Levels.Checkpoints
 {
@@ -17,22 +19,12 @@ namespace FD.Levels.Checkpoints
         
         private BoxCollider _trigger;
         
-        private void Start()
+        protected virtual void Start()
         {
             if (TryGetComponent(out _trigger))
             {
                 _trigger.isTrigger = true;
             }
-
-            if (initialSavePoint)
-            {
-                CheckpointSystem.Instance.SaveCheckpoint(this);
-            }
-        }
-
-        private void OnValidate()
-        {
-            _trigger = GetComponent<BoxCollider>();
         }
 
         private void OnTriggerEnter(Collider other)
@@ -43,27 +35,48 @@ namespace FD.Levels.Checkpoints
             }
         }
 
+        public void Spawn(PlayerController player, int index)
+        {
+            var position = spawnPositions.Count > index ? spawnPositions[index].position : transform.position; 
+            player.transform.SetPositionAndRotation(position, Quaternion.identity);
+            if (resetPlayers)
+            {
+                players[index].Reset();
+            }
+        }
+
         public void Spawn(List<PlayerController> players)
         {
             Debug.Log($"Spawning {players.Count} at {name}");
             for (var index = 0; index < players.Count; index++)
             {
-                players[index].transform.SetPositionAndRotation(spawnPositions[index].position, Quaternion.identity);
-                if (resetPlayers)
-                {
-                    players[index].Reset();
-                }
+                Spawn(players[index], index);
             }
             onRespawn?.Invoke();
         }
-        
+
+        #if UNITY_EDITOR
+        [DrawGizmo(GizmoType.NonSelected)]
+        private static void DrawCheckpointZone(Checkpoint checkpoint, GizmoType gizmoType)
+        {
+            var collider = checkpoint.GetComponent<BoxCollider>();
+            Gizmos.color = Color.magenta;
+            DebugExtension.DrawLocalCube(checkpoint.transform.localToWorldMatrix, collider.size, Color.cyan);
+        }
+        #endif
+
         private void OnDrawGizmos()
+        {
+            Gizmos.DrawIcon(transform.position, "Game/Scripts/Levels/Checkpoints/Checkpoint", true);
+        }
+
+        private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.red;
             
             foreach (var spawnPosition in spawnPositions)
             {
-                Gizmos.DrawWireSphere(spawnPosition.position, 0.04f);
+                Gizmos.DrawSphere(spawnPosition.position, 0.04f);
             }
         }
     }

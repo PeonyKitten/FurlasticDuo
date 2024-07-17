@@ -11,7 +11,7 @@ namespace FD.Levels.Checkpoints
         private Image _image;
         private static readonly int LoadingAnimHash = Animator.StringToHash("Loading");
 
-        private void Start()
+        private void Awake()
         {
             _animator = GetComponent<Animator>();
             _image = GetComponent<Image>();
