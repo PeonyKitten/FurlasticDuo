@@ -1,9 +1,9 @@
-using UnityEngine;
 using System.Collections.Generic;
-using Game.Scripts.Player;
+using FD.Player;
+using UnityEngine;
 using UnityEngine.Events;
 
-namespace Game.Scripts.Grab
+namespace FD.Grab
 {
     public class StaticObject : MonoBehaviour, IGrabbable
     {
