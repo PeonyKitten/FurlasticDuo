@@ -4,14 +4,12 @@
 // Controls the elastic force between the players, along with snapping back. 
 
 using System;
-using Game.Scripts;
-using Game.Scripts.Player;
-using Game.Scripts.Utils;
+using FD.Player;
+using FD.Utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-
-namespace Game.Scripts.Elastic
+namespace FD.Elastic
 {
     public class ElasticForce : MonoBehaviour
     {

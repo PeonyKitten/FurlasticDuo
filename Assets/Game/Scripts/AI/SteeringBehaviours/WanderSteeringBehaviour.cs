@@ -1,8 +1,8 @@
-﻿using Game.Scripts.Utils;
+﻿using FD.Utils;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Game.Scripts.SteeringBehaviours
+namespace FD.AI.SteeringBehaviours
 {
     public class WanderSteeringBehaviour: SeekSteeringBehaviour
     {

@@ -1,10 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Game.Scripts.Player;
+using FD.Player;
 using UnityEngine;
 
-namespace Game.Scripts.Barking
+namespace FD.Barking
 {
     public class Bark : MonoBehaviour
     {

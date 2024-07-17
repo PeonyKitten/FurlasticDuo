@@ -1,4 +1,4 @@
-namespace Game.Scripts.Game.States
+namespace FD.Game.States
 {
     public enum GameEvents
     {

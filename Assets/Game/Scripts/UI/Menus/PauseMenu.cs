@@ -1,13 +1,13 @@
 using System.Collections;
-using Game.Scripts.Game;
-using Game.Scripts.Game.States;
-using Game.Scripts.Levels.Checkpoints;
-using Game.Scripts.Utils;
+using FD.Game;
+using FD.Game.States;
+using FD.Levels.Checkpoints;
+using FD.Utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
-namespace Game.Scripts.UI.Menus
+namespace FD.UI.Menus
 {
     public class PauseMenu: Menu
     {

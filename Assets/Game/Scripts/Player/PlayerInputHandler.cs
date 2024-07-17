@@ -4,14 +4,14 @@
 // Acts as an interface between a PlayerInput and either both or one of the PlayerControllers.
 
 using System;
-using Game.Scripts.Game;
-using Game.Scripts.Game.States;
-using Game.Scripts.Grab;
-using Game.Scripts.Patterns;
+using FD.Game;
+using FD.Game.States;
+using FD.Grab;
+using FD.Patterns;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Game.Scripts.Player
+namespace FD.Player
 {
     [RequireComponent(typeof(PlayerInput))]
     public class PlayerInputHandler: MonoBehaviour

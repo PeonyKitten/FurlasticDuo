@@ -1,13 +1,12 @@
 using System;
-using Game.Scripts.Game.States;
-using Game.Scripts.Grab;
-using Game.Scripts.Misc;
-using Game.Scripts.Patterns;
-using Game.Scripts.Utils;
+using FD.Grab;
+using FD.Levels.Checkpoints;
+using FD.Misc;
+using FD.Utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Game.Scripts.Player
+namespace FD.Player
 {
     [Serializable]
     public enum Player
@@ -26,7 +25,7 @@ namespace Game.Scripts.Player
     }
     
     [RequireComponent(typeof(Rigidbody))]
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviour, IReset
     {
         [Header("Movement")]
         [SerializeField] private bool useCameraRelativeMovement = true;
@@ -259,6 +258,11 @@ namespace Game.Scripts.Player
         private void OnDrawGizmos()
         {
             Gizmos.DrawRay(transform.position, _movement.Bulk());
+        }
+
+        public void Reset()
+        {
+            _grabbing.CurrentGrabbable?.ReleaseAll();
         }
     }
 }

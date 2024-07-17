@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Game.Scripts.Utils
+namespace FD.Utils
 {
     public static class UtilsMath
     {

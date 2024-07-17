@@ -1,9 +1,9 @@
-using Game.Scripts.Patterns;
-using Game.Scripts.UI;
+using FD.Patterns;
+using FD.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Game.Scripts.Game.States
+namespace FD.Game.States
 {
     public class PauseState : IState<GameManager>
     {

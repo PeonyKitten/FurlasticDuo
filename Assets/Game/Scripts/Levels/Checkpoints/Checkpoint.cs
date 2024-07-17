@@ -1,18 +1,21 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using Game.Scripts.Player;
-using Game.Scripts.Utils;
-using UnityEditor;
+using FD.Player;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEditor;
+using FD.Utils;
 
-namespace Game.Scripts.Levels.Checkpoints
+namespace FD.Levels.Checkpoints
 {
     [RequireComponent(typeof(BoxCollider))]
     public class Checkpoint: MonoBehaviour
     {
         [SerializeField] private List<Transform> spawnPositions = new();
+        [SerializeField] private bool resetPlayers = true;
 
+        [Header("Callbacks")]
+        public UnityEvent onRespawn;
+        
         private BoxCollider _trigger;
         
         protected virtual void Start()
@@ -35,6 +38,10 @@ namespace Game.Scripts.Levels.Checkpoints
         {
             var position = spawnPositions.Count > index ? spawnPositions[index].position : transform.position; 
             player.transform.SetPositionAndRotation(position, Quaternion.identity);
+            if (resetPlayers)
+            {
+                player.Reset();
+            }
         }
 
         public void Spawn(List<PlayerController> players)
@@ -44,6 +51,7 @@ namespace Game.Scripts.Levels.Checkpoints
             {
                 Spawn(players[index], index);
             }
+            onRespawn?.Invoke();
         }
 
         #if UNITY_EDITOR

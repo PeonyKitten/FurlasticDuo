@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Game.Scripts.Utils;
+using FD.Utils;
 using UnityEngine;
 
-namespace Game.Scripts.SteeringBehaviours
+namespace FD.AI.SteeringBehaviours
 {
     public class AvoidObstaclesSteeringBehaviour : SteeringBehaviour
     {
@@ -56,5 +56,7 @@ namespace Game.Scripts.SteeringBehaviours
                 Debug.DrawLine(feelerPos, forward * feeler.distance + feelerPos, feeler.IsTriggered ? Color.red : Color.blue);
             }
         }
+        
+        public override void Reset() {}
     }
 }

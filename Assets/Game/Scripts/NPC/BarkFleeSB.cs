@@ -1,12 +1,11 @@
-using UnityEngine;
-using Game.Scripts.Barking;
-using Game.Scripts.SteeringBehaviours;
-using UnityEngine.AI;
-using System.Collections;
-using Game.Scripts.Utils;
 using System;
+using System.Collections;
+using FD.AI.SteeringBehaviours;
+using FD.Barking;
+using FD.Utils;
+using UnityEngine;
 
-namespace Game.Scripts.NPC
+namespace FD.NPC
 {
     public class BarkFleeSB : FleeSteeringBehaviour, IBarkReaction
     {

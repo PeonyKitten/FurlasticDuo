@@ -1,29 +1,22 @@
-using Game.Scripts.SteeringBehaviours;
+using FD.AI.SteeringBehaviours;
 using UnityEngine;
 
-namespace Game.Scripts.NPC
+namespace FD.NPC
 {
-    public class ChasePlayerSteeringBehaviour: ArriveSteeringBehaviour
+    public class ChasePlayerSteeringBehaviour : ArriveSteeringBehaviour
     {
-        private Transform _player;
-
-        public void SetPlayer(Transform player)
-        {
-            _player = player;
-        }
-
-        public void ResetPlayer()
-        {
-            _player = null;
-        }
+        public Transform player;
 
         public override Vector3 CalculateForce()
         {
-            if (_player is null) return Vector3.zero;
-
-            Target = _player.position;
-
+            if (player == null) return Vector3.zero;
+            Target = player.position;
             return base.CalculateForce();
+        }
+
+        public override void Reset()
+        {
+            player = null;
         }
     }
 }

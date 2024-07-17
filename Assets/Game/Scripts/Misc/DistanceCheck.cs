@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Game.Scripts.Misc
+namespace FD.Misc
 {
     public class DistanceCheck : MonoBehaviour
     {

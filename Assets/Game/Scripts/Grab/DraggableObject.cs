@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
-using Game.Scripts.Player;
+using FD.Player;
 using UnityEngine;
 
-namespace Game.Scripts.Grab
+namespace FD.Grab
 {
     public class DraggableObject : MonoBehaviour, IGrabbable
     {

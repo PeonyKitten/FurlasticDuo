@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
-using Game.Scripts.Elastic;
-using Game.Scripts.Levels.Checkpoints;
-using Game.Scripts.Patterns;
-using Game.Scripts.Player;
+using FD.Elastic;
+using FD.Levels.Checkpoints;
+using FD.Patterns;
+using FD.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using Scene = UnityEngine.SceneManagement.Scene;
 
-namespace Game.Scripts.Game
+namespace FD.Game
 {
     [Serializable]
     public enum PlayMode

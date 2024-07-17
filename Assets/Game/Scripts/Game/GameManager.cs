@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Game.Scripts.Game.States;
-using Game.Scripts.Patterns;
-using Game.Scripts.Player;
+using FD.Game.States;
+using FD.Patterns;
+using FD.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Game.Scripts.Game
+namespace FD.Game
 {
     public class GameManager: Singleton<GameManager>
     {

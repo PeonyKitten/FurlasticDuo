@@ -1,10 +1,12 @@
-using Game.Scripts.Utils;
+using FD.Levels.Checkpoints;
+using FD.Utils;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Game.Scripts.SteeringBehaviours
+namespace FD.AI.SteeringBehaviours
 {
-    public abstract class SteeringBehaviour : MonoBehaviour
+    public abstract class SteeringBehaviour : MonoBehaviour, IReset
     {
         [Header("Steering Behaviour")]
         [SerializeField] protected float weight = 1f;
@@ -19,6 +21,7 @@ namespace Game.Scripts.SteeringBehaviours
         }
 
         [HideInInspector] public SteeringAgent steeringAgent;
+        private IReset _resetImplementation;
 
         private void Awake()
         {
@@ -41,5 +44,6 @@ namespace Game.Scripts.SteeringBehaviours
             return false;
         }
         public abstract Vector3 CalculateForce();
+        public abstract void Reset();
     }
 }

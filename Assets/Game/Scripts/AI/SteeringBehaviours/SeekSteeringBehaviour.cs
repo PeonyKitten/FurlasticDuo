@@ -1,7 +1,7 @@
-﻿using Game.Scripts.Utils;
+﻿using FD.Utils;
 using UnityEngine;
 
-namespace Game.Scripts.SteeringBehaviours
+namespace FD.AI.SteeringBehaviours
 {
     public class SeekSteeringBehaviour: SteeringBehaviour
     {
@@ -24,6 +24,11 @@ namespace Game.Scripts.SteeringBehaviours
         protected virtual void OnDrawGizmos()
         {
             DebugExtension.DrawCircle(Target, Vector3.up, Color.green);
+        }
+
+        public override void Reset()
+        {
+            DesiredVelocity = Vector3.zero;
         }
     }
 }

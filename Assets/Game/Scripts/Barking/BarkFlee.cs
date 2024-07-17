@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace Game.Scripts.Barking
+namespace FD.Barking
 {
     [RequireComponent(typeof(NavMeshAgent))]
     public class BarkFlee : MonoBehaviour, IBarkReaction

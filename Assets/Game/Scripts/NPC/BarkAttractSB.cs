@@ -1,12 +1,12 @@
-using UnityEngine;
-using Game.Scripts.Barking;
-using Game.Scripts.SteeringBehaviours;
-using System.Collections;
 using System;
-using Game.Scripts.Utils;
+using System.Collections;
+using FD.AI.SteeringBehaviours;
+using FD.Barking;
+using FD.Utils;
+using UnityEngine;
 using UnityEngine.Events;
 
-namespace Game.Scripts.NPC
+namespace FD.NPC
 {
     public class BarkAttractSB : ArriveSteeringBehaviour, IBarkReaction
     {
@@ -29,6 +29,12 @@ namespace Game.Scripts.NPC
             
         public bool IsReacting { get; set; }
         private Coroutine _barkCoroutine;
+        private Security.Security _security;
+
+        private void Awake()
+        {
+            _security = GetComponentInParent<Security.Security>();
+        }
 
         public void React(Bark bark)
         {
@@ -37,6 +43,11 @@ namespace Game.Scripts.NPC
             steeringAgent.reachedGoal = false;
             
             onBarkReact?.Invoke();
+
+            if (_security != null)
+            {
+                _security.ReactToBark(Target);
+            }
 
             if (attractStrategy == AttractStrategy.AttractByDistance) return;
 
@@ -89,6 +100,16 @@ namespace Game.Scripts.NPC
             base.OnDrawGizmos();
             DebugExtension.DrawCircle(transform.position, Vector3.up, Color.blue);
             Gizmos.DrawLine(transform.position, Target);
+        }
+
+        public override void Reset()
+        {
+            if (_barkCoroutine != null)
+            {
+                StopCoroutine(_barkCoroutine);
+            }
+            
+            StopReacting();
         }
     }
 }

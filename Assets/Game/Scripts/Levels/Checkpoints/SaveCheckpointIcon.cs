@@ -1,9 +1,8 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Game.Scripts.Levels.Checkpoints
+namespace FD.Levels.Checkpoints
 {
     [RequireComponent(typeof(Animator))]
     public class SaveCheckpointIcon : MonoBehaviour

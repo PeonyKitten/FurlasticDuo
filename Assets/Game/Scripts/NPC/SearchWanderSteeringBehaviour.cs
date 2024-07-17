@@ -1,8 +1,8 @@
-using Game.Scripts.SteeringBehaviours;
+using FD.AI.SteeringBehaviours;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Game.Scripts.NPC
+namespace FD.NPC
 {
     public class SearchWanderSteeringBehaviour: WanderSteeringBehaviour
     {
