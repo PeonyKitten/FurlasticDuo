@@ -1,4 +1,3 @@
-using Game.Scripts.Player;
 using UnityEngine;
 using UnityEngine.Events;
 
