@@ -1,10 +1,11 @@
 using FD.AI.FSM;
 using FD.AI.SteeringBehaviours;
+using FD.Levels.Checkpoints;
 using UnityEngine;
 
 namespace FD.NPC.Security
 {
-    public class Security : FSM
+    public class Security : FSM, IReset
     {
         [SerializeField] private Animator visualAnimator;
         public SteeringAgent steeringAgent;
@@ -67,8 +68,13 @@ namespace FD.NPC.Security
                 default:
                     Debug.LogWarning($"Unkniown State: {stateName}. Speed is not set");
                     break;
-
             }
+        }
+
+        public void Reset()
+        {
+            steeringAgent.Reset();
+            playerDetection.Reset();
         }
     }
 }

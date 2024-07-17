@@ -1,5 +1,6 @@
 using System;
 using FD.Grab;
+using FD.Levels.Checkpoints;
 using FD.Misc;
 using FD.Utils;
 using UnityEngine;
@@ -24,7 +25,7 @@ namespace FD.Player
     }
     
     [RequireComponent(typeof(Rigidbody))]
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviour, IReset
     {
         [Header("Movement")]
         [SerializeField] private bool useCameraRelativeMovement = true;
@@ -254,6 +255,11 @@ namespace FD.Player
         private void OnDrawGizmos()
         {
             Gizmos.DrawRay(transform.position, _movement.Bulk());
+        }
+
+        public void Reset()
+        {
+            _grabbing.CurrentGrabbable?.ReleaseAll();
         }
     }
 }

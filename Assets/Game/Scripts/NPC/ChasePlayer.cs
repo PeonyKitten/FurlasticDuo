@@ -13,5 +13,10 @@ namespace FD.NPC
             Target = player.position;
             return base.CalculateForce();
         }
+
+        public override void Reset()
+        {
+            player = null;
+        }
     }
 }

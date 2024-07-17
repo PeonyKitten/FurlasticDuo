@@ -101,5 +101,15 @@ namespace FD.NPC
             DebugExtension.DrawCircle(transform.position, Vector3.up, Color.blue);
             Gizmos.DrawLine(transform.position, Target);
         }
+
+        public override void Reset()
+        {
+            if (_barkCoroutine != null)
+            {
+                StopCoroutine(_barkCoroutine);
+            }
+            
+            StopReacting();
+        }
     }
 }

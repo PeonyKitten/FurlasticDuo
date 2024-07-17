@@ -4,6 +4,7 @@
 // Stores and resets the position and rotation of all children, and optionally reset Rigidbodies.
 
 using System.Collections.Generic;
+using FD.Levels.Checkpoints;
 using UnityEngine;
 
 namespace FD.Misc
@@ -23,10 +24,13 @@ namespace FD.Misc
         }
 
         [SerializeField] private bool storeGlobalPosition;
+        [SerializeField] private bool storeLocalRotation;
         [SerializeField] private bool storeOnAwake;
         [SerializeField] private bool resetRigidbodyVelocities;
+        [SerializeField] private bool resetOtherStuff;
         
         private readonly Dictionary<Transform, TransformData> _children = new();
+        private readonly List<IReset> _resets = new();
 
         public void StoreTransforms()
         {
@@ -35,8 +39,13 @@ namespace FD.Misc
             {
                 var child = transform.GetChild(index);
                 var position = storeGlobalPosition ? child.position : child.localPosition;
-                _children.Add(child, new TransformData(position, child.rotation));
+                var rotation = storeLocalRotation ? child.localRotation : child.rotation;
+                _children.Add(child, new TransformData(position, rotation));
             }
+            
+            if (!resetOtherStuff) return;
+            _resets.Clear();
+            GetComponentsInChildren(true, _resets);
         }
 
         public void RestoreTransforms()
@@ -51,13 +60,28 @@ namespace FD.Misc
                 {
                     childTransform.localPosition = childData.position;
                 }
-                childTransform.rotation = childData.rotation;
+
+                if (storeLocalRotation)
+                {
+                    childTransform.localRotation = childData.rotation;
+                }
+                else
+                {
+                    childTransform.rotation = childData.rotation;
+                }
 
                 if (resetRigidbodyVelocities && childTransform.TryGetComponent(out Rigidbody rb))
                 {
                     rb.velocity = Vector3.zero;
                     rb.angularVelocity = Vector3.zero;
                 } 
+            }
+            
+            if (resetOtherStuff) return;
+
+            foreach (var reset in _resets)
+            {
+                reset.Reset();
             }
         }
 

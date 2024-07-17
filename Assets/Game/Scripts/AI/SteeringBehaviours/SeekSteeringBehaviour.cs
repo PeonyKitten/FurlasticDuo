@@ -25,5 +25,10 @@ namespace FD.AI.SteeringBehaviours
         {
             DebugExtension.DrawCircle(Target, Vector3.up, Color.green);
         }
+
+        public override void Reset()
+        {
+            DesiredVelocity = Vector3.zero;
+        }
     }
 }

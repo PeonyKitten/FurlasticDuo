@@ -19,7 +19,6 @@ namespace FD.Grab
         [SerializeField] private LayerMask groundGrabLayerMask;
         [SerializeField] private float groundGrabDistance = 1f;
 
-        private IGrabbable _currentGrabbable;
         private Transform _grabPoint;
         private PlayerController _playerController;
         private GameObject _currentGrabbableObject;
@@ -28,7 +27,8 @@ namespace FD.Grab
         private readonly Collider[] _colliders = new Collider[10];
         private static readonly int AnimHashMoveDirectionDot = Animator.StringToHash("MoveDirectionDot");
 
-        public bool IsGrabbing { get; private set; } 
+        public bool IsGrabbing { get; private set; }
+        public IGrabbable CurrentGrabbable { get; private set; }
 
         private void Start()
         {
@@ -42,7 +42,7 @@ namespace FD.Grab
         {
             if (holdToGrab) return;
 
-            if (_currentGrabbable == null)
+            if (CurrentGrabbable == null)
             {
                 TryGrab();
             }
@@ -55,7 +55,7 @@ namespace FD.Grab
         private void OnGrabPerformed(InputAction.CallbackContext callbackContext)
         {
             // Leave as toggle for Keyboard Input
-            if (_currentGrabbable != null)
+            if (CurrentGrabbable != null)
             {
                 if (callbackContext.control.device is Keyboard)
                 {
@@ -73,7 +73,7 @@ namespace FD.Grab
         {
             if (!holdToGrab || callbackContext.control.device is Keyboard) return;
 
-            if (_currentGrabbable == null) return;
+            if (CurrentGrabbable == null) return;
 
             Release();
         }
@@ -103,9 +103,9 @@ namespace FD.Grab
         {
             if (!otherCollider.TryGetComponent(out IGrabbable grabbable)) return false;
             
-            _currentGrabbable = grabbable;
+            CurrentGrabbable = grabbable;
             _currentGrabbableObject = otherCollider.gameObject;
-            _currentGrabbable.OnGrab(_grabPoint);
+            CurrentGrabbable.OnGrab(_grabPoint);
 
             AdjustPlayerSpeed();
                     
@@ -118,10 +118,10 @@ namespace FD.Grab
         {
             if (_currentGrabbableObject is null) return;
 
-            _currentGrabbable.OnRelease(_grabPoint);
+            CurrentGrabbable.OnRelease(_grabPoint);
 
             ResetPlayerSpeed();
-            _currentGrabbable = null;
+            CurrentGrabbable = null;
             _currentGrabbableObject = null;
             IsGrabbing = false;
         }

@@ -1,12 +1,14 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using FD.Levels.Checkpoints;
 using FD.Misc;
 using UnityEngine;
 
 namespace FD.NPC.Security
 {
     [RequireComponent(typeof(SphereCollider))]
-    public class DetectPlayer : MonoBehaviour
+    public class DetectPlayer : MonoBehaviour, IReset
     {
         public FOV fov;
         [SerializeField] private LayerMask wallLayerMask;
@@ -67,6 +69,11 @@ namespace FD.NPC.Security
             {
                 _playersInRange.Remove(other.transform);
             }
+        }
+
+        public void Reset()
+        { 
+            _playersInRange.Clear();
         }
     }
 }

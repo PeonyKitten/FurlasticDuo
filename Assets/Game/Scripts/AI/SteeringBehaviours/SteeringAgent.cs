@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using FD.Levels.Checkpoints;
 using FD.Utils;
 using UnityEngine;
 
 namespace FD.AI.SteeringBehaviours
 {
-    public class SteeringAgent: MonoBehaviour
+    public class SteeringAgent: MonoBehaviour, IReset
     {
         [Serializable]
         public enum SummingStrategy
@@ -228,6 +229,14 @@ namespace FD.AI.SteeringBehaviours
             foreach (var behaviour in _steeringBehaviours)
             {
                 behaviour.Target = target;
+            }
+        }
+
+        public void Reset()
+        {
+            foreach (var behaviour in _steeringBehaviours)
+            {
+                behaviour.Reset();
             }
         }
     }

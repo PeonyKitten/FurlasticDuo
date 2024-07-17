@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using FD.Player;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace FD.Levels.Checkpoints
 {
@@ -9,7 +10,11 @@ namespace FD.Levels.Checkpoints
     {
         [SerializeField] private List<Transform> spawnPositions = new();
         [SerializeField] private bool initialSavePoint = false;
+        [SerializeField] private bool resetPlayers = true;
 
+        [Header("Callbacks")]
+        public UnityEvent onRespawn;
+        
         private BoxCollider _trigger;
         
         private void Start()
@@ -44,8 +49,14 @@ namespace FD.Levels.Checkpoints
             for (var index = 0; index < players.Count; index++)
             {
                 players[index].transform.SetPositionAndRotation(spawnPositions[index].position, Quaternion.identity);
+                if (resetPlayers)
+                {
+                    players[index].Reset();
+                }
             }
+            onRespawn?.Invoke();
         }
+        
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;

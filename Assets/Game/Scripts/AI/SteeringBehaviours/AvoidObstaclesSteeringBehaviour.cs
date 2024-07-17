@@ -56,5 +56,7 @@ namespace FD.AI.SteeringBehaviours
                 Debug.DrawLine(feelerPos, forward * feeler.distance + feelerPos, feeler.IsTriggered ? Color.red : Color.blue);
             }
         }
+        
+        public override void Reset() {}
     }
 }
