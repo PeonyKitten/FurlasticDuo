@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Game.Scripts.Barking
+namespace FD.Barking
 {
     public class BarkSwitch : MonoBehaviour, IBarkReaction
     {

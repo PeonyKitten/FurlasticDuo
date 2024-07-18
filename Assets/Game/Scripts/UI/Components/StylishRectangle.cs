@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Game.Scripts.UI.Components
+namespace FD.UI.Components
 {
     public class StylishRectangle : VisualElement
     {

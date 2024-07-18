@@ -1,6 +1,6 @@
 using System;
 
-namespace Game.Scripts.Misc
+namespace FD.Misc
 {
     [Serializable]
     public struct Spring

@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 63933258692276474}
   - component: {fileID: 2818911912363054635}
-  - component: {fileID: 7847864182114972643}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -45,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26ccd91fe65c4a99bcea4e0a72dffa5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameScene: Level-1-lab
   pauseGameAction:
     m_Name: Pause Game
     m_Type: 1
@@ -71,50 +71,3 @@ MonoBehaviour:
       m_Flags: 0
     m_Flags: 0
   uiCamera: {fileID: 0}
-  playerInputManager: {fileID: 0}
-  inputHandlers: []
---- !u!114 &7847864182114972643
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6667520492877351929}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 621567455fd1c4ceb811cc8a00b6a1a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_NotificationBehavior: 0
-  m_MaxPlayerCount: 2
-  m_AllowJoining: 0
-  m_JoinBehavior: 0
-  m_PlayerJoinedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_PlayerLeftEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_JoinAction:
-    m_UseReference: 0
-    m_Action:
-      m_Name: 
-      m_Type: 0
-      m_ExpectedControlType: 
-      m_Id: 33a6e03d-8bfa-4796-bb50-898dd1b1109b
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: 0}
-  m_PlayerPrefab: {fileID: 5158904645978587220, guid: a77c1427e4428ba408c629056e51af2b,
-    type: 3}
-  m_SplitScreen: 0
-  m_MaintainAspectRatioInSplitScreen: 0
-  m_FixedNumberOfSplitScreens: -1
-  m_SplitScreenRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1

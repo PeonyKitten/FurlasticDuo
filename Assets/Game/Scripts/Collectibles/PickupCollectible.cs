@@ -1,8 +1,8 @@
-using Game.Scripts.Player;
+using FD.Player;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Game.Scripts.Collectibles
+namespace FD.Collectibles
 {
     public class PickupCollectible: MonoBehaviour
     {

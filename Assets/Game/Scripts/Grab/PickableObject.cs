@@ -1,10 +1,15 @@
 using UnityEngine;
+using UnityEngine.Events;
 
-namespace Game.Scripts.Grab
+namespace FD.Grab
 {
     public class PickableObject : MonoBehaviour, IGrabbable
     {
         [SerializeField] private float lerpSpeed = 10f;
+
+        public UnityEvent onGrab;
+        public UnityEvent onGrabRelease;
+
         private Rigidbody _rb;
         private Transform _grabPoint;
 
@@ -22,6 +27,8 @@ namespace Game.Scripts.Grab
             // }
             _grabPoint = grabPoint;
             _rb.useGravity = false;
+
+            onGrab?.Invoke();
         }
 
         public void OnRelease(Transform grabPoint)
@@ -31,6 +38,8 @@ namespace Game.Scripts.Grab
             
             _grabPoint = null;
             _rb.useGravity = true;
+
+            onGrabRelease?.Invoke();
         }
 
         public void ReleaseAll()

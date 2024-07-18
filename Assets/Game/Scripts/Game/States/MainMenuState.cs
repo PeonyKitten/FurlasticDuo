@@ -1,9 +1,9 @@
-using Game.Scripts.Patterns;
-using Game.Scripts.UI;
+using FD.Patterns;
+using FD.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Game.Scripts.Game.States
+namespace FD.Game.States
 {
     public class MainMenuState : IState<GameManager>
     {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Game.Scripts.Utils
+namespace FD.Utils
 {
     public static class CameraUtils
     {

@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Generic;
-using Game.Scripts.Utils;
-using Game.Scripts.Player;
+using FD.Player;
+using FD.Utils;
 using UnityEngine;
 
-namespace Game.Scripts.Toys
+namespace FD.Toys
 {
     public class HamsterWheel : MonoBehaviour
     {

@@ -1,4 +1,4 @@
-namespace Game.Scripts.Patterns
+namespace FD.Patterns
 {
     public interface IState<T>
     {

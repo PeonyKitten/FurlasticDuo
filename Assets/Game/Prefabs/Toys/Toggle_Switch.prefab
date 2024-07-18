@@ -101,6 +101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gate: {fileID: 6922748840661176440}
   usePosition: 0
+  useRigidbodyPosition: 0
   useGlobalPosition: 0
   openPosition: {x: 0, y: 0, z: 0}
   closePosition: {x: 0, y: 0, z: 0}
@@ -109,10 +110,17 @@ MonoBehaviour:
   rotationAxis: {x: 1, y: 0, z: 0}
   openRotationDeg: 45
   closeRotationDeg: -45
-  duration: 1
+  duration: 0.5
   openThreshold: 0.5
   startState: 0
   scriptOverride: 0
+  scriptOverrideCallbacks: 1
+  onDoorOpen:
+    m_PersistentCalls:
+      m_Calls: []
+  onDoorClose:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &5864108020182613791
 MonoBehaviour:
   m_ObjectHideFlags: 0

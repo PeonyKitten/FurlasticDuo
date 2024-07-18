@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game.Scripts.Collectibles
+namespace FD.Collectibles
 {
     public class DummyCollectible : MonoBehaviour, ICollectible
     {

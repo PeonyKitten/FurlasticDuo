@@ -1,4 +1,4 @@
-namespace Game.Scripts.Collectibles
+namespace FD.Collectibles
 {
     public interface ICollectible
     {

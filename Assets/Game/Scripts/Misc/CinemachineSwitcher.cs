@@ -1,8 +1,8 @@
-using Game.Scripts.Player;
+using FD.Player;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Game.Scripts.Misc
+namespace FD.Misc
 {
     public class CinemachineSwitcher : MonoBehaviour
     {

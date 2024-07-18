@@ -1,11 +1,12 @@
-using UnityEngine;
-using Game.Scripts.Barking;
-using Game.Scripts.SteeringBehaviours;
-using System.Collections;
 using System;
-using Game.Scripts.Utils;
+using System.Collections;
+using FD.AI.SteeringBehaviours;
+using FD.Barking;
+using FD.Utils;
+using UnityEngine;
+using UnityEngine.Events;
 
-namespace Game.Scripts.NPC
+namespace FD.NPC
 {
     public class BarkAttractSB : ArriveSteeringBehaviour, IBarkReaction
     {
@@ -22,14 +23,31 @@ namespace Game.Scripts.NPC
         [Tooltip("When it is the only active SteeringBehaviour, should we keep running after we stop reacting?")]
         [SerializeField] private bool shouldRunAwayForever = true;
 
+        [Header("Callbacks")]
+        public UnityEvent onBarkReact;
+        public UnityEvent onBarkStopReact;
+            
         public bool IsReacting { get; set; }
         private Coroutine _barkCoroutine;
+        private Security.Security _security;
+
+        private void Awake()
+        {
+            _security = GetComponentInParent<Security.Security>();
+        }
 
         public void React(Bark bark)
         {
             IsReacting = true;
-            Target = bark.transform.position;
+            Target = bark.transform.position.Flatten().Bulk(transform.position.y);
             steeringAgent.reachedGoal = false;
+            
+            onBarkReact?.Invoke();
+
+            if (_security != null)
+            {
+                _security.ReactToBark(Target);
+            }
 
             if (attractStrategy == AttractStrategy.AttractByDistance) return;
 
@@ -50,7 +68,7 @@ namespace Game.Scripts.NPC
 
             var attractForce = CalculateArriveForce();
             
-            if (attractStrategy == AttractStrategy.AttractByDistance && attractForce == Vector3.zero) {
+            if (attractStrategy == AttractStrategy.AttractByDistance && steeringAgent.reachedGoal) {
                 StopReacting();
             }
 
@@ -65,6 +83,8 @@ namespace Game.Scripts.NPC
             {
                 steeringAgent.reachedGoal = true;
             }
+            
+            onBarkStopReact?.Invoke();
         }
 
         private IEnumerator StopReactingAfterTime(float time)
@@ -75,11 +95,21 @@ namespace Game.Scripts.NPC
 
         protected override void OnDrawGizmos()
         {
+            if (!IsReacting) return;
+            
             base.OnDrawGizmos();
-            if (IsReacting)
+            DebugExtension.DrawCircle(transform.position, Vector3.up, Color.blue);
+            Gizmos.DrawLine(transform.position, Target);
+        }
+
+        public override void Reset()
+        {
+            if (_barkCoroutine != null)
             {
-                DebugExtension.DrawCircle(transform.position, Vector3.up, Color.blue);
+                StopCoroutine(_barkCoroutine);
             }
+            
+            StopReacting();
         }
     }
 }

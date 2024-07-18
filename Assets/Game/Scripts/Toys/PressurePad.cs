@@ -1,9 +1,8 @@
-using System;
-using Game.Scripts.Misc;
+using FD.Misc;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Game.Scripts.Toys
+namespace FD.Toys
 {
     public class PressurePad : MonoBehaviour
     {

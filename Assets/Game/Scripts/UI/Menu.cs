@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Game.Scripts.UI
+namespace FD.UI
 {
     [RequireComponent(typeof(UIDocument))]
     public abstract class Menu : MonoBehaviour

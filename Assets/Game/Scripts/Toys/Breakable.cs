@@ -1,9 +1,8 @@
-using System;
-using Game.Scripts.Player;
+using FD.Player;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Game.Scripts.Toys {
+namespace FD.Toys {
     public class Breakable : MonoBehaviour
     {
         [SerializeField] private bool onlyAllowPlayerBreak = true;

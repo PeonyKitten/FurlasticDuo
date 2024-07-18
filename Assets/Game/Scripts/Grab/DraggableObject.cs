@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using Game.Scripts.Player;
+using FD.Player;
 using UnityEngine;
+using UnityEngine.Events;
 
-namespace Game.Scripts.Grab
+namespace FD.Grab
 {
     public class DraggableObject : MonoBehaviour, IGrabbable
     {
@@ -11,6 +10,9 @@ namespace Game.Scripts.Grab
         [SerializeField] private Material selectedMaterial;
         [SerializeField] private bool requireBothPlayersToMove = false;
         [SerializeField] private bool pushIfNotGrabbed = true;
+
+        public UnityEvent onGrab;
+        public UnityEvent onGrabRelease;
 
         private Renderer[] _renderers;
         private int _grabCount = 0;
@@ -44,6 +46,8 @@ namespace Game.Scripts.Grab
             {
                 _rb.isKinematic = false;
             }
+
+            onGrab?.Invoke();
         }
 
         public void OnRelease(Transform playerGrabPoint)
@@ -66,6 +70,8 @@ namespace Game.Scripts.Grab
             {
                 _rb.isKinematic = !pushIfNotGrabbed;
             }
+
+            onGrabRelease?.Invoke();
         }
 
         //TODO: maybe change?   

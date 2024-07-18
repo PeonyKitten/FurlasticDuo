@@ -1,7 +1,7 @@
 using UnityEngine.Events;
 using UnityEngine.UIElements;
 
-namespace Game.Scripts.Utils
+namespace FD.Utils
 {
     // Based off of Matthew J. Spencer's approach outlined here - https://www.youtube.com/watch?v=I1JcytXwXM4
     internal static class UIExtensions

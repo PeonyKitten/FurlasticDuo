@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Game.Scripts.Toys
+namespace FD.Toys
 {
     [Serializable]
     public enum StartState
