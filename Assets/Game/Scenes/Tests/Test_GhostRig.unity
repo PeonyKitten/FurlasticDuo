@@ -313,9 +313,13 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  limitPlayerMovementMode: 0
+  snapbackMode: 1
   snapbackThreshold: 0.85
   snapbackForceMagnitude: 500
+  snapbackDuration: 0.1
   snapbackDelay: 0.5
+  stopSnapbackDistance: 0.5
   useRumble: 0
   rumbleAmount: 0.5
   rumbleForceCurve:
@@ -1871,6 +1875,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4861269335736145007, guid: a4b40bf65cd223442a4ae3992a05f381,
         type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6db5401f033ed554d965c7074f0f23a7, type: 2}
+    - target: {fileID: 4861269335736145007, guid: a4b40bf65cd223442a4ae3992a05f381,
+        type: 3}
       propertyPath: m_BlendShapeWeights.Array.data[0]
       value: 0
       objectReference: {fileID: 0}
@@ -1882,7 +1891,7 @@ PrefabInstance:
     - target: {fileID: 4861269335736145007, guid: a4b40bf65cd223442a4ae3992a05f381,
         type: 3}
       propertyPath: m_BlendShapeWeights.Array.data[2]
-      value: 100
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
