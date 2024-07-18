@@ -365,20 +365,20 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 1
-      inSlope: 0.008349396
-      outSlope: 0.008349396
+      inSlope: -1.4590174
+      outSlope: -1.4590174
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.13805005
+      outWeight: 0.072568916
     - serializedVersion: 3
       time: 1
       value: 0.2
-      inSlope: -1.385396
-      outSlope: -1.385396
+      inSlope: -0.06042809
+      outSlope: -0.06042809
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.038495004
+      inWeight: 0.17689073
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -788,7 +788,7 @@ PrefabInstance:
     - target: {fileID: 2421459717976907058, guid: bb08fd50fae0bbd4a9003662d04aa708,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2421459717976907058, guid: bb08fd50fae0bbd4a9003662d04aa708,
         type: 3}
@@ -842,7 +842,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2638896502068619925, guid: bb08fd50fae0bbd4a9003662d04aa708,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5695397373757669220}
+      addedObject: {fileID: 4066909350504204733}
   m_SourcePrefab: {fileID: 100100000, guid: bb08fd50fae0bbd4a9003662d04aa708, type: 3}
 --- !u!4 &7664665993229180301 stripped
 Transform:
@@ -856,8 +856,8 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 5459662182937477311}
   m_PrefabAsset: {fileID: 0}
---- !u!1818360608 &5695397373757669220
-PositionConstraint:
+--- !u!1773428102 &4066909350504204733
+ParentConstraint:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -866,11 +866,18 @@ PositionConstraint:
   m_Enabled: 1
   serializedVersion: 2
   m_Weight: 1
-  m_TranslationAtRest: {x: -0.0000019073486, y: 0.444557, z: -0.00000012361299}
-  m_TranslationOffset: {x: 0, y: 0, z: 0}
+  m_TranslationAtRest: {x: -0.0000019073486, y: 0.444557, z: 0}
+  m_RotationAtRest: {x: 0, y: 0, z: 0}
+  m_TranslationOffsets:
+  - {x: 0, y: 0, z: 0}
+  m_RotationOffsets:
+  - {x: 0, y: 0, z: 0}
   m_AffectTranslationX: 1
   m_AffectTranslationY: 1
   m_AffectTranslationZ: 1
+  m_AffectRotationX: 1
+  m_AffectRotationY: 1
+  m_AffectRotationZ: 1
   m_Active: 1
   m_IsLocked: 1
   m_Sources:
