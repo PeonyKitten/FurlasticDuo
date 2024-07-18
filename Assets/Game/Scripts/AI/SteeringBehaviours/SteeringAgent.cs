@@ -26,7 +26,7 @@ namespace FD.AI.SteeringBehaviours
         [Header("Agent Settings")]
         public SummingStrategy summingStrategy = SummingStrategy.WeightedAverage;
         public MovementStrategy movementStrategy = MovementStrategy.DirectTransform;
-
+        [SerializeField] private Animator animator;
         [SerializeField] private float mass = 1f;
         public float maxSpeed = 1f;
         public float maxForce = 10f;
@@ -61,7 +61,6 @@ namespace FD.AI.SteeringBehaviours
         public bool useRootMotion = true;
         public bool useGravity = true;
         
-        private Animator _animator;
         private CharacterController _controller;
         private Rigidbody _rigidbody;
         private readonly int _animHashSpeed = Animator.StringToHash("Speed");
@@ -107,8 +106,8 @@ namespace FD.AI.SteeringBehaviours
                 behaviour.steeringAgent = this;
             }
             
-            _animator = GetComponent<Animator>();
-            if (_animator == null)
+            animator ??= GetComponent<Animator>();
+            if (animator == null)
             {
                 useRootMotion = false;
             }
@@ -124,9 +123,9 @@ namespace FD.AI.SteeringBehaviours
             if (reachedGoal)
             {
                 Velocity = Vector3.zero;
-                if (_animator != null)
+                if (animator)
                 {
-                    _animator.SetFloat(_animHashSpeed, 0);
+                    animator.SetFloat(_animHashSpeed, 0);
                 }
                 return;
             }
@@ -140,9 +139,9 @@ namespace FD.AI.SteeringBehaviours
             // Slow down, Speedy Gonzales
             Velocity = Vector3.ClampMagnitude(Velocity, maxSpeed);
 
-            if (_animator != null)
+            if (animator)
             {
-                _animator.SetFloat(_animHashSpeed, Velocity.magnitude);
+                animator.SetFloat(_animHashSpeed, Velocity.magnitude);
             }
             
             // Rotate Agent
@@ -168,7 +167,7 @@ namespace FD.AI.SteeringBehaviours
         {
             if (!useRootMotion || Time.deltaTime == 0f) return;
 
-            var animationVelocity = _animator.deltaPosition / Time.deltaTime;
+            var animationVelocity = animator.deltaPosition / Time.deltaTime;
 
             var motion = transform.forward * animationVelocity.magnitude;
             
