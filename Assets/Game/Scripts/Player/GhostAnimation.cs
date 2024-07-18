@@ -32,6 +32,7 @@ namespace Game.Scripts.Player
 
         [Header("Ghost Material")]
         [SerializeField] private Material ghostEffectMaterial;
+        [SerializeField] private Material ghostBodyMaterial;
 
         [Header("Debug Settings")]
         [SerializeField] private bool debugJointDirections;
@@ -135,6 +136,11 @@ namespace Game.Scripts.Player
             if (ghostEffectMaterial != null)
             {
                 ghostEffectMaterial.SetFloat("_Stages", ghostLength);
+            }
+
+            if (ghostBodyMaterial != null)
+            {
+                ghostBodyMaterial.SetFloat("_Stages", ghostLength);
             }
 
             // Set the ghost mouth deformation
