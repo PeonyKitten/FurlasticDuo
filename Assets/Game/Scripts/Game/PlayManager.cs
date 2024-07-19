@@ -4,6 +4,8 @@ using FD.Elastic;
 using FD.Levels.Checkpoints;
 using FD.Patterns;
 using FD.Player;
+using FD.UI.Input;
+using FD.Utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -25,6 +27,8 @@ namespace FD.Game
         [SerializeField] private GameObject dogPrefab;
         [SerializeField] private GameObject ghostPrefab;
         
+        [SerializeField] private InputUISettings inputSettings;
+        
         public PlayerInputManager playerInputManager;
         private int _playerIndex;
         
@@ -38,6 +42,7 @@ namespace FD.Game
         private PlayerStart _playerStart;
 
         public PlayMode Mode { get; private set; } = PlayMode.Unassigned;
+        public InputUISettings InputSettings => inputSettings;
 
         private void Start()
         {
@@ -46,6 +51,7 @@ namespace FD.Game
         
         public void PlayGame(PlayMode mode, Scene scene)
         {
+            CameraUtils.ResetMainCamera();
             Mode = mode;
             _playerStart = FindFirstObjectByType<PlayerStart>(); 
             if (_playerStart is null)
@@ -181,6 +187,21 @@ namespace FD.Game
                 Destroy(inputHandler.gameObject);
             }
             inputHandlers.Clear();
+        }
+
+        public Sprite GetInputSpriteFromMapping(PlayerController player, InputLayout.InputMapping inputMapping)
+        {
+            var device = player.InputHandler?.device ?? PlayerInputDevice.GenericGamepad;
+            
+            return inputSettings.GetSprite(inputMapping, device);
+        }
+
+        public Sprite GetInputSpriteFromAction(PlayerController player, FDPlayerActions.PlayerInputAction action)
+        {
+            var device = player.InputHandler?.device ?? PlayerInputDevice.GenericGamepad;
+
+            var inputMapping = FDPlayerActions.GetMapping(player, action);
+            return inputSettings.GetSprite(inputMapping, device);
         }
     }
 }

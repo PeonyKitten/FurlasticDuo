@@ -52,6 +52,8 @@ namespace FD.Player
         
         public PlayerController dog;
         public PlayerController cat;
+        
+        public PlayerInputType InputType => playerInputType;
 
         public PlayerInputHandlerEvent onPlayerDeviceChanged;
 
@@ -104,14 +106,18 @@ namespace FD.Player
                 case PlayerInputType.Cat:
                     playerInput.SwitchCurrentActionMap("Cat");
                     player = cat;
+                    cat.InputHandler = this;
                     break;
                 case PlayerInputType.Dog:
                     playerInput.SwitchCurrentActionMap("Dog");
                     player = dog;
+                    dog.InputHandler = this;
                     break;
                 case PlayerInputType.Combined:
                 default:
                     playerInput.SwitchCurrentActionMap("Combined");
+                    cat.InputHandler = this;
+                    dog.InputHandler = this;
                     InputSystem.onActionChange += OnActionChange;
                     break;
             }

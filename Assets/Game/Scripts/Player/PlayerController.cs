@@ -78,6 +78,7 @@ namespace FD.Player
         public bool IsGrabbing => _grabbing.IsGrabbing;
         public bool IsDog => playerType == Player.Dog;
         public bool IsCat => playerType == Player.Cat;
+        public PlayerInputHandler InputHandler { get; set; }
 
         private void Awake()
         {

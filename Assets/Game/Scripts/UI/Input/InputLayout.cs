@@ -22,6 +22,19 @@ namespace FD.UI.Input
             LeftButton,
             RightButton,
             StartButton,
+            KeyA,
+            KeyB,
+            KeyD,
+            KeyI,
+            KeyJ,
+            KeyK,
+            KeyL,
+            KeyP,
+            KeyQ,
+            KeyS,
+            KeyW,
+            KeySpace,
+            KeyEscape
         }
         
         public virtual Sprite GetSprite(InputMapping mapping)
