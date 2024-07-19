@@ -2,6 +2,7 @@ using System;
 using FD.Grab;
 using FD.Levels.Checkpoints;
 using FD.Misc;
+using FD.UI.Input;
 using FD.Utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -46,6 +47,7 @@ namespace FD.Player
         [SerializeField] private Spring uprightJointSpring = new() { strength = 100, damping = 10 };
         [SerializeField] private Camera primaryCamera;
         [SerializeField] private bool disableSteepSlopeMovement = true;
+        [SerializeField] private SpeechBubble speechBubble;
 
         [SerializeField, Range(0, 1)] private float meiyisSlider;
 
@@ -253,6 +255,17 @@ namespace FD.Player
         public void DisableGroundCheckForSeconds(float delay)
         {
             _groundCheckDisabledTimer = delay;
+        }
+
+        public void Speak(Sprite sprite)
+        {
+            speechBubble.Show();
+            speechBubble.Say(sprite);
+        }
+
+        public void StopSpeaking()
+        {
+            speechBubble.Hide();
         }
 
         private void OnDrawGizmos()
