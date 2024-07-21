@@ -3,10 +3,10 @@
 // 2024-06-20
 // Hard resets PlayerController values.
 
-using Game.Scripts.Player;
+using FD.Player;
 using UnityEngine;
 
-namespace Game.Scripts.Misc
+namespace FD.Misc
 {
     public class ResetPlayerSpeedFactor : MonoBehaviour
     {

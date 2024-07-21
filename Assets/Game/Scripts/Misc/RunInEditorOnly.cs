@@ -1,9 +1,8 @@
-using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
-namespace Game.Scripts.Misc
+namespace FD.Misc
 {
     public class RunInEditorOnly : MonoBehaviour
     {

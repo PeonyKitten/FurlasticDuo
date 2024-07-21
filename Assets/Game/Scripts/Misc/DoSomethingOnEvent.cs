@@ -1,9 +1,9 @@
 using System;
-using Game.Scripts.Player;
+using FD.Player;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Game.Scripts.Misc
+namespace FD.Misc
 {
     public class DoSomethingOnEvent : MonoBehaviour
     {
@@ -13,6 +13,7 @@ namespace Game.Scripts.Misc
             None,
             ObjectStart,
             ObjectDestroy,
+            ObjectUpdate,
             TriggerEnter,
             TriggerExit,
             CollisionEnter,
@@ -30,7 +31,14 @@ namespace Game.Scripts.Misc
             
             onAction?.Invoke();
         }
-        
+
+        private void Update()
+        {
+            if (performActionOnEvent != ListenableEvent.ObjectUpdate) return;
+            
+            onAction?.Invoke();
+        }
+
         private void OnDestroy()
         {
             if (performActionOnEvent != ListenableEvent.ObjectDestroy) return;

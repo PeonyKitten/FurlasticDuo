@@ -1,8 +1,8 @@
 using System;
-using Game.Scripts.Utils;
+using FD.Utils;
 using UnityEngine;
 
-namespace Game.Scripts.Misc
+namespace FD.Misc
 {
     public class Jail : MonoBehaviour
     {
@@ -13,10 +13,32 @@ namespace Game.Scripts.Misc
             Spherical
         }
 
-        [SerializeField] private BoundsShape boundsShape = BoundsShape.Cylindrical;
+        [SerializeField] protected BoundsShape boundsShape = BoundsShape.Cylindrical;
+        [SerializeField] protected bool useCylinderHeight = true;
+        [SerializeField] protected float cylinderHeight = 1f;
         public float radius = 10f;
         
-        public void OnDrawGizmos()
+        public virtual bool IsContained(Vector3 targetPosition) {
+            if (boundsShape == BoundsShape.Spherical)
+            {
+                return (transform.position - targetPosition).IsWithinSphere(radius);
+            }
+
+            if (useCylinderHeight)
+            {
+                var height = targetPosition.y - transform.position.y;
+
+                if (height > cylinderHeight || height < 0) return false;
+            }
+            
+            // Fun fact: there is no global standard for how high of an altitude a nation's airspace extends to
+            var target2D = targetPosition.Flatten();
+            var position2D = transform.position.Flatten();
+
+            return (position2D - target2D).IsWithinCircle(radius);
+        }
+        
+        protected virtual void OnDrawGizmos()
         {
             if (boundsShape == BoundsShape.Cylindrical)
             {
@@ -26,19 +48,6 @@ namespace Game.Scripts.Misc
             {
                 DebugExtension.DebugWireSphere(transform.position, Color.magenta, radius);
             }
-        }
-        
-        public bool IsContained(Vector3 targetPosition) {
-            if (boundsShape == BoundsShape.Spherical)
-            {
-                return (transform.position - targetPosition).IsWithinSphere(radius);
-            }
-            
-            // Fun fact: there is no global standard for how high of an altitude a nation's airspace extends to
-            var target2D = targetPosition.Flatten();
-            var position2D = transform.position.Flatten();
-
-            return (position2D - target2D).IsWithinCircle(radius);
         }
     }
 }

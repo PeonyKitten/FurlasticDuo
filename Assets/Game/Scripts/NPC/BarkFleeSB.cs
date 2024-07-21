@@ -1,16 +1,26 @@
-using UnityEngine;
-using Game.Scripts.Barking;
-using Game.Scripts.SteeringBehaviours;
-using UnityEngine.AI;
+using System;
 using System.Collections;
-using Game.Scripts.Utils;
+using FD.AI.SteeringBehaviours;
+using FD.Barking;
+using FD.Utils;
+using UnityEngine;
 
-namespace Game.Scripts.NPC
+namespace FD.NPC
 {
     public class BarkFleeSB : FleeSteeringBehaviour, IBarkReaction
     {
-        [SerializeField] private bool fleeBasedOnDistance = true;
+        [Serializable]
+        public enum FleeStrategy
+        {
+            FleeByDistance,
+            FleeForDuration,
+        }
+
+        [Header("Bark Flee Settings")]
+        [SerializeField] private FleeStrategy fleeStrategy = FleeStrategy.FleeForDuration;
         [SerializeField] private float fleeTime = 3f;
+        [Tooltip("When it is the only active SteeringBehaviour, should we keep running after we stop reacting?")]
+        [SerializeField] private bool shouldRunAwayForever = true;
 
         public bool IsReacting { get; set; }
 
@@ -21,6 +31,8 @@ namespace Game.Scripts.NPC
             IsReacting = true;
             Target = bark.transform.position;
             steeringAgent.reachedGoal = false;
+
+            if (fleeStrategy == FleeStrategy.FleeByDistance) return;
 
             if (_barkCoroutine != null)
             {
@@ -37,9 +49,16 @@ namespace Game.Scripts.NPC
                 return Vector3.zero;
             }
 
-            if (fleeBasedOnDistance)
+            if (fleeStrategy == FleeStrategy.FleeByDistance)
             {
-                return base.CalculateForce();
+                // If we've gotten out of range, stop reacting
+                var fleeForce = base.CalculateForce();
+                if (fleeForce == Vector3.zero)
+                {
+                    StopReacting();
+                }
+
+                return fleeForce;
             }
 
             CalculateSeekForce();
@@ -52,7 +71,10 @@ namespace Game.Scripts.NPC
         private void StopReacting()
         {
             IsReacting = false;
-            steeringAgent.reachedGoal = true;
+            if (steeringAgent.SteeringBehaviourCount == 1 && !shouldRunAwayForever)
+            {
+                steeringAgent.reachedGoal = true;
+            }
         }
 
         private IEnumerator StopReactingAfterTime(float time)

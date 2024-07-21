@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using Game.Scripts.Patterns;
-using Game.Scripts.UI.Menus;
+using FD.Patterns;
+using FD.UI.Menus;
 
-namespace Game.Scripts.UI
+namespace FD.UI
 {
     public class MenuManager: Singleton<MenuManager>
     {

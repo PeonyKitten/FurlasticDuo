@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Game.Scripts.Toys
+namespace FD.Toys
 {
     [Serializable]
     public enum PlatformType

@@ -1,9 +1,8 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Game.Scripts.Levels.Checkpoints
+namespace FD.Levels.Checkpoints
 {
     [RequireComponent(typeof(Animator))]
     public class SaveCheckpointIcon : MonoBehaviour
@@ -12,7 +11,7 @@ namespace Game.Scripts.Levels.Checkpoints
         private Image _image;
         private static readonly int LoadingAnimHash = Animator.StringToHash("Loading");
 
-        private void Start()
+        private void Awake()
         {
             _animator = GetComponent<Animator>();
             _image = GetComponent<Image>();

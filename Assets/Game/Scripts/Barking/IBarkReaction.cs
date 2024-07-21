@@ -1,6 +1,4 @@
-using UnityEngine;
-
-namespace Game.Scripts.Barking
+namespace FD.Barking
 {
     public interface IBarkReaction
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game.Scripts.Elastic
+namespace FD.Elastic
 {
     [RequireComponent(typeof(ElasticForce), typeof(LineRenderer))]
     public class ElasticVisual : MonoBehaviour

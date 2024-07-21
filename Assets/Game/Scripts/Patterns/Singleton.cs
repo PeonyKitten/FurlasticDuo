@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game.Scripts.Patterns
+namespace FD.Patterns
 {
     public abstract class Singleton<T> : MonoBehaviour where T : Component
     {

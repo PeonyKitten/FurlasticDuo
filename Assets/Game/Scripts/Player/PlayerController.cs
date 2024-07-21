@@ -1,13 +1,12 @@
 using System;
-using Game.Scripts.Game.States;
-using Game.Scripts.Grab;
-using Game.Scripts.Misc;
-using Game.Scripts.Patterns;
-using Game.Scripts.Utils;
+using FD.Grab;
+using FD.Levels.Checkpoints;
+using FD.Misc;
+using FD.Utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Game.Scripts.Player
+namespace FD.Player
 {
     [Serializable]
     public enum Player
@@ -26,7 +25,7 @@ namespace Game.Scripts.Player
     }
     
     [RequireComponent(typeof(Rigidbody))]
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviour, IReset
     {
         [Header("Movement")]
         [SerializeField] private bool useCameraRelativeMovement = true;
@@ -41,12 +40,16 @@ namespace Game.Scripts.Player
         [SerializeField] private float rideHeight = 0.5f;
         [SerializeField] private float groundCheckLength = 1f;
         [SerializeField] private LayerMask groundLayerMask;
+        [SerializeField] private LayerMask slopeCheckLayerMask;
         [SerializeField, Range(0, 90)] private float maxSlopeAngleDeg = 45;
         [SerializeField] private Spring rideSpring = new() { strength = 100, damping = 10 };
         [SerializeField] private Spring uprightJointSpring = new() { strength = 100, damping = 10 };
         [SerializeField] private Camera primaryCamera;
         [SerializeField] private bool disableSteepSlopeMovement = true;
 
+        [SerializeField, Range(0, 1)] private float meiyisSlider;
+
+        public Animator animator;
         public Player playerType = Player.Cat;
         public Vector3 gravityMultiplier = Vector3.one;
         public float speedFactor = 1f;
@@ -54,17 +57,18 @@ namespace Game.Scripts.Player
         public float angularSpeedFactor = 1f;
         public bool ignoreGroundVelocity;
 
-        private Rigidbody _rb;
         private Vector2 _movement;
         private Vector3 _goalVel;
         private float _movementControlDisabledTimer;
         private float _groundCheckDisabledTimer;
 
         private Grabbing _grabbing;
+        private static readonly int AnimHashSpeed = Animator.StringToHash("Speed");
 
         /// Camera to be used for camera-relative movement
         public Camera PrimaryCamera { get => primaryCamera; set => primaryCamera = value; }
-        public float Mass => _rb.mass;
+        public Rigidbody Rigidbody { get; private set; }
+        public float Mass => Rigidbody.mass;
         public Quaternion TargetRotation { get; private set; } = Quaternion.identity;
         public float GroundCheckLength => groundCheckLength;
         public float MaximumSpeed => maxSpeed * speedFactor;
@@ -73,11 +77,14 @@ namespace Game.Scripts.Player
         public bool IsDog => playerType == Player.Dog;
         public bool IsCat => playerType == Player.Cat;
 
+        private void Awake()
+        {
+            Rigidbody = GetComponent<Rigidbody>();
+            _grabbing = GetComponent<Grabbing>();
+        }
+        
         private void Start()
         {
-            _rb = GetComponent<Rigidbody>();
-            _grabbing = GetComponent<Grabbing>();
-
             if (!primaryCamera)
             {
                 primaryCamera = Camera.main;
@@ -113,12 +120,14 @@ namespace Game.Scripts.Player
         private void FixedUpdate()
         {
             _groundCheckDisabledTimer -= Time.deltaTime;
-
-            var hitGround = FloatPlayerAboveGround(out var hitInfo, out var groundVel);
+            
+            var groundRay = new Ray(transform.position, Vector3.down);
+            var hitGround = FloatPlayerAboveGround(groundRay, out var hitInfo, out var groundVel);
 
             HoldPlayerUpright(Time.deltaTime);
-            
-            var groundAngle = Vector3.Angle(Vector3.up, hitInfo.normal);
+
+            var onSlope = Physics.Raycast(groundRay, out var slopeHitInfo, groundCheckLength, slopeCheckLayerMask.value, QueryTriggerInteraction.Ignore);
+            var groundAngle = Vector3.Angle(Vector3.up, slopeHitInfo.normal);
             
             // TODO: speed factor bad. fix @alvin
             if (speedFactor > 1)
@@ -130,28 +139,26 @@ namespace Game.Scripts.Player
             HandleMovement(groundVel, groundAngle);
 
             var effectiveGravity = Vector3.Scale(Physics.gravity, gravityMultiplier);
-
+            
             // Slopes
-            if (hitGround)
+            if (onSlope)
             {
-                HandleStickingToSlopes(groundAngle, effectiveGravity, hitInfo.normal);
+                HandleStickingToSlopes(groundAngle, effectiveGravity, slopeHitInfo.normal);
             }
             
             // Apply gravity
-            _rb.AddForce(effectiveGravity, ForceMode.Acceleration);
+            Rigidbody.AddForce(effectiveGravity, ForceMode.Acceleration);
         }
 
-        private bool FloatPlayerAboveGround(out RaycastHit hitInfo, out Vector3 groundVel)
+        private bool FloatPlayerAboveGround(Ray groundRay, out RaycastHit hitInfo, out Vector3 groundVel)
         {
             groundVel = Vector3.zero;
-            
-            var groundRay = new Ray(transform.position, Vector3.down);
             
             var hitGround = Physics.Raycast(groundRay, out hitInfo, groundCheckLength, groundLayerMask.value, QueryTriggerInteraction.Ignore);
 
             if (!hitGround || _groundCheckDisabledTimer > 0) return false;
             
-            var velocity = _rb.velocity;
+            var velocity = Rigidbody.velocity;
             var rayDir = -hitInfo.normal;
 
             var otherVelocity = Vector3.zero;
@@ -170,7 +177,7 @@ namespace Game.Scripts.Player
 
             var springForce = rideSpring.CalculateSpringForce(displacement, relativeVelocity);
 
-            _rb.AddForce(rayDir * springForce);
+            Rigidbody.AddForce(rayDir * springForce);
 
             // Apply force to the Rigidbody we're standing on
             if (hitBody)
@@ -183,13 +190,18 @@ namespace Game.Scripts.Player
             return true;
         }
 
-        private void HandleMovement(Vector3 groundVel, float groundAngle)
+        private void HandleMovement(Vector3 groundVel, float groundSlopeAngle)
         {
             // Do not move if we're on too steep of a slope
-            if (disableSteepSlopeMovement && groundAngle > maxSlopeAngleDeg) return;
+            if (disableSteepSlopeMovement && groundSlopeAngle > maxSlopeAngleDeg) return;
 
             var movement = _movement.Bulk();
             var velDot = Vector3.Dot(movement, _goalVel.normalized);
+
+            if (animator)
+            {
+                animator.SetFloat(AnimHashSpeed, Mathf.Lerp(animator.GetFloat(AnimHashSpeed), velDot, meiyisSlider));
+            }
             
             var accel = acceleration * accelerationFactorDot.Evaluate(velDot);
 
@@ -206,11 +218,11 @@ namespace Game.Scripts.Player
                 totalVel,
                 accel * Time.deltaTime);
 
-            var neededAccel = (_goalVel - _rb.velocity) / Time.deltaTime * accelerationFactor;
+            var neededAccel = (_goalVel - Rigidbody.velocity) / Time.deltaTime * accelerationFactor;
             var maxAccel = maxAcceleration * maxAccelerationFactorDot.Evaluate(velDot);
 
             neededAccel = Vector3.ClampMagnitude(neededAccel, maxAccel);
-            _rb.AddForce(Vector3.Scale(neededAccel * _rb.mass, forceScale));
+            Rigidbody.AddForce(Vector3.Scale(neededAccel * Rigidbody.mass, forceScale));
         }
 
         private void HandleStickingToSlopes(float groundAngle, Vector3 gravity, Vector3 groundNormal)
@@ -220,7 +232,7 @@ namespace Game.Scripts.Player
             var gravityComponent = Vector3.ProjectOnPlane(gravity, groundNormal);
             var counterForce = -gravityComponent;
             
-            _rb.AddForce(counterForce, ForceMode.Acceleration);
+            Rigidbody.AddForce(counterForce, ForceMode.Acceleration);
             
             Debug.DrawRay(transform.position, counterForce.normalized);
         }
@@ -235,7 +247,7 @@ namespace Game.Scripts.Player
 
             var rotRadians = rotDegrees * Mathf.Deg2Rad;
         
-            _rb.AddTorque((rotAxis * (rotRadians * uprightJointSpring.strength * angularSpeedFactor) - _rb.angularVelocity * (uprightJointSpring.damping / angularSpeedFactor)) * elapsedTime);
+            Rigidbody.AddTorque((rotAxis * (rotRadians * uprightJointSpring.strength * angularSpeedFactor) - Rigidbody.angularVelocity * (uprightJointSpring.damping / angularSpeedFactor)) * elapsedTime);
         }
         
         public void DisableGroundCheckForSeconds(float delay)
@@ -246,6 +258,11 @@ namespace Game.Scripts.Player
         private void OnDrawGizmos()
         {
             Gizmos.DrawRay(transform.position, _movement.Bulk());
+        }
+
+        public void Reset()
+        {
+            _grabbing.CurrentGrabbable?.ReleaseAll();
         }
     }
 }

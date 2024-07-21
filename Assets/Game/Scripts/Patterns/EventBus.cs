@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine.Events;
 
-namespace Game.Scripts.Patterns
+namespace FD.Patterns
 {
     public static class EventBus<T>
     {

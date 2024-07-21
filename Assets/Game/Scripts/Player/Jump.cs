@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Game.Scripts.Player
+namespace FD.Player
 {
     [RequireComponent(typeof(PlayerController))]
     public class Jump : MonoBehaviour

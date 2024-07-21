@@ -1,6 +1,7 @@
 using UnityEngine;
+using UnityEngine.Events;
 
-namespace Game.Scripts.Grab
+namespace FD.Grab
 {
     public interface IGrabbable
     {
