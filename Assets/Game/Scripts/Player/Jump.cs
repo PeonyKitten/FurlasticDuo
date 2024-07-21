@@ -27,7 +27,12 @@ namespace FD.Player
         [SerializeField] private GameObject jumpEndEffect;
         [SerializeField] private bool ignoreGroundEffectSpawnRotation;
         [SerializeField] private bool globalFallEffect;
-        
+
+
+        [Header("Ground Indicator")]
+        [SerializeField] private bool useGroundIndicator = false;
+        [SerializeField] private GameObject groundIndicatorPrefab;
+
         [Header("Callbacks")]
         public UnityEvent onPlayerJump;
         public UnityEvent onPlayerFall;
@@ -44,6 +49,9 @@ namespace FD.Player
         private Rigidbody _rb;
 
         private RaycastHit _hitInfo;
+
+        private GameObject currentGroundIndicator;
+
 
         private void Start()
         {
@@ -108,6 +116,11 @@ namespace FD.Player
                 IsJumping = true;
                 OnJumpStart();
             }
+
+            if (IsJumping && useGroundIndicator)
+            {
+                UpdateGroundIndicatorPosition();
+            }
         }
 
         private void OnDrawGizmosSelected()
@@ -133,6 +146,11 @@ namespace FD.Player
             _playerController.speedFactor *= jumpSpeedMultiplier;
             _playerController.angularSpeedFactor *= jumpAngularSpeedMultiplier;
             onPlayerJump.Invoke();
+
+            if (useGroundIndicator && groundIndicatorPrefab != null)
+            {
+                SpawnGroundIndicator();
+            }
         }
         
         // We've started falling
@@ -170,6 +188,35 @@ namespace FD.Player
             _playerController.speedFactor /= jumpSpeedMultiplier;
             _playerController.angularSpeedFactor /= jumpAngularSpeedMultiplier;
             onPlayerLand.Invoke();
+
+            DestroyGroundIndicator();
+        }
+
+        private void SpawnGroundIndicator()
+        {
+            DestroyGroundIndicator();
+            currentGroundIndicator = Instantiate(groundIndicatorPrefab);
+            UpdateGroundIndicatorPosition();
+        }
+
+        private void UpdateGroundIndicatorPosition()
+        {
+            if (currentGroundIndicator == null) return;
+
+            if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit))
+            {
+                currentGroundIndicator.transform.position = hit.point;
+                currentGroundIndicator.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+            }
+        }
+
+        private void DestroyGroundIndicator()
+        {
+            if (currentGroundIndicator != null)
+            {
+                Destroy(currentGroundIndicator);
+                currentGroundIndicator = null;
+            }
         }
     }
 }
