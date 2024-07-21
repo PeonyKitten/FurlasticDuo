@@ -6,6 +6,11 @@ namespace FD.Utils
     {
         private static Camera _mainCamera;
 
+        public static void ResetMainCamera()
+        {
+            _mainCamera = null;
+        }
+
         public static Camera Main
         {
             get

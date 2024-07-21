@@ -114,6 +114,11 @@ namespace FD.Grab
             }
         }
 
+        public void EnablePush(bool enablePush)
+        {
+            pushIfNotGrabbed = enablePush;
+        }
+
         private void UpdateMaterial()
         {
             var material = _grabCount > 0 ? selectedMaterial : normalMaterial;
