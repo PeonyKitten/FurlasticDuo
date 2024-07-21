@@ -11,6 +11,7 @@ namespace FD.Player
         [SerializeField] private float jumpSpeed = 15f;
         [SerializeField] private float jumpInputBuffer = 0.33f;
         [SerializeField] private float coyoteTime = 0.33f;
+        [SerializeField] private LayerMask groundLayerMask;
         
         [Header("Ground Forces")]
         [SerializeField] private float jumpGroundForce = 10f;
@@ -49,7 +50,7 @@ namespace FD.Player
 
         private RaycastHit _hitInfo;
 
-        private GameObject currentGroundIndicator;
+        private GameObject _currentGroundIndicator;
 
 
         private void Start()
@@ -69,11 +70,12 @@ namespace FD.Player
             _jumpInputBufferTimer -= Time.deltaTime;
             _jumpTimer -= Time.deltaTime;
 
-            var hitGround = Physics.Raycast(transform.position, Vector3.down, out _hitInfo, longRaycastLength);
-
-            if (currentGroundIndicator != null)
+            var ray = new Ray(transform.position, Vector3.down);
+            var hitGround = Physics.Raycast(ray, out var hitInfo, longRaycastLength, groundLayerMask.value, QueryTriggerInteraction.Ignore);
+            
+            if (hitGround)
             {
-                UpdateGroundIndicatorPosition(hitGround);
+                UpdateGroundIndicatorPosition(hitInfo);
             }
 
             // Check if we're falling
@@ -90,8 +92,10 @@ namespace FD.Player
             
             if (_jumpTimer > 0) return;
 
-            if (hitGround && _hitInfo.distance <= _playerController.GroundCheckLength)
+            if (hitGround && hitInfo.distance <= _playerController.GroundCheckLength)
             {
+                _hitInfo = hitInfo;
+                
                 // If we were currently in the air and have touched the ground, we've landed
                 if (IsJumping)
                 {
@@ -146,13 +150,9 @@ namespace FD.Player
             _playerController.angularSpeedFactor *= jumpAngularSpeedMultiplier;
             onPlayerJump.Invoke();
 
-            if (groundIndicatorPrefab != null)
+            if (groundIndicatorPrefab)
             {
-                SpawnGroundIndicator();
-            }
-            else
-            {
-                Debug.LogError($"Ground Indicator Prefab Not Set!");
+                SpawnGroundIndicator(_hitInfo);
             }
         }
         
@@ -195,27 +195,26 @@ namespace FD.Player
             DestroyGroundIndicator();
         }
 
-        private void SpawnGroundIndicator()
+        private void SpawnGroundIndicator(RaycastHit hitInfo)
         {
             DestroyGroundIndicator();
-            currentGroundIndicator = Instantiate(groundIndicatorPrefab);
-            UpdateGroundIndicatorPosition(false);
+            _currentGroundIndicator = Instantiate(groundIndicatorPrefab, hitInfo.point, Quaternion.FromToRotation(Vector3.up, hitInfo.normal));
         }
 
-        private void UpdateGroundIndicatorPosition(bool hitGround)
+        private void UpdateGroundIndicatorPosition(RaycastHit hitInfo)
         {
-            if (currentGroundIndicator == null || !hitGround) return;
+            if (_currentGroundIndicator is null) return;
 
-            currentGroundIndicator.transform.position = _hitInfo.point;
-            currentGroundIndicator.transform.rotation = Quaternion.FromToRotation(Vector3.up, _hitInfo.normal);
+            _currentGroundIndicator.transform.position = hitInfo.point;
+            _currentGroundIndicator.transform.rotation = Quaternion.FromToRotation(Vector3.up, hitInfo.normal);
         }
 
         private void DestroyGroundIndicator()
         {
-            if (currentGroundIndicator != null)
+            if (_currentGroundIndicator)
             {
-                Destroy(currentGroundIndicator);
-                currentGroundIndicator = null;
+                Destroy(_currentGroundIndicator);
+                _currentGroundIndicator = null;
             }
         }
     }
