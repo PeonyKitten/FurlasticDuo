@@ -230,7 +230,6 @@ Shader "FD/S_Ghost_Mesh"
             #endif
 
 			#define ASE_NEEDS_FRAG_WORLD_POSITION
-			#define ASE_NEEDS_VERT_NORMAL
 
 
 			struct VertexInput
@@ -255,7 +254,6 @@ Shader "FD/S_Ghost_Mesh"
 				#endif
 				float4 ase_texcoord3 : TEXCOORD3;
 				float4 ase_texcoord4 : TEXCOORD4;
-				float4 ase_texcoord5 : TEXCOORD5;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -279,6 +277,12 @@ Shader "FD/S_Ghost_Mesh"
 			sampler2D _T_Ghost_EffectLines;
 
 
+			float3 ASESafeNormalize(float3 inVec)
+			{
+				float dp3 = max(1.175494351e-38, dot(inVec, inVec));
+				return inVec* rsqrt(dp3);
+			}
+			
 			inline float Dither4x4Bayer( int x, int y )
 			{
 				const float dither[ 16 ] = {
@@ -298,18 +302,14 @@ Shader "FD/S_Ghost_Mesh"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
-				float3 ase_worldNormal = TransformObjectToWorldNormal(v.normalOS);
-				o.ase_texcoord4.xyz = ase_worldNormal;
-				
 				float4 ase_clipPos = TransformObjectToHClip((v.positionOS).xyz);
 				float4 screenPos = ComputeScreenPos(ase_clipPos);
-				o.ase_texcoord5 = screenPos;
+				o.ase_texcoord4 = screenPos;
 				
 				o.ase_texcoord3.xy = v.ase_texcoord.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
 				o.ase_texcoord3.zw = 0;
-				o.ase_texcoord4.w = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = v.positionOS.xyz;
@@ -462,12 +462,14 @@ Shader "FD/S_Ghost_Mesh"
 				
 				float3 ase_worldViewDir = ( _WorldSpaceCameraPos.xyz - WorldPosition );
 				ase_worldViewDir = normalize(ase_worldViewDir);
-				float3 ase_worldNormal = IN.ase_texcoord4.xyz;
-				float dotResult15 = dot( ase_worldViewDir , ase_worldNormal );
-				float temp_output_19_0 = pow( dotResult15 , _EdgePower );
+				float3 temp_output_82_0_g2 = ( WorldPosition - _WorldSpaceCameraPos );
+				float3 temp_output_78_0_g2 = cross( ddy( temp_output_82_0_g2 ) , ddx( temp_output_82_0_g2 ) );
+				float3 normalizeResult87_g2 = ASESafeNormalize( temp_output_78_0_g2 );
+				float dotResult15 = dot( ase_worldViewDir , normalizeResult87_g2 );
+				float temp_output_19_0 = pow( abs( dotResult15 ) , _EdgePower );
 				float clampResult50 = clamp( ( (0.2 + (StagesSlider39 - 0.0) * (1.0 - 0.2) / (1.0 - 0.0)) * 2.0 ) , 0.0 , 1.0 );
 				
-				float4 screenPos = IN.ase_texcoord5;
+				float4 screenPos = IN.ase_texcoord4;
 				float4 ase_screenPosNorm = screenPos / screenPos.w;
 				ase_screenPosNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm.z : ase_screenPosNorm.z * 0.5 + 0.5;
 				float2 clipScreen22 = ase_screenPosNorm.xy * _ScreenParams.xy;
@@ -555,7 +557,6 @@ Shader "FD/S_Ghost_Mesh"
             #endif
 
 			#define ASE_NEEDS_FRAG_WORLD_POSITION
-			#define ASE_NEEDS_VERT_NORMAL
 
 
 			struct VertexInput
@@ -576,7 +577,6 @@ Shader "FD/S_Ghost_Mesh"
 				float4 shadowCoord : TEXCOORD1;
 				#endif
 				float4 ase_texcoord2 : TEXCOORD2;
-				float4 ase_texcoord3 : TEXCOORD3;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -599,6 +599,12 @@ Shader "FD/S_Ghost_Mesh"
 
 			
 
+			float3 ASESafeNormalize(float3 inVec)
+			{
+				float dp3 = max(1.175494351e-38, dot(inVec, inVec));
+				return inVec* rsqrt(dp3);
+			}
+			
 			inline float Dither4x4Bayer( int x, int y )
 			{
 				const float dither[ 16 ] = {
@@ -618,16 +624,10 @@ Shader "FD/S_Ghost_Mesh"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
-				float3 ase_worldNormal = TransformObjectToWorldNormal(v.normalOS);
-				o.ase_texcoord2.xyz = ase_worldNormal;
-				
 				float4 ase_clipPos = TransformObjectToHClip((v.positionOS).xyz);
 				float4 screenPos = ComputeScreenPos(ase_clipPos);
-				o.ase_texcoord3 = screenPos;
+				o.ase_texcoord2 = screenPos;
 				
-				
-				//setting value to unused interpolator channels and avoid initialization warnings
-				o.ase_texcoord2.w = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = v.positionOS.xyz;
@@ -762,13 +762,15 @@ Shader "FD/S_Ghost_Mesh"
 
 				float3 ase_worldViewDir = ( _WorldSpaceCameraPos.xyz - WorldPosition );
 				ase_worldViewDir = normalize(ase_worldViewDir);
-				float3 ase_worldNormal = IN.ase_texcoord2.xyz;
-				float dotResult15 = dot( ase_worldViewDir , ase_worldNormal );
-				float temp_output_19_0 = pow( dotResult15 , _EdgePower );
+				float3 temp_output_82_0_g2 = ( WorldPosition - _WorldSpaceCameraPos );
+				float3 temp_output_78_0_g2 = cross( ddy( temp_output_82_0_g2 ) , ddx( temp_output_82_0_g2 ) );
+				float3 normalizeResult87_g2 = ASESafeNormalize( temp_output_78_0_g2 );
+				float dotResult15 = dot( ase_worldViewDir , normalizeResult87_g2 );
+				float temp_output_19_0 = pow( abs( dotResult15 ) , _EdgePower );
 				float StagesSlider39 = _Stages;
 				float clampResult50 = clamp( ( (0.2 + (StagesSlider39 - 0.0) * (1.0 - 0.2) / (1.0 - 0.0)) * 2.0 ) , 0.0 , 1.0 );
 				
-				float4 screenPos = IN.ase_texcoord3;
+				float4 screenPos = IN.ase_texcoord2;
 				float4 ase_screenPosNorm = screenPos / screenPos.w;
 				ase_screenPosNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm.z : ase_screenPosNorm.z * 0.5 + 0.5;
 				float2 clipScreen22 = ase_screenPosNorm.xy * _ScreenParams.xy;
@@ -834,8 +836,7 @@ Shader "FD/S_Ghost_Mesh"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderGraphFunctions.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/Editor/ShaderGraph/Includes/ShaderPass.hlsl"
 
-			#define ASE_NEEDS_VERT_NORMAL
-
+			
 
 			struct VertexInput
 			{
@@ -850,7 +851,6 @@ Shader "FD/S_Ghost_Mesh"
 				float4 positionCS : SV_POSITION;
 				float4 ase_texcoord : TEXCOORD0;
 				float4 ase_texcoord1 : TEXCOORD1;
-				float4 ase_texcoord2 : TEXCOORD2;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -873,6 +873,12 @@ Shader "FD/S_Ghost_Mesh"
 
 			
 
+			float3 ASESafeNormalize(float3 inVec)
+			{
+				float dp3 = max(1.175494351e-38, dot(inVec, inVec));
+				return inVec* rsqrt(dp3);
+			}
+			
 			inline float Dither4x4Bayer( int x, int y )
 			{
 				const float dither[ 16 ] = {
@@ -905,17 +911,14 @@ Shader "FD/S_Ghost_Mesh"
 
 				float3 ase_worldPos = TransformObjectToWorld( (v.positionOS).xyz );
 				o.ase_texcoord.xyz = ase_worldPos;
-				float3 ase_worldNormal = TransformObjectToWorldNormal(v.normalOS);
-				o.ase_texcoord1.xyz = ase_worldNormal;
 				
 				float4 ase_clipPos = TransformObjectToHClip((v.positionOS).xyz);
 				float4 screenPos = ComputeScreenPos(ase_clipPos);
-				o.ase_texcoord2 = screenPos;
+				o.ase_texcoord1 = screenPos;
 				
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
 				o.ase_texcoord.w = 0;
-				o.ase_texcoord1.w = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = v.positionOS.xyz;
@@ -1026,13 +1029,15 @@ Shader "FD/S_Ghost_Mesh"
 				float3 ase_worldPos = IN.ase_texcoord.xyz;
 				float3 ase_worldViewDir = ( _WorldSpaceCameraPos.xyz - ase_worldPos );
 				ase_worldViewDir = normalize(ase_worldViewDir);
-				float3 ase_worldNormal = IN.ase_texcoord1.xyz;
-				float dotResult15 = dot( ase_worldViewDir , ase_worldNormal );
-				float temp_output_19_0 = pow( dotResult15 , _EdgePower );
+				float3 temp_output_82_0_g2 = ( ase_worldPos - _WorldSpaceCameraPos );
+				float3 temp_output_78_0_g2 = cross( ddy( temp_output_82_0_g2 ) , ddx( temp_output_82_0_g2 ) );
+				float3 normalizeResult87_g2 = ASESafeNormalize( temp_output_78_0_g2 );
+				float dotResult15 = dot( ase_worldViewDir , normalizeResult87_g2 );
+				float temp_output_19_0 = pow( abs( dotResult15 ) , _EdgePower );
 				float StagesSlider39 = _Stages;
 				float clampResult50 = clamp( ( (0.2 + (StagesSlider39 - 0.0) * (1.0 - 0.2) / (1.0 - 0.0)) * 2.0 ) , 0.0 , 1.0 );
 				
-				float4 screenPos = IN.ase_texcoord2;
+				float4 screenPos = IN.ase_texcoord1;
 				float4 ase_screenPosNorm = screenPos / screenPos.w;
 				ase_screenPosNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm.z : ase_screenPosNorm.z * 0.5 + 0.5;
 				float2 clipScreen22 = ase_screenPosNorm.xy * _ScreenParams.xy;
@@ -1104,8 +1109,7 @@ Shader "FD/S_Ghost_Mesh"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             #endif
 
-			#define ASE_NEEDS_VERT_NORMAL
-
+			
 
 			struct VertexInput
 			{
@@ -1120,7 +1124,6 @@ Shader "FD/S_Ghost_Mesh"
 				float4 positionCS : SV_POSITION;
 				float4 ase_texcoord : TEXCOORD0;
 				float4 ase_texcoord1 : TEXCOORD1;
-				float4 ase_texcoord2 : TEXCOORD2;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -1143,6 +1146,12 @@ Shader "FD/S_Ghost_Mesh"
 
 			
 
+			float3 ASESafeNormalize(float3 inVec)
+			{
+				float dp3 = max(1.175494351e-38, dot(inVec, inVec));
+				return inVec* rsqrt(dp3);
+			}
+			
 			inline float Dither4x4Bayer( int x, int y )
 			{
 				const float dither[ 16 ] = {
@@ -1174,17 +1183,14 @@ Shader "FD/S_Ghost_Mesh"
 
 				float3 ase_worldPos = TransformObjectToWorld( (v.positionOS).xyz );
 				o.ase_texcoord.xyz = ase_worldPos;
-				float3 ase_worldNormal = TransformObjectToWorldNormal(v.normalOS);
-				o.ase_texcoord1.xyz = ase_worldNormal;
 				
 				float4 ase_clipPos = TransformObjectToHClip((v.positionOS).xyz);
 				float4 screenPos = ComputeScreenPos(ase_clipPos);
-				o.ase_texcoord2 = screenPos;
+				o.ase_texcoord1 = screenPos;
 				
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
 				o.ase_texcoord.w = 0;
-				o.ase_texcoord1.w = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = v.positionOS.xyz;
@@ -1293,13 +1299,15 @@ Shader "FD/S_Ghost_Mesh"
 				float3 ase_worldPos = IN.ase_texcoord.xyz;
 				float3 ase_worldViewDir = ( _WorldSpaceCameraPos.xyz - ase_worldPos );
 				ase_worldViewDir = normalize(ase_worldViewDir);
-				float3 ase_worldNormal = IN.ase_texcoord1.xyz;
-				float dotResult15 = dot( ase_worldViewDir , ase_worldNormal );
-				float temp_output_19_0 = pow( dotResult15 , _EdgePower );
+				float3 temp_output_82_0_g2 = ( ase_worldPos - _WorldSpaceCameraPos );
+				float3 temp_output_78_0_g2 = cross( ddy( temp_output_82_0_g2 ) , ddx( temp_output_82_0_g2 ) );
+				float3 normalizeResult87_g2 = ASESafeNormalize( temp_output_78_0_g2 );
+				float dotResult15 = dot( ase_worldViewDir , normalizeResult87_g2 );
+				float temp_output_19_0 = pow( abs( dotResult15 ) , _EdgePower );
 				float StagesSlider39 = _Stages;
 				float clampResult50 = clamp( ( (0.2 + (StagesSlider39 - 0.0) * (1.0 - 0.2) / (1.0 - 0.0)) * 2.0 ) , 0.0 , 1.0 );
 				
-				float4 screenPos = IN.ase_texcoord2;
+				float4 screenPos = IN.ase_texcoord1;
 				float4 ase_screenPosNorm = screenPos / screenPos.w;
 				ase_screenPosNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm.z : ase_screenPosNorm.z * 0.5 + 0.5;
 				float2 clipScreen22 = ase_screenPosNorm.xy * _ScreenParams.xy;
@@ -1426,6 +1434,12 @@ Shader "FD/S_Ghost_Mesh"
 
 			
 
+			float3 ASESafeNormalize(float3 inVec)
+			{
+				float dp3 = max(1.175494351e-38, dot(inVec, inVec));
+				return inVec* rsqrt(dp3);
+			}
+			
 			inline float Dither4x4Bayer( int x, int y )
 			{
 				const float dither[ 16 ] = {
@@ -1580,8 +1594,11 @@ Shader "FD/S_Ghost_Mesh"
 				float3 ase_worldPos = IN.ase_texcoord1.xyz;
 				float3 ase_worldViewDir = ( _WorldSpaceCameraPos.xyz - ase_worldPos );
 				ase_worldViewDir = normalize(ase_worldViewDir);
-				float dotResult15 = dot( ase_worldViewDir , IN.normalWS );
-				float temp_output_19_0 = pow( dotResult15 , _EdgePower );
+				float3 temp_output_82_0_g2 = ( ase_worldPos - _WorldSpaceCameraPos );
+				float3 temp_output_78_0_g2 = cross( ddy( temp_output_82_0_g2 ) , ddx( temp_output_82_0_g2 ) );
+				float3 normalizeResult87_g2 = ASESafeNormalize( temp_output_78_0_g2 );
+				float dotResult15 = dot( ase_worldViewDir , normalizeResult87_g2 );
+				float temp_output_19_0 = pow( abs( dotResult15 ) , _EdgePower );
 				float StagesSlider39 = _Stages;
 				float clampResult50 = clamp( ( (0.2 + (StagesSlider39 - 0.0) * (1.0 - 0.2) / (1.0 - 0.0)) * 2.0 ) , 0.0 , 1.0 );
 				
@@ -1635,11 +1652,12 @@ Shader "FD/S_Ghost_Mesh"
 /*ASEBEGIN
 Version=19303
 Node;AmplifyShaderEditor.ViewDirInputsCoordNode;10;-1536,-240;Inherit;False;World;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.WorldNormalVector;12;-1536,-64;Inherit;False;False;1;0;FLOAT3;0,0,1;False;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.RangedFloatNode;28;-2480,-880;Inherit;False;Property;_Stages;Stages;1;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.FunctionNode;67;-1568.392,-62.25827;Inherit;False;World Normal Face;-1;;2;8ad4248928242e14ab87cd99e6913c33;1,86,1;0;1;FLOAT3;30
 Node;AmplifyShaderEditor.DotProductOpNode;15;-1232,-192;Inherit;True;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;20;-880,80;Inherit;False;Property;_EdgePower;EdgePower;0;0;Create;True;0;0;0;False;0;False;1;1;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;28;-2480,-880;Inherit;False;Property;_Stages;Stages;1;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.AbsOpNode;56;-896,-208;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;39;-2096,-736;Inherit;False;StagesSlider;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;20;-880,80;Inherit;False;Property;_EdgePower;EdgePower;0;0;Create;True;0;0;0;False;0;False;1;1;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.PowerNode;19;-592,-80;Inherit;False;False;2;0;FLOAT;0;False;1;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;47;-736,448;Inherit;False;39;StagesSlider;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;55;-666.2432,557.3555;Inherit;False;Constant;_Float1;Float 1;8;0;Create;True;0;0;0;False;0;False;0.2;0;0;0;0;1;FLOAT;0
@@ -1648,13 +1666,11 @@ Node;AmplifyShaderEditor.RangedFloatNode;49;-432,528;Inherit;False;Constant;_Flo
 Node;AmplifyShaderEditor.TFHCRemapNode;54;-464,336;Inherit;False;5;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;1;False;3;FLOAT;0;False;4;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.AbsOpNode;43;-192,-64;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;48;-224,448;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SaturateNode;25;-368,112;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SaturateNode;41;-64,-48;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.ClampOpNode;50;16,448;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;1;False;1;FLOAT;0
-Node;AmplifyShaderEditor.NormalVertexDataNode;13;-1200,128;Inherit;False;0;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.SaturateNode;25;-368,112;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.DitheringNode;22;-176,112;Inherit;False;0;False;4;0;FLOAT;0;False;1;SAMPLER2D;;False;2;FLOAT4;0,0,0,0;False;3;SAMPLERSTATE;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.TexturePropertyNode;23;-864,224;Inherit;True;Property;_Texture0;Texture 0;3;0;Create;True;0;0;0;False;0;False;eefae4d78517c4c4dbdc560785d0110f;eefae4d78517c4c4dbdc560785d0110f;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
-Node;AmplifyShaderEditor.SimpleAddOpNode;24;-576,112;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.ColorNode;21;-567.5084,-341.6699;Inherit;False;Property;_EdgeColor;EdgeColor;2;0;Create;True;0;0;0;False;0;False;1,0,0,0;0,0,0,0;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.SamplerNode;27;-640,-544;Inherit;True;Property;_T_Ghost_EffectLines;T_Ghost_EffectLines;4;0;Create;True;0;0;0;False;0;False;-1;af810f1854940fc449a54065c311ab86;af810f1854940fc449a54065c311ab86;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.DynamicAppendNode;30;-1776,-896;Inherit;False;FLOAT2;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT2;0
@@ -1670,6 +1686,7 @@ Node;AmplifyShaderEditor.RangedFloatNode;37;-1616,-560;Inherit;False;Property;_S
 Node;AmplifyShaderEditor.TFHCRemapNode;29;-2336,-720;Inherit;False;5;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;1;False;3;FLOAT;0;False;4;FLOAT;0.66;False;1;FLOAT;0
 Node;AmplifyShaderEditor.ClampOpNode;42;-368,-240;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0.01;False;2;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;45;96,-32;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleAddOpNode;24;-576,112;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;0;0,0;Float;False;False;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;New Amplify Shader;2992e84f91cbeb14eab234972e07ea9d;True;ExtraPrePass;0;0;ExtraPrePass;5;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Unlit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;0;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;0;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;2;0,0;Float;False;False;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;New Amplify Shader;2992e84f91cbeb14eab234972e07ea9d;True;ShadowCaster;0;2;ShadowCaster;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Unlit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;False;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;True;3;False;;False;True;1;LightMode=ShadowCaster;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;3;0,0;Float;False;False;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;New Amplify Shader;2992e84f91cbeb14eab234972e07ea9d;True;DepthOnly;0;3;DepthOnly;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Unlit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;True;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;False;False;True;1;LightMode=DepthOnly;False;False;0;;0;0;Standard;0;False;0
@@ -1681,9 +1698,10 @@ Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;8;0,0;Float;False;False;-1;
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;9;0,0;Float;False;False;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;New Amplify Shader;2992e84f91cbeb14eab234972e07ea9d;True;DepthNormalsOnly;0;9;DepthNormalsOnly;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Unlit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;False;;True;3;False;;False;True;1;LightMode=DepthNormalsOnly;False;True;9;d3d11;metal;vulkan;xboxone;xboxseries;playstation;ps4;ps5;switch;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;1;416,-48;Float;False;True;-1;2;UnityEditor.ShaderGraphUnlitGUI;0;13;FD/S_Ghost_Mesh;2992e84f91cbeb14eab234972e07ea9d;True;Forward;0;1;Forward;8;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;False;False;False;True;4;RenderPipeline=UniversalPipeline;RenderType=Transparent=RenderType;Queue=Transparent=Queue=0;UniversalMaterialType=Unlit;True;5;True;12;all;0;False;True;1;5;False;;10;False;;1;1;False;;10;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;2;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalForwardOnly;False;False;0;;0;0;Standard;21;Surface;1;638569386187895020;  Blend;0;0;Two Sided;1;0;Forward Only;0;0;Cast Shadows;0;638552806502867796;  Use Shadow Threshold;0;0;GPU Instancing;1;0;LOD CrossFade;1;0;Built-in Fog;1;0;Meta Pass;0;0;Extra Pre Pass;0;0;Tessellation;0;0;  Phong;0;0;  Strength;0.5,False,;0;  Type;0;0;  Tess;16,False,;0;  Min;10,False,;0;  Max;25,False,;0;  Edge Length;16,False,;0;  Max Displacement;25,False,;0;Vertex Position,InvertActionOnDeselection;1;0;0;10;False;True;False;True;False;False;True;True;True;False;False;;False;0
 WireConnection;15;0;10;0
-WireConnection;15;1;12;0
+WireConnection;15;1;67;30
+WireConnection;56;0;15;0
 WireConnection;39;0;28;0
-WireConnection;19;0;15;0
+WireConnection;19;0;56;0
 WireConnection;19;1;20;0
 WireConnection;26;0;19;0
 WireConnection;54;0;47;0
@@ -1691,12 +1709,10 @@ WireConnection;54;3;55;0
 WireConnection;43;0;26;0
 WireConnection;48;0;54;0
 WireConnection;48;1;49;0
-WireConnection;25;0;19;0
 WireConnection;41;0;43;0
 WireConnection;50;0;48;0
+WireConnection;25;0;19;0
 WireConnection;22;0;25;0
-WireConnection;24;0;15;0
-WireConnection;24;1;20;0
 WireConnection;27;1;40;0
 WireConnection;30;0;33;0
 WireConnection;30;1;32;0
@@ -1711,8 +1727,10 @@ WireConnection;35;1;37;0
 WireConnection;29;0;28;0
 WireConnection;45;0;41;0
 WireConnection;45;1;50;0
+WireConnection;24;0;15;0
+WireConnection;24;1;20;0
 WireConnection;1;2;27;0
 WireConnection;1;3;45;0
 WireConnection;1;4;22;0
 ASEEND*/
-//CHKSM=D8A8B88B76CE497032832F1D02391D22FAD12E1E
+//CHKSM=143AAB857EB276E73A9E7AC5FC83D8132706DCAA
