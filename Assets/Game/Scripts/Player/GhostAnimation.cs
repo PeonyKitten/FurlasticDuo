@@ -27,6 +27,8 @@ namespace Game.Scripts.Player
 
         [Header("Ghost Mouth")]
         [SerializeField] private Animator mouthAnimator;
+        // Temp Mouth Outline
+        [SerializeField] private Animator mouthRingAnimator;
 
         [Header("Ghost Material and Effect")]
         [SerializeField] private GameObject effectLine;
@@ -173,6 +175,12 @@ namespace Game.Scripts.Player
             if (mouthAnimator != null)
             {
                 mouthAnimator.SetFloat("MouthShapeBlend", ghostLength);
+            }
+
+            // Temp Mouth Outline
+            if (mouthRingAnimator != null)
+            {
+                mouthRingAnimator.SetFloat("MouthRingBlend", ghostLength);
             }
         }
 
