@@ -1,3 +1,4 @@
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -21,6 +22,11 @@ namespace FD.Player
         [SerializeField] private float jumpAngularSpeedMultiplier = 1f;
         [SerializeField] private float fallGravityMultiplier = 2f;
 
+        [Header("Jump Sounds")]
+        [SerializeField] private EventReference jumpStartSound;
+        [SerializeField] private EventReference fallStartSound;
+        [SerializeField] private EventReference hitGroundSound;
+        
         [Header("Jump Effects")]
         [SerializeField] private GameObject jumpStartEffect;
         [SerializeField] private GameObject fallStartEffect;
@@ -94,7 +100,9 @@ namespace FD.Player
             // Perform Jump
             if (_jumpInputBufferTimer > 0 && _coyoteTimeTimer > 0)
             {
-                _rb.velocity = new Vector3(_rb.velocity.x, jumpSpeed, _rb.velocity.z);
+                var velocity = _rb.velocity;
+                velocity = new Vector3(velocity.x, jumpSpeed, velocity.z);
+                _rb.velocity = velocity;
                 if (_hitInfo.rigidbody)
                 {
                     _hitInfo.rigidbody.AddForceAtPosition(Vector3.down * jumpGroundForce, _hitInfo.point, ForceMode.Impulse);
@@ -132,6 +140,11 @@ namespace FD.Player
             }
             _playerController.speedFactor *= jumpSpeedMultiplier;
             _playerController.angularSpeedFactor *= jumpAngularSpeedMultiplier;
+            
+            if (!jumpStartSound.IsNull)
+            {
+                RuntimeManager.PlayOneShot(jumpStartSound);
+            }
             onPlayerJump.Invoke();
         }
         
@@ -150,6 +163,11 @@ namespace FD.Player
                 }
             }
             _playerController.gravityMultiplier = Vector3.one * fallGravityMultiplier;
+            
+            if (!fallStartSound.IsNull)
+            {
+                RuntimeManager.PlayOneShot(fallStartSound);
+            }
             onPlayerFall.Invoke();
         }
 
@@ -169,6 +187,11 @@ namespace FD.Player
             _playerController.gravityMultiplier = Vector3.one;
             _playerController.speedFactor /= jumpSpeedMultiplier;
             _playerController.angularSpeedFactor /= jumpAngularSpeedMultiplier;
+
+            if (!hitGroundSound.IsNull)
+            {
+                RuntimeManager.PlayOneShot(hitGroundSound);
+            }
             onPlayerLand.Invoke();
         }
     }
