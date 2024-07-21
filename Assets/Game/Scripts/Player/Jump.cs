@@ -28,10 +28,9 @@ namespace FD.Player
         [SerializeField] private bool ignoreGroundEffectSpawnRotation;
         [SerializeField] private bool globalFallEffect;
 
-
         [Header("Ground Indicator")]
-        [SerializeField] private bool useGroundIndicator = false;
         [SerializeField] private GameObject groundIndicatorPrefab;
+        [SerializeField] private float longRaycastLength = 100f;
 
         [Header("Callbacks")]
         public UnityEvent onPlayerJump;
@@ -46,7 +45,7 @@ namespace FD.Player
         private float _jumpTimer;
 
         private PlayerController _playerController;
-        private Rigidbody _rb;
+        private Rigidbody _rb;  
 
         private RaycastHit _hitInfo;
 
@@ -70,6 +69,13 @@ namespace FD.Player
             _jumpInputBufferTimer -= Time.deltaTime;
             _jumpTimer -= Time.deltaTime;
 
+            var hitGround = Physics.Raycast(transform.position, Vector3.down, out _hitInfo, longRaycastLength);
+
+            if (currentGroundIndicator != null)
+            {
+                UpdateGroundIndicatorPosition(hitGround);
+            }
+
             // Check if we're falling
             if (IsJumping && _rb.velocity.y < 0)
             {
@@ -83,10 +89,8 @@ namespace FD.Player
             }
             
             if (_jumpTimer > 0) return;
-            
-            var hitGround = Physics.Raycast(transform.position, Vector3.down, out _hitInfo, _playerController.GroundCheckLength);
 
-            if (hitGround)
+            if (hitGround && _hitInfo.distance <= _playerController.GroundCheckLength)
             {
                 // If we were currently in the air and have touched the ground, we've landed
                 if (IsJumping)
@@ -116,11 +120,6 @@ namespace FD.Player
                 IsJumping = true;
                 OnJumpStart();
             }
-
-            if (IsJumping && useGroundIndicator)
-            {
-                UpdateGroundIndicatorPosition();
-            }
         }
 
         private void OnDrawGizmosSelected()
@@ -147,9 +146,13 @@ namespace FD.Player
             _playerController.angularSpeedFactor *= jumpAngularSpeedMultiplier;
             onPlayerJump.Invoke();
 
-            if (useGroundIndicator && groundIndicatorPrefab != null)
+            if (groundIndicatorPrefab != null)
             {
                 SpawnGroundIndicator();
+            }
+            else
+            {
+                Debug.LogError($"Ground Indicator Prefab Not Set!");
             }
         }
         
@@ -196,18 +199,15 @@ namespace FD.Player
         {
             DestroyGroundIndicator();
             currentGroundIndicator = Instantiate(groundIndicatorPrefab);
-            UpdateGroundIndicatorPosition();
+            UpdateGroundIndicatorPosition(false);
         }
 
-        private void UpdateGroundIndicatorPosition()
+        private void UpdateGroundIndicatorPosition(bool hitGround)
         {
-            if (currentGroundIndicator == null) return;
+            if (currentGroundIndicator == null || !hitGround) return;
 
-            if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit))
-            {
-                currentGroundIndicator.transform.position = hit.point;
-                currentGroundIndicator.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
-            }
+            currentGroundIndicator.transform.position = _hitInfo.point;
+            currentGroundIndicator.transform.rotation = Quaternion.FromToRotation(Vector3.up, _hitInfo.normal);
         }
 
         private void DestroyGroundIndicator()
