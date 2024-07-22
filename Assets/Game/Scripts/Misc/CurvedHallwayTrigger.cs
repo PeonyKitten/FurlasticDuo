@@ -17,8 +17,6 @@ namespace FD.Misc
             {
                 UpdateShaderCurviness();
             }
-
-            Debug.Log("Player Detected");
         }
 
         private void UpdateShaderCurviness()
