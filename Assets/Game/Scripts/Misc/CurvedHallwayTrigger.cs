@@ -1,44 +1,31 @@
-using System.Collections;
-using System.Collections.Generic;
+using FD.Toys;
 using UnityEngine;
 
 namespace FD.Misc
 {
     public class CurvedHallwayTrigger : MonoBehaviour
     {
-        public FD.Toys.Door hamsterWheelDoor;
-        public Material curvedHallwayMaterial;
-        public float maxCurviness = 1f;
-        public bool resetCurvature = false;
+        [SerializeField] private Door hamsterWheelDoor;
+        [SerializeField] private Material curvedHallwayMaterial;
+        [SerializeField] private float maxSkew = 1f;
+        [SerializeField] private bool reverseOpenness;
+        
+        private static readonly int ShaderHashSkewMultiplier = Shader.PropertyToID("_Skew_Multiplier");
 
         private void OnTriggerStay(Collider other)
         {
             if (other.CompareTag("Player"))
             {
-                UpdateShaderCurviness();
+                UpdateShaderSkew();
             }
-
-            Debug.Log("Player Detected");
         }
 
-        private void UpdateShaderCurviness()
+        private void UpdateShaderSkew()
         {
-            if (hamsterWheelDoor != null && curvedHallwayMaterial != null)
-            {
-                float openness = hamsterWheelDoor.Openness;
-                float curviness;
+            var openness = reverseOpenness ? 1 - hamsterWheelDoor.Openness: hamsterWheelDoor.Openness;
+            var skew = openness * maxSkew;
 
-                if (resetCurvature)
-                {
-                    curviness = (1 - openness) * maxCurviness;
-                }
-                else
-                {
-                    curviness = openness * maxCurviness;
-                }
-
-                curvedHallwayMaterial.SetFloat("_Skew_Multiplier", curviness);
-            }
+            curvedHallwayMaterial.SetFloat(ShaderHashSkewMultiplier, skew);
         }
     }
 }
