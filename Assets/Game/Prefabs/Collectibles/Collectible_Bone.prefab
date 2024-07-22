@@ -4960,8 +4960,9 @@ GameObject:
   - component: {fileID: 3370787928163486197}
   - component: {fileID: 1964655673994224319}
   - component: {fileID: 4016522920030448371}
-  - component: {fileID: 4411296423243623419}
   - component: {fileID: 5330002365652182422}
+  - component: {fileID: 2475461851560430000}
+  - component: {fileID: -8527563394503544199}
   m_Layer: 0
   m_Name: Collectible_Bone
   m_TagString: Untagged
@@ -4979,7 +4980,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 116.830215, y: -35.58, z: 8.854746}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8687870034110846293}
@@ -5068,7 +5069,21 @@ MonoBehaviour:
   onCollectibleCollect:
     m_PersistentCalls:
       m_Calls: []
---- !u!135 &4411296423243623419
+--- !u!114 &5330002365652182422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5249608170462017368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a763167a6072244f84001b660b38906, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  axis: {x: 0, y: 1, z: 0}
+  degreesPerSecond: 15
+--- !u!135 &2475461851560430000
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5087,9 +5102,9 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 2
+  m_Radius: 0.7
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5330002365652182422
+--- !u!114 &-8527563394503544199
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5098,11 +5113,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 5249608170462017368}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a763167a6072244f84001b660b38906, type: 3}
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  axis: {x: 0, y: 1, z: 0}
-  degreesPerSecond: 15
+  CollisionTag: Player
+  EventReference:
+    Guid:
+      Data1: 1288973800
+      Data2: 1291254799
+      Data3: 2064737981
+      Data4: 868618634
+    Path: event:/Coin
+  Event: 
+  PlayEvent: 3
+  StopEvent: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!1001 &2440353480039030766
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5114,17 +5146,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 3d9f773d90d349b44b3d3263ed67157a,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 3d9f773d90d349b44b3d3263ed67157a,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 3d9f773d90d349b44b3d3263ed67157a,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 3d9f773d90d349b44b3d3263ed67157a,
         type: 3}

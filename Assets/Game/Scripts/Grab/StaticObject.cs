@@ -1,11 +1,15 @@
 using System.Collections.Generic;
 using FD.Player;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace FD.Grab
 {
     public class StaticObject : MonoBehaviour, IGrabbable
     {
+        public UnityEvent onGrab;
+        public UnityEvent onGrabRelease;
+
         private static readonly Dictionary<GameObject, FixedJoint> PlayerJoints = new();
 
         private void Awake()
@@ -27,6 +31,7 @@ namespace FD.Grab
 
             var connectionBody = CreateConnectionBody(playerGrabPoint.position);
             AttachJointToPlayer(player, connectionBody);
+            onGrab?.Invoke();
         }
 
         private Rigidbody CreateConnectionBody(Vector3 position)
@@ -66,6 +71,8 @@ namespace FD.Grab
             {
                 DestroyJointAndConnectedBody(joint);
             }
+
+            onGrabRelease?.Invoke();
         }
 
         private static void DestroyJointAndConnectedBody(Joint joint)
