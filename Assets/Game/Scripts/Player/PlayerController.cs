@@ -49,12 +49,17 @@ namespace FD.Player
         [SerializeField] private bool disableSteepSlopeMovement = true;
         [SerializeField] private SpeechBubble speechBubble;
 
+        [Header("Speed Control")]
+        public bool manualSpeedOverride = false;
+        public float overrideSpeed = 10f;
+        public float speedFactor = 1f;
+
         [SerializeField, Range(0, 1)] private float meiyisSlider;
 
         public Animator animator;
         public Player playerType = Player.Cat;
         public Vector3 gravityMultiplier = Vector3.one;
-        public float speedFactor = 1f;
+       //public float speedFactor = 1f;
         public float accelerationFactor = 1f;
         public float angularSpeedFactor = 1f;
         public bool ignoreGroundVelocity;
@@ -133,11 +138,12 @@ namespace FD.Player
             var groundAngle = Vector3.Angle(Vector3.up, slopeHitInfo.normal);
             
             // TODO: speed factor bad. fix @alvin
-            if (speedFactor > 1)
-            {
-                Debug.LogWarning("SpeedFactor > 1. Clamping to 1");
-                speedFactor = 1;
-            }
+            // Changed by Nono for now, needs review & testing
+            //if (speedFactor > 1)
+            //{
+            //    Debug.LogWarning("SpeedFactor > 1. Clamping to 1");
+            //    speedFactor = 1;
+            //}
             
             HandleMovement(groundVel, groundAngle);
 
@@ -197,6 +203,12 @@ namespace FD.Player
         {
             // Do not move if we're on too steep of a slope
             if (disableSteepSlopeMovement && groundSlopeAngle > maxSlopeAngleDeg) return;
+
+            if (manualSpeedOverride)
+            {
+                Rigidbody.velocity = _movement.Bulk() * overrideSpeed;
+                return;
+            }
 
             var movement = _movement.Bulk();
             var velDot = Vector3.Dot(movement, _goalVel.normalized);

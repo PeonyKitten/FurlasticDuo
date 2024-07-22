@@ -9,7 +9,9 @@ namespace FD.Toys
     {
         private struct PlayerData
         {
-            public float SpeedFactor;
+            public float OriginalSpeedFactor;
+            public bool OriginalManualSpeedOverride;
+            public float OriginalOverrideSpeed;
             public Jump Jump;
         }
 
@@ -37,7 +39,9 @@ namespace FD.Toys
             
             var playerData = new PlayerData
             {
-                SpeedFactor = player.speedFactor,
+                OriginalSpeedFactor = player.speedFactor,
+                OriginalManualSpeedOverride = player.manualSpeedOverride,
+                OriginalOverrideSpeed = player.overrideSpeed,
                 Jump = player.GetComponent<Jump>()
             };
 
@@ -67,7 +71,9 @@ namespace FD.Toys
                 var moveSpeedFactor = Vector3.Dot(movement, transform.right);
                 var absMoveSpeedFactor = Mathf.Abs(moveSpeedFactor);
                 absMoveSpeedFactor = absMoveSpeedFactor * absMoveSpeedFactor;
-                player.speedFactor = playerData.SpeedFactor * absMoveSpeedFactor;
+
+                player.manualSpeedOverride = true;
+                player.overrideSpeed = playerData.OriginalSpeedFactor * absMoveSpeedFactor * player.MaximumSpeed;
 
                 currentRotation += turnSpeedFactor;
             }
@@ -88,11 +94,13 @@ namespace FD.Toys
         private void OnTriggerExit(Collider other)
         {
             if (!other.TryGetComponent(out PlayerController player)) return;
-            
+
             if (_enteredPlayers.Remove(player, out var playerData))
             {
                 player.ignoreGroundVelocity = false;
-                player.speedFactor = playerData.SpeedFactor;
+                player.speedFactor = playerData.OriginalSpeedFactor;
+                player.manualSpeedOverride = playerData.OriginalManualSpeedOverride;
+                player.overrideSpeed = playerData.OriginalOverrideSpeed;
             }
         }
         
