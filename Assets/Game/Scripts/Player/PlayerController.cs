@@ -204,12 +204,6 @@ namespace FD.Player
             // Do not move if we're on too steep of a slope
             if (disableSteepSlopeMovement && groundSlopeAngle > maxSlopeAngleDeg) return;
 
-            if (manualSpeedOverride)
-            {
-                Rigidbody.velocity = _movement.Bulk() * overrideSpeed;
-                return;
-            }
-
             var movement = _movement.Bulk();
             var velDot = Vector3.Dot(movement, _goalVel.normalized);
 
@@ -220,7 +214,7 @@ namespace FD.Player
             
             var accel = acceleration * accelerationFactorDot.Evaluate(velDot);
 
-            var goalVel = movement * MaximumSpeed;
+            var goalVel = movement * (manualSpeedOverride ? overrideSpeed : MaximumSpeed);
 
             var totalVel = goalVel;
             
@@ -233,11 +227,18 @@ namespace FD.Player
                 totalVel,
                 accel * Time.deltaTime);
 
-            var neededAccel = (_goalVel - Rigidbody.velocity) / Time.deltaTime * accelerationFactor;
-            var maxAccel = maxAcceleration * maxAccelerationFactorDot.Evaluate(velDot);
+            if (manualSpeedOverride)
+            {
+                Rigidbody.velocity = _goalVel;
+            }
+            else
+            {
+                var neededAccel = (_goalVel - Rigidbody.velocity) / Time.deltaTime * accelerationFactor;
+                var maxAccel = maxAcceleration * maxAccelerationFactorDot.Evaluate(velDot);
 
-            neededAccel = Vector3.ClampMagnitude(neededAccel, maxAccel);
-            Rigidbody.AddForce(Vector3.Scale(neededAccel * Rigidbody.mass, forceScale));
+                neededAccel = Vector3.ClampMagnitude(neededAccel, maxAccel);
+                Rigidbody.AddForce(Vector3.Scale(neededAccel * Rigidbody.mass, forceScale));
+            }
         }
 
         private void HandleStickingToSlopes(float groundAngle, Vector3 gravity, Vector3 groundNormal)
