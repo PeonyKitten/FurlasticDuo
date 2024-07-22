@@ -301,6 +301,9 @@ MonoBehaviour:
   jumpSpeed: 2.5
   jumpInputBuffer: 0.33
   coyoteTime: 0.33
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 1097
   jumpGroundForce: 10
   landGroundForce: 100
   jumpSpeedMultiplier: 0.5
@@ -332,6 +335,8 @@ MonoBehaviour:
   jumpEndEffect: {fileID: 0}
   ignoreGroundEffectSpawnRotation: 0
   globalFallEffect: 0
+  groundIndicatorPrefab: {fileID: 0}
+  longRaycastLength: 100
   onPlayerJump:
     m_PersistentCalls:
       m_Calls: []
