@@ -69,6 +69,7 @@ namespace FD.Grab
             if (_grabCount <= 0)
             {
                 _rb.isKinematic = !pushIfNotGrabbed;
+                _grabCount = 0;
             }
 
             onGrabRelease?.Invoke();
