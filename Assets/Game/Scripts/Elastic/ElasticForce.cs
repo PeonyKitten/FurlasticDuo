@@ -207,10 +207,13 @@ namespace FD.Elastic
                 return false;
             }
 
-            if (useRumble && Gamepad.current is not null)
+            if (useRumble)
             {
                 var rumble = rumbleForceCurve.Evaluate(forceAppliedNormalizedDistance) * rumbleAmount;
-                Gamepad.current.SetMotorSpeeds(rumble, rumble);
+                foreach (var gamepad in Gamepad.all)
+                {
+                    gamepad.SetMotorSpeeds(rumble, rumble);
+                }
             }
 
             force = forceDirection * forceMagnitude;
