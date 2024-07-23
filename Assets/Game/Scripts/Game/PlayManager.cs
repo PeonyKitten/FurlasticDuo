@@ -203,5 +203,19 @@ namespace FD.Game
             var inputMapping = FDPlayerActions.GetMapping(player, action);
             return inputSettings.GetSprite(inputMapping, device);
         }
+
+        // ReSharper disable Unity.PerformanceAnalysis
+        public static PlayerController[] GetPlayers()
+        {
+            if (!HasInstance())
+            {
+                return FindObjectsOfType<PlayerController>();
+            }
+            
+            var players = new PlayerController[2];
+            players[0] = Instance.cat;
+            players[1] = Instance.dog;
+            return players;
+        }
     }
 }

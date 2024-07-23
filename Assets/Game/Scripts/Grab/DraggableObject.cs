@@ -1,3 +1,4 @@
+using FD.Game;
 using FD.Player;
 using UnityEngine;
 using UnityEngine.Events;
@@ -78,7 +79,7 @@ namespace FD.Grab
         //TODO: maybe change?   
         public void ReleaseAll()
         {
-            var allPlayers = FindObjectsOfType<PlayerController>();
+            var allPlayers = PlayManager.GetPlayers();
             foreach (var player in allPlayers)
             {
                 var joint = player.GetComponent<FixedJoint>();
