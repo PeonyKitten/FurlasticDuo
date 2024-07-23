@@ -32,6 +32,12 @@ namespace FD.Player
     {
         
     }
+
+    [Serializable]
+    public class ScoreChangedEvent : UnityEvent<int>
+    {
+        
+    }
     
     [RequireComponent(typeof(PlayerInput))]
     public class PlayerInputHandler: MonoBehaviour
@@ -52,10 +58,13 @@ namespace FD.Player
         
         public PlayerController dog;
         public PlayerController cat;
-        
-        public PlayerInputType InputType => playerInputType;
 
         public PlayerInputHandlerEvent onPlayerDeviceChanged;
+
+        public int Score { get; private set; }
+        public ScoreChangedEvent onScoreChanged;
+        
+        public PlayerInputType InputType => playerInputType;
 
         public void DefaultSetup()
         {
@@ -242,6 +251,18 @@ namespace FD.Player
             {
                 player?.GetComponent<Grabbing>().SetGrabAction(playerInput.actions["Grab"]);
             }
+        }
+
+        public void AddScore(int points)
+        {
+            Score += points;
+            onScoreChanged?.Invoke(Score);
+        }
+
+        public void ResetScore()
+        {
+            Score = 0;
+            onScoreChanged?.Invoke(Score);
         }
     }
 }
