@@ -32,6 +32,9 @@ namespace FD.Game
 
         [SerializeField] private TMP_Text player1Score;
         [SerializeField] private TMP_Text player2Score;
+
+        [SerializeField] private Color catColor;
+        [SerializeField] private Color dogColor;
         
         public PlayerInputManager playerInputManager;
         private int _playerIndex;
@@ -117,6 +120,8 @@ namespace FD.Game
             if (mode == PlayMode.LocalCoop)
             {
                 playerInputManager.EnableJoining();
+                player1Score.color = catColor;
+                player2Score.color = dogColor;
                 player2Score.enabled = true;
             }
             else
@@ -173,6 +178,7 @@ namespace FD.Game
             inputHandler.SetupGrabActions();
             inputHandlers.Add(inputHandler);
 
+            player1Score.color = Color.white;
             player2Score.enabled = false;
             inputHandler.onScoreChanged.AddListener(UpdatePlayerScores);
             inputHandler.ResetScore();
