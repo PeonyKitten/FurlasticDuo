@@ -94,6 +94,8 @@ namespace FD.Player
             {
                 primaryCamera = Camera.main;
             }
+
+            _idleTimer = idleDelay;
         }
 
         public void OnMovement(InputValue value)
