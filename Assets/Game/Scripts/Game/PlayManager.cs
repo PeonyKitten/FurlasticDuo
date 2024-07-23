@@ -6,6 +6,7 @@ using FD.Patterns;
 using FD.Player;
 using FD.UI.Input;
 using FD.Utils;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -28,6 +29,9 @@ namespace FD.Game
         [SerializeField] private GameObject ghostPrefab;
         
         [SerializeField] private InputUISettings inputSettings;
+
+        [SerializeField] private TMP_Text player1Score;
+        [SerializeField] private TMP_Text player2Score;
         
         public PlayerInputManager playerInputManager;
         private int _playerIndex;
@@ -113,6 +117,7 @@ namespace FD.Game
             if (mode == PlayMode.LocalCoop)
             {
                 playerInputManager.EnableJoining();
+                player2Score.enabled = true;
             }
             else
             {
@@ -149,6 +154,8 @@ namespace FD.Game
                 : PlayerInputHandler.PlayerInputType.Dog;
             inputHandler.SetupPlayer(playerType);
             inputHandler.SetupGrabActions();
+            inputHandler.onScoreChanged.AddListener(UpdatePlayerScores);
+            inputHandler.ResetScore();
             inputHandlers.Add(inputHandler);
             _playerIndex++;
 
@@ -165,6 +172,22 @@ namespace FD.Game
             inputHandler.SetupPlayer(PlayerInputHandler.PlayerInputType.Combined);
             inputHandler.SetupGrabActions();
             inputHandlers.Add(inputHandler);
+
+            player2Score.enabled = false;
+            inputHandler.onScoreChanged.AddListener(UpdatePlayerScores);
+            inputHandler.ResetScore();
+        }
+
+        private void UpdatePlayerScores(int _)
+        {
+            if (cat?.InputHandler is not null && player1Score is not null)
+            {
+                player1Score.text = $"{cat.InputHandler.Score}";
+            }
+            if (dog?.InputHandler is not null && player2Score is not null)
+            {
+                player2Score.text = $"{dog.InputHandler.Score}";
+            }
         }
 
         // ReSharper disable once UnusedMember.Local
@@ -184,6 +207,8 @@ namespace FD.Game
         {
             foreach (var inputHandler in inputHandlers)
             {
+                inputHandler.ResetScore();
+                inputHandler.onScoreChanged.RemoveAllListeners();
                 Destroy(inputHandler.gameObject);
             }
             inputHandlers.Clear();

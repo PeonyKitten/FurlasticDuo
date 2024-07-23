@@ -23,9 +23,9 @@ namespace FD.Collectibles
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!other.TryGetComponent(out PlayerController _)) return;
+            if (!other.TryGetComponent(out PlayerController player)) return;
             
-            _collectible.Collect();
+            _collectible.Collect(player);
             onCollectibleCollect?.Invoke();
 
             if (disableAfterCollect)
