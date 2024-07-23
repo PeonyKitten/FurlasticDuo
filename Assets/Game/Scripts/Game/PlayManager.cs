@@ -220,6 +220,24 @@ namespace FD.Game
             inputHandlers.Clear();
         }
 
+        public bool GetRumble()
+        {
+            if (ghost)
+            {
+                return ghost.useRumble;
+            }
+
+            return true;
+        }
+
+        public void SetRumble(bool useRumble)
+        {
+            if (ghost)
+            {
+                ghost.useRumble = useRumble;
+            }
+        }
+
         public Sprite GetInputSpriteFromMapping(PlayerController player, InputLayout.InputMapping inputMapping)
         {
             var device = player.InputHandler?.device ?? PlayerInputDevice.GenericGamepad;

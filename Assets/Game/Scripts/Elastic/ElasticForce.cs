@@ -51,7 +51,7 @@ namespace FD.Elastic
         [SerializeField] private float stopSnapbackDistance = 0.5f;
 
         [Header("Rumble Settings")]
-        [SerializeField] private bool useRumble = true;
+        public bool useRumble = true;
         [SerializeField, Range(0, 1)] private float rumbleAmount = 0.5f;
         [SerializeField] private AnimationCurve rumbleForceCurve;
 
