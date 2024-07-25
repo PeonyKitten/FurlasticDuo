@@ -12,6 +12,7 @@ namespace FD.Player
         [SerializeField] private float jumpSpeed = 15f;
         [SerializeField] private float jumpInputBuffer = 0.33f;
         [SerializeField] private float coyoteTime = 0.33f;
+        [SerializeField] private LayerMask groundLayerMask;
         
         [Header("Ground Forces")]
         [SerializeField] private float jumpGroundForce = 10f;
@@ -33,7 +34,11 @@ namespace FD.Player
         [SerializeField] private GameObject jumpEndEffect;
         [SerializeField] private bool ignoreGroundEffectSpawnRotation;
         [SerializeField] private bool globalFallEffect;
-        
+
+        [Header("Ground Indicator")]
+        [SerializeField] private GameObject groundIndicatorPrefab;
+        [SerializeField] private float longRaycastLength = 100f;
+
         [Header("Callbacks")]
         public UnityEvent onPlayerJump;
         public UnityEvent onPlayerFall;
@@ -47,9 +52,12 @@ namespace FD.Player
         private float _jumpTimer;
 
         private PlayerController _playerController;
-        private Rigidbody _rb;
+        private Rigidbody _rb;  
 
         private RaycastHit _hitInfo;
+
+        private GameObject _currentGroundIndicator;
+
 
         private void Start()
         {
@@ -68,6 +76,14 @@ namespace FD.Player
             _jumpInputBufferTimer -= Time.deltaTime;
             _jumpTimer -= Time.deltaTime;
 
+            var ray = new Ray(transform.position, Vector3.down);
+            var hitGround = Physics.Raycast(ray, out var hitInfo, longRaycastLength, groundLayerMask.value, QueryTriggerInteraction.Ignore);
+            
+            if (hitGround)
+            {
+                UpdateGroundIndicatorPosition(hitInfo);
+            }
+
             // Check if we're falling
             if (IsJumping && _rb.velocity.y < 0)
             {
@@ -81,11 +97,11 @@ namespace FD.Player
             }
             
             if (_jumpTimer > 0) return;
-            
-            var hitGround = Physics.Raycast(transform.position, Vector3.down, out _hitInfo, _playerController.GroundCheckLength);
 
-            if (hitGround)
+            if (hitGround && hitInfo.distance <= _playerController.GroundCheckLength)
             {
+                _hitInfo = hitInfo;
+                
                 // If we were currently in the air and have touched the ground, we've landed
                 if (IsJumping)
                 {
@@ -146,6 +162,11 @@ namespace FD.Player
                 RuntimeManager.PlayOneShot(jumpStartSound);
             }
             onPlayerJump.Invoke();
+
+            if (groundIndicatorPrefab)
+            {
+                SpawnGroundIndicator(_hitInfo);
+            }
         }
         
         // We've started falling
@@ -193,6 +214,31 @@ namespace FD.Player
                 RuntimeManager.PlayOneShot(hitGroundSound);
             }
             onPlayerLand.Invoke();
+
+            DestroyGroundIndicator();
+        }
+
+        private void SpawnGroundIndicator(RaycastHit hitInfo)
+        {
+            DestroyGroundIndicator();
+            _currentGroundIndicator = Instantiate(groundIndicatorPrefab, hitInfo.point, Quaternion.FromToRotation(Vector3.up, hitInfo.normal));
+        }
+
+        private void UpdateGroundIndicatorPosition(RaycastHit hitInfo)
+        {
+            if (_currentGroundIndicator is null) return;
+
+            _currentGroundIndicator.transform.position = hitInfo.point;
+            _currentGroundIndicator.transform.rotation = Quaternion.FromToRotation(Vector3.up, hitInfo.normal);
+        }
+
+        private void DestroyGroundIndicator()
+        {
+            if (_currentGroundIndicator)
+            {
+                Destroy(_currentGroundIndicator);
+                _currentGroundIndicator = null;
+            }
         }
     }
 }

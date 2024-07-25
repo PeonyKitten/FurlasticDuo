@@ -1,3 +1,4 @@
+using FD.Game;
 using FD.Player;
 using UnityEngine;
 using UnityEngine.Events;
@@ -69,6 +70,7 @@ namespace FD.Grab
             if (_grabCount <= 0)
             {
                 _rb.isKinematic = !pushIfNotGrabbed;
+                _grabCount = 0;
             }
 
             onGrabRelease?.Invoke();
@@ -77,7 +79,7 @@ namespace FD.Grab
         //TODO: maybe change?   
         public void ReleaseAll()
         {
-            var allPlayers = FindObjectsOfType<PlayerController>();
+            var allPlayers = PlayManager.GetPlayers();
             foreach (var player in allPlayers)
             {
                 var joint = player.GetComponent<FixedJoint>();
@@ -112,6 +114,11 @@ namespace FD.Grab
             {
                 Destroy(joint);
             }
+        }
+
+        public void EnablePush(bool enablePush)
+        {
+            pushIfNotGrabbed = enablePush;
         }
 
         private void UpdateMaterial()

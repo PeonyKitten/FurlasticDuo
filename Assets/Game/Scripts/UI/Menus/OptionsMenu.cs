@@ -1,4 +1,5 @@
 using System.Collections;
+using FD.Game;
 using FD.Utils;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -9,16 +10,38 @@ namespace FD.UI.Menus
     public class OptionsMenu: Menu
     {
         [SerializeField] private InputAction returnToPreviousMenuAction;
-        private VisualElement _paw;
+        [SerializeField] private Material worldDistortMaterial;
         private Button _backButton;
-        
+
+        private Toggle _rumbleToggle;
+        private Toggle _distortionToggle;
+        private static readonly int MatHashEnableSkew = Shader.PropertyToID("_Enable_Skew");
+
         protected override IEnumerator Generate()
         {
             yield return null;
             var root = Document.rootVisualElement;
             root.styleSheets.Add(style);
 
-            _paw = root.Q("PawIndicator");
+            _rumbleToggle = root.Q<Toggle>("RumbleToggle");
+            _rumbleToggle.value = PlayManager.Instance.GetRumble();
+            _rumbleToggle.RegisterCallback<ChangeEvent<bool>>(evt =>
+            {
+                PlayManager.Instance.SetRumble(evt.newValue);
+            });
+
+            _distortionToggle = root.Q<Toggle>("DistortionToggle");
+            if (worldDistortMaterial)
+            {
+                _distortionToggle.value = Mathf.Approximately(worldDistortMaterial.GetFloat(MatHashEnableSkew), 1);
+            }
+            _distortionToggle.RegisterCallback<ChangeEvent<bool>>(evt =>
+            {
+                if (worldDistortMaterial)
+                {
+                    worldDistortMaterial.SetFloat(MatHashEnableSkew, evt.newValue ? 1 : 0);
+                }
+            });
 
             _backButton = root.Q<Button>("BackButton");
             _backButton.RegisterCallback<ClickEvent>(_ => ReturnToPreviousMenu());

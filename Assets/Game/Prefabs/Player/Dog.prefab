@@ -1,5 +1,51 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &619192736398899327
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3326214666145351189}
+  - component: {fileID: 1183331349374326501}
+  m_Layer: 6
+  m_Name: SpeechBubble
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3326214666145351189
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 619192736398899327}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.505}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7201880167608502431}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1183331349374326501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 619192736398899327}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55a0bad5f2c44dbda799e03a6dae13c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bubble: {fileID: 0}
+  bubbleContents: {fileID: 0}
 --- !u!1 &813081530204185311
 GameObject:
   m_ObjectHideFlags: 0
@@ -37,6 +83,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1398293801070240978}
+  - {fileID: 3326214666145351189}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &7328651308814601735
@@ -189,6 +236,7 @@ MonoBehaviour:
     damping: 80
   primaryCamera: {fileID: 0}
   disableSteepSlopeMovement: 1
+  speechBubble: {fileID: 1183331349374326501}
   meiyisSlider: 0.1
   animator: {fileID: 5010131548546137768}
   playerType: 1
@@ -213,6 +261,7 @@ MonoBehaviour:
   barkDelay: 0.5
   barkEffect: {fileID: 676789718690479089, guid: d8a1778683d59864d8f0a2c29aab3473,
     type: 3}
+  barkSpawn: {fileID: 9196940568456464328}
 --- !u!114 &7156274775594864634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -253,16 +302,42 @@ MonoBehaviour:
   jumpSpeed: 2.5
   jumpInputBuffer: 0.33
   coyoteTime: 0.33
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 1097
   jumpGroundForce: 10
   landGroundForce: 100
   jumpSpeedMultiplier: 0.5
   jumpAngularSpeedMultiplier: 0.5
   fallGravityMultiplier: 2
+  jumpStartSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  fallStartSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  hitGroundSound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   jumpStartEffect: {fileID: 0}
   fallStartEffect: {fileID: 0}
   jumpEndEffect: {fileID: 0}
   ignoreGroundEffectSpawnRotation: 0
   globalFallEffect: 0
+  groundIndicatorPrefab: {fileID: 0}
+  longRaycastLength: 100
   onPlayerJump:
     m_PersistentCalls:
       m_Calls: []
@@ -287,22 +362,57 @@ MonoBehaviour:
   CollisionTag: 
   EventReference:
     Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
+      Data1: 207055022
+      Data2: 1341096650
+      Data3: -1912981601
+      Data4: -1499789263
+    Path: event:/Lvl_Music_LAB
   Event: 
-  PlayEvent: 0
-  StopEvent: 0
+  PlayEvent: 1
+  StopEvent: 2
   AllowFadeout: 1
   TriggerOnce: 0
   Preload: 0
-  AllowNonRigidbodyDoppler: 0
-  Params: []
+  NonRigidbodyVelocity: 0
+  Params:
+  - Name: Garbage chute
+    Value: 0
+  - Name: Puzzle
+    Value: 1
   OverrideAttenuation: 0
-  OverrideMinDistance: -1
-  OverrideMaxDistance: -1
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
+--- !u!1 &3044733543298956574
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9196940568456464328}
+  m_Layer: 6
+  m_Name: BarkSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9196940568456464328
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3044733543298956574}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6017926963150381540}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1507867707046970169
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -405,7 +515,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 8f920bddef89e8548b6a86e3ee1aff85, type: 2}
+      objectReference: {fileID: 2100000, guid: eedd52e2689824746ab6424f75386488, type: 2}
     - target: {fileID: -3705451606014385959, guid: 660ab74aeee2e204cacb37aaba9e18a6,
         type: 3}
       propertyPath: m_Layer
@@ -553,7 +663,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -4076042433932844323, guid: 660ab74aeee2e204cacb37aaba9e18a6,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9196940568456464328}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 660ab74aeee2e204cacb37aaba9e18a6, type: 3}
 --- !u!4 &1398293801070240978 stripped
@@ -565,6 +679,12 @@ Transform:
 --- !u!95 &5010131548546137768 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 660ab74aeee2e204cacb37aaba9e18a6,
+    type: 3}
+  m_PrefabInstance: {fileID: 1507867707046970169}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6017926963150381540 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -4076042433932844323, guid: 660ab74aeee2e204cacb37aaba9e18a6,
     type: 3}
   m_PrefabInstance: {fileID: 1507867707046970169}
   m_PrefabAsset: {fileID: 0}

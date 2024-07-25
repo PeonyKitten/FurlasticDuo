@@ -9,14 +9,41 @@ using FD.Game.States;
 using FD.Grab;
 using FD.Patterns;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.DualShock;
+using UnityEngine.InputSystem.XInput;
 
 namespace FD.Player
 {
+    [Serializable]
+    public enum PlayerInputDevice
+    {
+        Unassigned,
+        Keyboard,
+        Xbox,
+        PS5,
+        PS4,
+        GenericGamepad,
+    }
+
+    [Serializable]
+    public class PlayerInputHandlerEvent : UnityEvent<PlayerInputHandler>
+    {
+        
+    }
+
+    [Serializable]
+    public class ScoreChangedEvent : UnityEvent<int>
+    {
+        
+    }
+    
     [RequireComponent(typeof(PlayerInput))]
     public class PlayerInputHandler: MonoBehaviour
     {
         public PlayerInput playerInput;
+        public PlayerInputDevice device = PlayerInputDevice.Unassigned;
 
         [Serializable]
         public enum PlayerInputType
@@ -32,10 +59,22 @@ namespace FD.Player
         public PlayerController dog;
         public PlayerController cat;
 
+        public PlayerInputHandlerEvent onPlayerDeviceChanged;
+
+        public int Score { get; private set; }
+        public ScoreChangedEvent onScoreChanged;
+        
+        public PlayerInputType InputType => playerInputType;
+
         public void DefaultSetup()
         {
             SetupPlayer(PlayerInputType.Combined);
             SetupGrabActions();
+        }
+
+        private void OnDisable()
+        {
+            InputSystem.onActionChange -= OnActionChange;
         }
         
         public void SetupPlayer(PlayerInputType playerType)
@@ -63,6 +102,8 @@ namespace FD.Player
             }
             
             playerInput = GetComponent<PlayerInput>();
+            UpdateControlScheme(playerInput);
+            
             playerInputType = playerType;
             
             // Subscribe to pause and unpause events
@@ -74,17 +115,50 @@ namespace FD.Player
                 case PlayerInputType.Cat:
                     playerInput.SwitchCurrentActionMap("Cat");
                     player = cat;
+                    cat.InputHandler = this;
                     break;
                 case PlayerInputType.Dog:
                     playerInput.SwitchCurrentActionMap("Dog");
                     player = dog;
+                    dog.InputHandler = this;
                     break;
                 case PlayerInputType.Combined:
                 default:
                     playerInput.SwitchCurrentActionMap("Combined");
+                    cat.InputHandler = this;
+                    dog.InputHandler = this;
+                    InputSystem.onActionChange += OnActionChange;
                     break;
             }
-        } 
+        }
+
+        private void OnActionChange(object obj, InputActionChange change)
+        {
+            if (change == InputActionChange.ActionPerformed && obj is InputAction)
+            {
+                UpdateControlScheme(playerInput);
+            }
+        }
+
+        private void UpdateControlScheme(PlayerInput input)
+        {
+            var oldDevice = device;
+            
+            device = input.devices[0] switch
+            {
+                Keyboard => PlayerInputDevice.Keyboard,
+                XInputController => PlayerInputDevice.Xbox,
+                DualSenseGamepadHID => PlayerInputDevice.PS5,
+                DualShockGamepad => PlayerInputDevice.PS4,
+                Gamepad => PlayerInputDevice.GenericGamepad,
+                _ => PlayerInputDevice.Unassigned
+            };
+
+            if (device != oldDevice)
+            {
+                onPlayerDeviceChanged?.Invoke(this);
+            }
+        }
 
         private void OnMovement(InputValue value)
         {
@@ -177,6 +251,18 @@ namespace FD.Player
             {
                 player?.GetComponent<Grabbing>().SetGrabAction(playerInput.actions["Grab"]);
             }
+        }
+
+        public void AddScore(int points)
+        {
+            Score += points;
+            onScoreChanged?.Invoke(Score);
+        }
+
+        public void ResetScore()
+        {
+            Score = 0;
+            onScoreChanged?.Invoke(Score);
         }
     }
 }

@@ -51,7 +51,7 @@ namespace FD.Elastic
         [SerializeField] private float stopSnapbackDistance = 0.5f;
 
         [Header("Rumble Settings")]
-        [SerializeField] private bool useRumble = true;
+        public bool useRumble = true;
         [SerializeField, Range(0, 1)] private float rumbleAmount = 0.5f;
         [SerializeField] private AnimationCurve rumbleForceCurve;
 
@@ -64,6 +64,9 @@ namespace FD.Elastic
         private bool _isApplyingSnapback;
         private bool _applySnapbackPlayer1;
         private bool _applySnapbackPlayer2;
+        
+        private static readonly int AnimHashElasticLength = Animator.StringToHash("ElasticLength");
+        private static readonly int AnimHashIsSnapping = Animator.StringToHash("IsSnapping");
 
         public Transform Player1 => player1;
         public Transform Player2 => player2;
@@ -97,7 +100,11 @@ namespace FD.Elastic
 
             var forceDirection1 = (midpoint - player1Position).NormalizedWithMagnitude(out var distance1);
             var forceDirection2 = (midpoint - player2Position).NormalizedWithMagnitude(out var distance2);
-            
+
+            var distance = distance1 + distance2;
+
+            SetCharacterMovementDifficulty(forceDirection1, distance);
+
             float normalizedDistance1 = distance1 / (maxDistance * midpointAdjustment);
             float normalizedDistance2 = distance2 / (maxDistance * (1 - midpointAdjustment));
 
@@ -132,6 +139,8 @@ namespace FD.Elastic
             // The OR here is used to prevent lazy evaluation of the ApplySnapbackForce
             if (snapbackPlayer1 || snapbackPlayer2)
             {
+                SetCharacterAnimSnapping(true);
+                
                 _snapbackDurationTimer = snapbackDuration;
                 _applySnapbackPlayer1 = snapbackPlayer1;
                 _applySnapbackPlayer2 = snapbackPlayer2;
@@ -147,7 +156,27 @@ namespace FD.Elastic
             if (_isApplyingSnapback)
             {
                 ContinueSnapbackForce(_applySnapbackPlayer1, _applySnapbackPlayer2, forceDirection1, forceDirection2);
+
+                if (!_isApplyingSnapback)
+                {
+                    SetCharacterAnimSnapping(false);
+                }
             }
+        }
+
+        private void SetCharacterAnimSnapping(bool isSnapping)
+        {
+            _controller1.animator.SetBool(AnimHashIsSnapping, isSnapping);
+            _controller2.animator.SetBool(AnimHashIsSnapping, isSnapping);
+        }
+
+        private void SetCharacterMovementDifficulty(Vector3 forceDirection, float distance)
+        {
+            var difficulty1 = Vector3.Dot(_controller1.Movement, forceDirection) > 0 ? 0 : distance;
+            var difficulty2 = Vector3.Dot(_controller2.Movement, -forceDirection) > 0 ? 0 : distance;
+            
+            _controller1.animator.SetFloat(AnimHashElasticLength, Mathf.Clamp01(difficulty1/maxDistance));
+            _controller2.animator.SetFloat(AnimHashElasticLength, Mathf.Clamp01(difficulty2/maxDistance));
         }
 
         private void ApplySnapbackImpulse(bool snapbackPlayer1, bool snapbackPlayer2, Vector3 forceDirection1, Vector3 forceDirection2)
@@ -178,10 +207,13 @@ namespace FD.Elastic
                 return false;
             }
 
-            if (useRumble && Gamepad.current is not null)
+            if (useRumble)
             {
                 var rumble = rumbleForceCurve.Evaluate(forceAppliedNormalizedDistance) * rumbleAmount;
-                Gamepad.current.SetMotorSpeeds(rumble, rumble);
+                foreach (var gamepad in Gamepad.all)
+                {
+                    gamepad.SetMotorSpeeds(rumble, rumble);
+                }
             }
 
             force = forceDirection * forceMagnitude;

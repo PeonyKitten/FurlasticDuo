@@ -64,7 +64,39 @@ MonoBehaviour:
       m_Id: 33a6e03d-8bfa-4796-bb50-898dd1b1109b
       m_Processors: 
       m_Interactions: 
-      m_SingletonActionBindings: []
+      m_SingletonActionBindings:
+      - m_Name: 
+        m_Id: 164c7ddc-8415-4774-9911-d5545bb4b441
+        m_Path: <Keyboard>/anyKey
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Join
+        m_Flags: 0
+      - m_Name: 
+        m_Id: e9b510dd-2760-48d2-99cc-267d71cc1862
+        m_Path: <Gamepad>/dpad
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Join
+        m_Flags: 0
+      - m_Name: 
+        m_Id: d4f61bdc-1dad-4bd2-b8c4-cf718e40be6c
+        m_Path: <Gamepad>/leftStick
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Join
+        m_Flags: 0
+      - m_Name: 
+        m_Id: 9c9ca6a6-5728-4bc3-acce-291674331449
+        m_Path: <Gamepad>/rightStick
+        m_Interactions: 
+        m_Processors: 
+        m_Groups: 
+        m_Action: Join
+        m_Flags: 0
       m_Flags: 0
     m_Reference: {fileID: 2446866082233356891, guid: 764bc45e107093347baa45c8fe10b1b1,
       type: 3}
@@ -99,6 +131,11 @@ MonoBehaviour:
     type: 3}
   ghostPrefab: {fileID: 8575567253837766898, guid: ebdc938333b89c74d8fdf4ca98cd4ec0,
     type: 3}
+  inputSettings: {fileID: 11400000, guid: 6d72cb10094cff94e9e38f06cf5a0840, type: 2}
+  player1Score: {fileID: 0}
+  player2Score: {fileID: 0}
+  catColor: {r: 0.69803923, g: 0.4509804, b: 0.9019608, a: 1}
+  dogColor: {r: 0.9019608, g: 0.65882355, b: 0.4509804, a: 1}
   playerInputManager: {fileID: 3846332775707657528}
   cat: {fileID: 0}
   dog: {fileID: 0}

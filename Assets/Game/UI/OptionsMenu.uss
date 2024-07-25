@@ -1,17 +1,22 @@
 .options-tab-button {
-    background-color: rgba(255, 255, 255, 0);
-    color: rgb(163, 0, 0);
+    color: rgb(0, 0, 0);
     -unity-font-style: bold;
-    font-size: 60px;
+    font-size: 48px;
     -unity-font: url("project://database/Assets/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&guid=6f146585abf074048bbf07c7061058f8&type=3#NotInter-Regular");
     border-top-width: 0;
     border-right-width: 0;
     border-bottom-width: 0;
     border-left-width: 0;
+    background-image: url("project://database/Assets/Game/Textures/UI/Stylized_Rect.png?fileID=21300000&guid=7441466fba5b1c2459946fb4a8831e99&type=3#Stylized_Rect");
+    padding-right: 80px;
+    padding-left: 80px;
+    -unity-slice-scale: 0.26px;
+    background-color: rgba(0, 0, 0, 0);
+    margin-right: -31px;
+    margin-left: -31px;
 }
 
 .options-tab-button:focus {
-    color: rgb(255, 255, 0);
-    font-size: 60px;
-    -unity-background-scale-mode: stretch-to-fill;
+    background-image: url("project://database/Assets/Game/Textures/UI/Stylized_Rect_Dark_Accent_Red.png?fileID=21300000&guid=f988c8af8a4f9684fa39f89223755b31&type=3#Stylized_Rect_Dark_Accent_Red");
+    color: rgb(255, 255, 255);
 }

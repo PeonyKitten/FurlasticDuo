@@ -70,7 +70,7 @@ namespace FD.Misc
                     childTransform.rotation = childData.rotation;
                 }
 
-                if (resetRigidbodyVelocities && childTransform.TryGetComponent(out Rigidbody rb))
+                if (resetRigidbodyVelocities && childTransform.TryGetComponent(out Rigidbody rb) && !rb.isKinematic)
                 {
                     rb.velocity = Vector3.zero;
                     rb.angularVelocity = Vector3.zero;
