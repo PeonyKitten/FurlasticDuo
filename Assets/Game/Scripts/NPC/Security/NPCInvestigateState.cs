@@ -8,17 +8,29 @@ namespace FD.NPC.Security
         [FormerlySerializedAs("GoToPatrolStateName")] public string goToPatrolStateName = "Patrolling";
         [FormerlySerializedAs("GoToChaseStateName")] public string goToChaseStateName = "Chasing";
 
-        private float _investigationTimer;
+        [SerializeField] private float _investigationTimer;
+        private Vector3 _barkOrigin;
+        private BarkAttractSB _barkAttractBehaviour;
+
+        public void SetBarkOrigin(Vector3 origin)
+        {
+            _barkOrigin = origin;
+        }
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             Debug.Log("Security NPC is investigating a sound.");
             Security.PlayAnimation("Alert");
-            Security.SetSpeedForState("Investigate");
-            Security.barkAttractBehaviour.Weight = 1;
-            Security.barkAttractBehaviour.Target = Security.barkOrigin;
-            Security.barkAttractBehaviour.IsReacting = true;
-            _investigationTimer = Security.investigationResetTime;
+            Security.SetSpeed(Security.GetSpeedForState("Investigate"));
+
+            _barkAttractBehaviour = Security.steeringAgent.GetBehaviour<BarkAttractSB>();
+            if (_barkAttractBehaviour != null)
+            {
+                _barkAttractBehaviour.Weight = 1;
+                _barkAttractBehaviour.Target = _barkOrigin;
+                _barkAttractBehaviour.IsReacting = true;
+            }
+            _investigationTimer = 5f;
 
         }
 
@@ -32,7 +44,7 @@ namespace FD.NPC.Security
                 return;
             }
 
-            if (Vector3.Distance(Security.transform.position, Security.barkOrigin) < 0.1f)
+            if (Vector3.Distance(Security.transform.position, _barkOrigin) < 0.1f)
             {
                 Security.PlayAnimation("Alert");
                 fsm.ChangeState(goToPatrolStateName);
@@ -45,8 +57,11 @@ namespace FD.NPC.Security
 
         public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            Security.barkAttractBehaviour.Weight = 0;
-            Security.IsReacting = false;
+            if (_barkAttractBehaviour != null)
+            {
+                _barkAttractBehaviour.Weight = 0;
+                _barkAttractBehaviour.IsReacting = false;
+            }
         }
     }
 }

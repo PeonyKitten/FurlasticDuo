@@ -34,6 +34,10 @@ namespace FD.NPC
         private void Awake()
         {
             _security = GetComponentInParent<Security.Security>();
+            if (_security != null)
+            {
+                _security.OnBarkReaction.AddListener(OnSecurityBarkReaction);
+            }
         }
 
         public void React(Bark bark)
@@ -46,7 +50,7 @@ namespace FD.NPC
 
             if (_security != null)
             {
-                _security.ReactToBark(Target);
+                _security.TriggerBarkReaction(Target);
             }
 
             if (attractStrategy == AttractStrategy.AttractByDistance) return;
@@ -57,6 +61,12 @@ namespace FD.NPC
             }
 
             _barkCoroutine = StartCoroutine(StopReactingAfterTime(attractTime));
+        }
+
+        private void OnSecurityBarkReaction(Vector3 barkOrigin)
+        {
+            Target = barkOrigin;
+            IsReacting = true;
         }
 
         public override Vector3 CalculateForce()
@@ -110,6 +120,14 @@ namespace FD.NPC
             }
             
             StopReacting();
+        }
+
+        private void OnDestroy()
+        {
+            if (_security != null)
+            {
+                _security.OnBarkReaction.RemoveListener(OnSecurityBarkReaction);
+            }
         }
     }
 }

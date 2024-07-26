@@ -66,6 +66,8 @@ namespace FD.AI.SteeringBehaviours
         private Rigidbody _rigidbody;
         private readonly int _animHashSpeed = Animator.StringToHash("Speed");
 
+        private Dictionary<Type, SteeringBehaviour> _cachedBehaviours = new Dictionary<Type, SteeringBehaviour>();
+
         private Vector3 CalculateSteeringForce()
         {
             var totalForce = Vector3.zero;
@@ -106,7 +108,9 @@ namespace FD.AI.SteeringBehaviours
             {
                 behaviour.steeringAgent = this;
             }
-            
+
+            CacheBehaviours();
+
             _animator = GetComponent<Animator>();
             if (_animator == null)
             {
@@ -115,6 +119,22 @@ namespace FD.AI.SteeringBehaviours
 
             _controller = GetComponent<CharacterController>();
             _rigidbody = GetComponent<Rigidbody>();
+        }
+        private void CacheBehaviours()
+        {
+            foreach (var behaviour in _steeringBehaviours)
+            {
+                _cachedBehaviours[behaviour.GetType()] = behaviour;
+            }
+        }
+
+        public T GetBehaviour<T>() where T : SteeringBehaviour
+        {
+            if (_cachedBehaviours.TryGetValue(typeof(T), out var behaviour))
+            {
+                return (T)behaviour;
+            }
+            return null;
         }
 
         protected virtual void Update()
