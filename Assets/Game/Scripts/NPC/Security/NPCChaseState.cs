@@ -6,12 +6,17 @@ namespace FD.NPC.Security
     public class SecurityNPCChaseState : SecurityNPCBaseState
     {
         [FormerlySerializedAs("GoToPatrolStateName")] public string goToPatrolStateName = "Patrolling";
+        private ChasePlayerSteeringBehaviour _chasePlayerBehaviour;
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             Debug.Log("Security NPC is chasing.");
-            Security.chasePlayerBehaviour.Weight = 1;
-            Security.SetSpeedForState("Chasing");
+            _chasePlayerBehaviour = Security.steeringAgent.GetBehaviour<ChasePlayerSteeringBehaviour>();
+            if (_chasePlayerBehaviour != null)
+            {
+                _chasePlayerBehaviour.Weight = 1;
+            }
+            Security.SetSpeed(Security.GetSpeedForState("Chasing"));
         }
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -23,18 +28,24 @@ namespace FD.NPC.Security
             else
             {
                 var closestPlayer = Security.playerDetection.GetClosestPlayer();
-                if (Security.chasePlayerBehaviour.player is not null && closestPlayer is null)
+                if (_chasePlayerBehaviour != null)
                 {
-                    Debug.Log("Lost Players :(");
+                    if (_chasePlayerBehaviour.player != null && closestPlayer == null)
+                    {
+                        Debug.Log("Lost Players :(");
+                    }
+                    _chasePlayerBehaviour.player = closestPlayer;
                 }
-                Security.chasePlayerBehaviour.player = closestPlayer;
             }
         }
 
         public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            Security.chasePlayerBehaviour.Weight = 0;
-            Security.chasePlayerBehaviour.player = null;
+            if (_chasePlayerBehaviour != null)
+            {
+                _chasePlayerBehaviour.Weight = 0;
+                _chasePlayerBehaviour.player = null;
+            }
             Security.PlayAnimation("Alert");
         }
     }

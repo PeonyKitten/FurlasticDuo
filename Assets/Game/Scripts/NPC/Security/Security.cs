@@ -2,6 +2,8 @@ using FD.AI.FSM;
 using FD.AI.SteeringBehaviours;
 using FD.Levels.Checkpoints;
 using UnityEngine;
+using UnityEngine.Events;
+
 
 namespace FD.NPC.Security
 {
@@ -9,35 +11,29 @@ namespace FD.NPC.Security
     {
         [SerializeField] private Animator visualAnimator;
         public SteeringAgent steeringAgent;
-        public FollowPathSteeringBehaviour followPathBehaviour;
-        public BarkAttractSB barkAttractBehaviour;
-        public ChasePlayerSteeringBehaviour chasePlayerBehaviour;
         public DetectPlayer playerDetection;
-        public bool IsReacting { get; set; }
-        public Vector3 barkOrigin { get; private set; }
 
         [Header("Speed Settings")]
         public float patrolSpeed;
         public float investigateSpeed;
         public float chaseSpeed;
 
-        [Header("Investigation Settings")]
-        public float investigationResetTime = 5f;
-
         private static readonly int IdleTrigger = Animator.StringToHash("IdleTrigger");
         private static readonly int AlertTrigger = Animator.StringToHash("AlertTrigger");
 
-        public void ReactToBark(Vector3 barkOrigin)
+        public UnityEvent<Vector3> OnBarkReaction = new UnityEvent<Vector3>();
+
+
+        public void TriggerBarkReaction(Vector3 barkOrigin)
         {
-            this.barkOrigin = barkOrigin;
-            IsReacting = true;
+            OnBarkReaction.Invoke(barkOrigin);
             ChangeState("Investigate");
         }
 
         public void PlayAnimation(string animationTrigger)
         {
             if (!visualAnimator) return;
-        
+
             switch (animationTrigger)
             {
                 case "Idle":
@@ -52,22 +48,21 @@ namespace FD.NPC.Security
             }
         }
 
-        public void SetSpeedForState(string stateName)
+        public void SetSpeed(float speed)
+        {
+            steeringAgent.maxSpeed = speed;
+        }
+
+        public float GetSpeedForState(string stateName)
         {
             switch (stateName)
             {
-                case "Patrolling":
-                    steeringAgent.maxSpeed = patrolSpeed;
-                    break;
-                case "Investigate":
-                    steeringAgent.maxSpeed = investigateSpeed;
-                    break;
-                case "Chasing":
-                    steeringAgent.maxSpeed = chaseSpeed;
-                    break;
+                case "Patrolling": return patrolSpeed;
+                case "Investigate": return investigateSpeed;
+                case "Chasing": return chaseSpeed;
                 default:
-                    Debug.LogWarning($"Unkniown State: {stateName}. Speed is not set");
-                    break;
+                    Debug.LogWarning($"Unknown State: {stateName}. Defaulting to patrol speed.");
+                    return patrolSpeed;
             }
         }
 
