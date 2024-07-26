@@ -7,19 +7,20 @@ namespace FD.UI.Input
     {
         [SerializeField] private GameObject controls;
         [SerializeField] private InputAction toggleControlsInputAction;
-
-        private bool _uiEnabled = true;
+        [SerializeField] private bool uiEnabled = false;
         
         private void Start()
         {
             toggleControlsInputAction.Enable();
             toggleControlsInputAction.performed += ToggleUIControls;
+
+            controls.SetActive(uiEnabled);
         }
 
         private void ToggleUIControls(InputAction.CallbackContext obj)
         {
-            _uiEnabled = !_uiEnabled;
-            controls.SetActive(_uiEnabled);
+            uiEnabled = !uiEnabled;
+            controls.SetActive(uiEnabled);
         }
 
         private void OnDestroy()

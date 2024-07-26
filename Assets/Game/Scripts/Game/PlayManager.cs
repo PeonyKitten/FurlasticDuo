@@ -6,6 +6,7 @@ using FD.Patterns;
 using FD.Player;
 using FD.UI.Input;
 using FD.Utils;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -28,6 +29,12 @@ namespace FD.Game
         [SerializeField] private GameObject ghostPrefab;
         
         [SerializeField] private InputUISettings inputSettings;
+
+        [SerializeField] private TMP_Text player1Score;
+        [SerializeField] private TMP_Text player2Score;
+
+        [SerializeField] private Color catColor;
+        [SerializeField] private Color dogColor;
         
         public PlayerInputManager playerInputManager;
         private int _playerIndex;
@@ -113,6 +120,9 @@ namespace FD.Game
             if (mode == PlayMode.LocalCoop)
             {
                 playerInputManager.EnableJoining();
+                player1Score.color = catColor;
+                player2Score.color = dogColor;
+                player2Score.enabled = true;
             }
             else
             {
@@ -149,6 +159,8 @@ namespace FD.Game
                 : PlayerInputHandler.PlayerInputType.Dog;
             inputHandler.SetupPlayer(playerType);
             inputHandler.SetupGrabActions();
+            inputHandler.onScoreChanged.AddListener(UpdatePlayerScores);
+            inputHandler.ResetScore();
             inputHandlers.Add(inputHandler);
             _playerIndex++;
 
@@ -165,6 +177,23 @@ namespace FD.Game
             inputHandler.SetupPlayer(PlayerInputHandler.PlayerInputType.Combined);
             inputHandler.SetupGrabActions();
             inputHandlers.Add(inputHandler);
+
+            player1Score.color = Color.white;
+            player2Score.enabled = false;
+            inputHandler.onScoreChanged.AddListener(UpdatePlayerScores);
+            inputHandler.ResetScore();
+        }
+
+        private void UpdatePlayerScores(int _)
+        {
+            if (cat?.InputHandler is not null && player1Score is not null)
+            {
+                player1Score.text = $"{cat.InputHandler.Score}";
+            }
+            if (dog?.InputHandler is not null && player2Score is not null)
+            {
+                player2Score.text = $"{dog.InputHandler.Score}";
+            }
         }
 
         // ReSharper disable once UnusedMember.Local
@@ -184,9 +213,29 @@ namespace FD.Game
         {
             foreach (var inputHandler in inputHandlers)
             {
+                inputHandler.ResetScore();
+                inputHandler.onScoreChanged.RemoveAllListeners();
                 Destroy(inputHandler.gameObject);
             }
             inputHandlers.Clear();
+        }
+
+        public bool GetRumble()
+        {
+            if (ghost)
+            {
+                return ghost.useRumble;
+            }
+
+            return true;
+        }
+
+        public void SetRumble(bool useRumble)
+        {
+            if (ghost)
+            {
+                ghost.useRumble = useRumble;
+            }
         }
 
         public Sprite GetInputSpriteFromMapping(PlayerController player, InputLayout.InputMapping inputMapping)
@@ -202,6 +251,20 @@ namespace FD.Game
 
             var inputMapping = FDPlayerActions.GetMapping(player, action);
             return inputSettings.GetSprite(inputMapping, device);
+        }
+
+        // ReSharper disable Unity.PerformanceAnalysis
+        public static PlayerController[] GetPlayers()
+        {
+            if (!HasInstance())
+            {
+                return FindObjectsOfType<PlayerController>();
+            }
+            
+            var players = new PlayerController[2];
+            players[0] = Instance.cat;
+            players[1] = Instance.dog;
+            return players;
         }
     }
 }

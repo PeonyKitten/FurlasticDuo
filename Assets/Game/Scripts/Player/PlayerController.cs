@@ -36,6 +36,7 @@ namespace FD.Player
         [SerializeField] private float maxAcceleration = 150f;
         [SerializeField] private AnimationCurve maxAccelerationFactorDot;
         [SerializeField] private Vector3 forceScale = new(1, 0, 1);
+        [SerializeField] private float idleDelay = 5f;
 
         [Header("Character Controller")]
         [SerializeField] private float rideHeight = 0.5f;
@@ -63,6 +64,7 @@ namespace FD.Player
         private Vector3 _goalVel;
         private float _movementControlDisabledTimer;
         private float _groundCheckDisabledTimer;
+        private float _idleTimer;
 
         private Grabbing _grabbing;
         private static readonly int AnimHashSpeed = Animator.StringToHash("Speed");
@@ -92,6 +94,8 @@ namespace FD.Player
             {
                 primaryCamera = Camera.main;
             }
+
+            _idleTimer = idleDelay;
         }
 
         public void OnMovement(InputValue value)
@@ -115,6 +119,12 @@ namespace FD.Player
             if (input != Vector2.zero)
             {
                 TargetRotation = Quaternion.LookRotation(input.Bulk(), Vector3.up);
+            }
+
+            if (input.sqrMagnitude > 0.05f)
+            {
+                _idleTimer = idleDelay;
+                animator.SetBool("IsIdle", false);
             }
 
             _movement = input;
@@ -256,6 +266,16 @@ namespace FD.Player
         public void DisableGroundCheckForSeconds(float delay)
         {
             _groundCheckDisabledTimer = delay;
+        }
+
+        private void LateUpdate()
+        {
+            _idleTimer -= Time.deltaTime;
+
+            if (_idleTimer < 0)
+            {
+                animator.SetBool("IsIdle", true);
+            }
         }
 
         public void Speak(Sprite sprite)

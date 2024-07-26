@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using FD.Game;
 using FD.Patterns;
 using FD.Player;
 using UnityEngine;
@@ -35,10 +36,10 @@ namespace FD.Levels.Checkpoints
             _lastCheckpoint = savePoint;
         }
 
-        public void ForceGrabValues()
+        private void ForceGrabValues()
         {
             // TODO: Really bad, @alvin fix ASAP
-            players = FindObjectsOfType<PlayerController>().ToList();
+            players = PlayManager.GetPlayers().ToList();
             savingIcon = FindObjectOfType<SaveCheckpointIcon>();
         }
 

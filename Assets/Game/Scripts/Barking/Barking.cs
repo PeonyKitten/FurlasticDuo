@@ -8,6 +8,7 @@ namespace FD.Barking
         public float barkRadius = 5f;
         [SerializeField] private float barkDelay = 0.5f;
         [SerializeField] private GameObject barkEffect;
+        [SerializeField] private Transform barkSpawn;
 
         private PlayerController _controller;
         private float _barkTimer = 0f;
@@ -16,6 +17,7 @@ namespace FD.Barking
         private void Awake()
         {
             _controller = GetComponent<PlayerController>();
+            barkSpawn ??= transform;
         }
 
         private void OnBark()
@@ -27,11 +29,13 @@ namespace FD.Barking
             _controller.animator?.SetTrigger(AnimHashBark);
             if (barkEffect)
             {
-                var effect = Instantiate(barkEffect, transform.position, Quaternion.identity);
+                var maybeForward = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
+                var rotation = Quaternion.LookRotation(maybeForward);
+                var effect = Instantiate(barkEffect, barkSpawn.position, rotation);
                 effect.transform.localScale = Vector3.one * barkRadius * 2;
             }
 
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position, barkRadius);
+            Collider[] hitColliders = Physics.OverlapSphere(barkSpawn.position, barkRadius);
             foreach (var hitCollider in hitColliders)
             {
                 var npcReaction = hitCollider.GetComponentInChildren<IBarkReaction>();

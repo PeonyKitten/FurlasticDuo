@@ -4958,11 +4958,11 @@ GameObject:
   m_Component:
   - component: {fileID: 1733213881873054043}
   - component: {fileID: 3370787928163486197}
-  - component: {fileID: 1964655673994224319}
   - component: {fileID: 4016522920030448371}
   - component: {fileID: 5330002365652182422}
   - component: {fileID: 4279364693271588083}
   - component: {fileID: -2193533841255031290}
+  - component: {fileID: 7288118266767084698}
   m_Layer: 0
   m_Name: Collectible_Bone_SideScroll
   m_TagString: Untagged
@@ -5040,18 +5040,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1964655673994224319
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5249608170462017368}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50b0ee01715d4634db3c1177bf95b098, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &4016522920030448371
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5135,6 +5123,19 @@ MonoBehaviour:
   OverrideAttenuation: 0
   OverrideMinDistance: 1
   OverrideMaxDistance: 20
+--- !u!114 &7288118266767084698
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5249608170462017368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 269d20d5aaef1a8409a0e3766f44ef6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scorePoints: 10
 --- !u!1001 &2440353480039030766
 PrefabInstance:
   m_ObjectHideFlags: 0
