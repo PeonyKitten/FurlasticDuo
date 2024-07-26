@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 66213741f984291459c109e13fed8e6d
+guid: af1ee050131b141049927fa053670029
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -33,11 +33,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Cat_Sit
-      takeName: Cat_Sit_Idle
-      internalID: 698421685009688939
-      firstFrame: 1
-      lastFrame: 84
+      name: A_Cat_WallBump_Sliding
+      takeName: A_Cat_WallBump
+      internalID: -1610148671945218500
+      firstFrame: 25
+      lastFrame: 25
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -60,42 +60,13 @@ ModelImporter:
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 1
+      additiveReferencePoseFrame: 3
     - serializedVersion: 16
-      name: Cat_Sit_Idle
-      takeName: Cat_Sit_Idle
-      internalID: 1536667950773763152
-      firstFrame: 95
-      lastFrame: 232
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 1
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 1
-    - serializedVersion: 16
-      name: Cat_Sit_Idle_Special
-      takeName: Cat_Sit_Idle
-      internalID: -8558445342329026456
-      firstFrame: 233
-      lastFrame: 698
+      name: A_Cat_WallBump_Impact
+      takeName: A_Cat_WallBump
+      internalID: 6711778906952332618
+      firstFrame: 3
+      lastFrame: 27
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -118,7 +89,36 @@ ModelImporter:
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 1
+      additiveReferencePoseFrame: 3
+    - serializedVersion: 16
+      name: A_Cat_WallBump_Drop
+      takeName: A_Cat_WallBump
+      internalID: -803041079271423815
+      firstFrame: 26
+      lastFrame: 108
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 3
     isReadable: 0
   meshes:
     lODScreenPercentages: []
