@@ -145,6 +145,8 @@ namespace FD.Elastic
                 _applySnapbackPlayer1 = snapbackPlayer1;
                 _applySnapbackPlayer2 = snapbackPlayer2;
                 _isApplyingSnapback = true;
+
+                FMODUnity.RuntimeManager.PlayOneShot("event:/Elastic_Snap");
                 
                 // Use good ol' Impulses
                 if (snapbackMode == SnapbackMode.Impulse)
