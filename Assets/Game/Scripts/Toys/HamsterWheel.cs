@@ -27,6 +27,9 @@ namespace FD.Toys
         [SerializeField] private bool disableRotationAtEnds = true;
         [SerializeField] private bool disableStoppingRotationIfNoPlayers = true;
         [SerializeField] private float rotationDisableDelay = 1.0f;
+        
+        [Header("FMOD Settings")]
+        [SerializeField] private string fmodParameterName;
 
         private readonly Dictionary<PlayerController, PlayerData> _enteredPlayers = new();
         private float _rotationDisableTimer;
@@ -80,6 +83,8 @@ namespace FD.Toys
                 door.IncrementOpenness(currentRotation * doorSpeedMultiplier);
                 
                 if (clampRotationAtEnds && (door.Openness <= 0 || door.Openness >= 1)) return;
+
+                FMODUnity.RuntimeManager.StudioSystem.setParameterByName(fmodParameterName, door.Openness);
             }
             
             wheel.Rotate(currentRotation * turnSpeed * Time.deltaTime, 0f, 0f);

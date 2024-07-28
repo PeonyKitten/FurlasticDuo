@@ -78,5 +78,15 @@ namespace FD.Misc
             Handles.DrawSolidArc(transform.position, transform.forward, transform.right, percentActivated * 360f, 0.2f);
             #endif
         }
+
+        public void TriggerPuzzleSolvedSound()
+            {
+                FMODUnity.RuntimeManager.PlayOneShot("event:/Puzzle_Solved");
+            }
+        public void TriggerFurnaceGateOpenSound()
+            {
+                FMODUnity.RuntimeManager.PlayOneShot("event:/Furnace_Gate_Open");
+                FMODUnity.RuntimeManager.StudioSystem.setParameterByName("Furnace_Gate_Status", 1f);
+            }
     }
 }
