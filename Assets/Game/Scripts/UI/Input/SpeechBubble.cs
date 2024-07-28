@@ -12,6 +12,12 @@ namespace FD.UI.Input
 
         private void Start()
         {
+            if (bubble is null)
+            {
+                Debug.LogWarning("Speech Bubble not set. Disabling. Input Hints will not work.");
+                enabled = false;
+                return;
+            }
             Hide();
         }
 
