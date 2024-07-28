@@ -73,7 +73,10 @@ namespace FD.Player
         private float _idleTimer;
 
         private Grabbing _grabbing;
+        
+        // Animator Hashes
         private static readonly int AnimHashSpeed = Animator.StringToHash("Speed");
+        private static readonly int AnimHashIsIdle = Animator.StringToHash("IsIdle");
 
         /// Camera to be used for camera-relative movement
         public Camera PrimaryCamera { get => primaryCamera; set => primaryCamera = value; }
@@ -130,7 +133,7 @@ namespace FD.Player
             if (input.sqrMagnitude > 0.05f)
             {
                 _idleTimer = idleDelay;
-                animator.SetBool("IsIdle", false);
+                animator.SetBool(AnimHashIsIdle, false);
             }
 
             _movement = input;
@@ -291,7 +294,7 @@ namespace FD.Player
 
             if (_idleTimer < 0)
             {
-                animator.SetBool("IsIdle", true);
+                animator.SetBool(AnimHashIsIdle, true);
             }
         }
 
