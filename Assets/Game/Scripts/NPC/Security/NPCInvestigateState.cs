@@ -1,3 +1,4 @@
+using FD.AI.FSM;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -5,35 +6,31 @@ namespace FD.NPC.Security
 {
     public class NPCInvestigateState : SecurityNPCBaseState
     {
-        [FormerlySerializedAs("GoToPatrolStateName")] public string goToPatrolStateName = "Patrolling";
-        [FormerlySerializedAs("GoToChaseStateName")] public string goToChaseStateName = "Chasing";
-
+        [SerializeField] private string goToPatrolStateName = "Patrolling";
+        [SerializeField] private string goToChaseStateName = "Chasing";
         [SerializeField] private float investigationDuration = 5f;
         private float _investigationTimer;
         private Vector3 _barkOrigin;
         private BarkAttractSB _barkAttractBehaviour;
 
+        public override void Init(GameObject owner, FSM fsm)
+        {
+            base.Init(owner, fsm);
+            CachedSpeed = SecurityNPC.investigateSpeed;
+        }
+
         public void SetBarkOrigin(Vector3 origin)
         {
             _barkOrigin = origin;
             _investigationTimer = investigationDuration;
-
-            Security.PlayAnimation("Alert");
-
-            if (_barkAttractBehaviour != null)
-            {
-                _barkAttractBehaviour.Target = _barkOrigin;
-            }
         }
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
+            base.OnStateEnter(animator, stateInfo, layerIndex);
             Debug.Log("Security NPC is investigating a sound.");
-            //Security.PlayAnimation("Alert");
-            Security.SetSpeed(Security.GetSpeedForState("Investigate"));
-
-            _barkAttractBehaviour = Security.steeringAgent.GetBehaviour<BarkAttractSB>();
-            if (_barkAttractBehaviour != null)
+            SecurityNPC.PlayAnimation("Alert");
+            if (SteeringAgent.TryGetBehaviour(out _barkAttractBehaviour))
             {
                 _barkAttractBehaviour.Weight = 1;
                 _barkAttractBehaviour.Target = _barkOrigin;
@@ -45,19 +42,17 @@ namespace FD.NPC.Security
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             _investigationTimer -= Time.deltaTime;
-
             if (_investigationTimer <= 0)
             {
                 fsm.ChangeState(goToPatrolStateName);
                 return;
             }
-
-            if (Vector3.Distance(Security.transform.position, _barkOrigin) < 0.1f)
+            if (Vector3.Distance(SecurityNPC.transform.position, _barkOrigin) < 0.1f)
             {
-                Security.PlayAnimation("Alert");
+                SecurityNPC.PlayAnimation("Alert");
                 fsm.ChangeState(goToPatrolStateName);
             }
-            else if (Security.playerDetection.CanSeePlayer(true))
+            else if (PlayerDetection.CanSeePlayer(true))
             {
                 fsm.ChangeState(goToChaseStateName);
             }

@@ -13,48 +13,26 @@ namespace FD.NPC.Security
         public SteeringAgent steeringAgent;
         public DetectPlayer playerDetection;
 
-        public bool IsReacting { get; set; }
-        public Vector3 barkOrigin { get; private set; }
+        private BarkAttractSB _barkAttractSB;
 
         [Header("Speed Settings")]
-        public float patrolSpeed;
-        public float investigateSpeed;
-        public float chaseSpeed;
+        public float patrolSpeed = 1f;
+        public float investigateSpeed = 1.5f;
+        public float chaseSpeed = 2f;
 
-        [Header("Stay In Place Settings")]
-        public bool stayInPlace = false;
+        public UnityEvent<Vector3> onBarkReaction = new UnityEvent<Vector3>();
 
-        private static readonly int IdleTrigger = Animator.StringToHash("IdleTrigger");
-        private static readonly int AlertTrigger = Animator.StringToHash("AlertTrigger");
-
-        public UnityEvent<Vector3> OnBarkReaction = new UnityEvent<Vector3>();
-
-        public void ReactToBark(Vector3 barkOrigin)
+        protected virtual void Start()
         {
-            var investigateState = fsmAnimator.GetBehaviour<NPCInvestigateState>();
-            if (investigateState != null)
+            if (steeringAgent.TryGetBehaviour(out _barkAttractSB))
             {
-                investigateState.SetBarkOrigin(barkOrigin);
+                _barkAttractSB.onBarkReaction.AddListener(ReactToBark);
             }
-            ChangeState("Investigate");
         }
-
         public void PlayAnimation(string animationTrigger)
         {
             if (!visualAnimator) return;
-
-            switch (animationTrigger)
-            {
-                case "Idle":
-                    visualAnimator.SetTrigger(IdleTrigger);
-                    break;
-                case "Alert":
-                    visualAnimator.SetTrigger(AlertTrigger);
-                    break;
-                default:
-                    Debug.Log($"Animation: {animationTrigger}");
-                    break;
-            }
+            visualAnimator.SetTrigger(animationTrigger);
         }
 
         public void SetSpeed(float speed)
@@ -62,16 +40,20 @@ namespace FD.NPC.Security
             steeringAgent.maxSpeed = speed;
         }
 
-        public float GetSpeedForState(string stateName)
+        public void ReactToBark(Vector3 barkOrigin)
         {
-            switch (stateName)
+            ChangeState("Investigate");
+            if (_barkAttractSB != null)
             {
-                case "Patrolling": return patrolSpeed;
-                case "Investigate": return investigateSpeed;
-                case "Chasing": return chaseSpeed;
-                default:
-                    Debug.LogWarning($"Unknown State: {stateName}. Defaulting to patrol speed.");
-                    return patrolSpeed;
+                _barkAttractSB.ReactToBarkOrigin(barkOrigin);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (_barkAttractSB != null)
+            {
+                _barkAttractSB.onBarkReaction.RemoveListener(ReactToBark);
             }
         }
 

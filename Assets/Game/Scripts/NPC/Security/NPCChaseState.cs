@@ -1,3 +1,4 @@
+using FD.AI.FSM;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -5,35 +6,36 @@ namespace FD.NPC.Security
 {
     public class SecurityNPCChaseState : SecurityNPCBaseState
     {
-        [FormerlySerializedAs("GoToPatrolStateName")] public string goToPatrolStateName = "Patrolling";
+        [SerializeField] private string goToPatrolStateName = "Patrolling";
         private ChasePlayerSteeringBehaviour _chasePlayerBehaviour;
+
+        public override void Init(GameObject owner, FSM fsm)
+        {
+            base.Init(owner, fsm);
+            CachedSpeed = SecurityNPC.chaseSpeed;
+        }
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
+            base.OnStateEnter(animator, stateInfo, layerIndex);
             Debug.Log("Security NPC is chasing.");
-            _chasePlayerBehaviour = Security.steeringAgent.GetBehaviour<ChasePlayerSteeringBehaviour>();
-            if (_chasePlayerBehaviour != null)
+            if (SteeringAgent.TryGetBehaviour(out _chasePlayerBehaviour))
             {
                 _chasePlayerBehaviour.Weight = 1;
             }
-            Security.SetSpeed(Security.GetSpeedForState("Chasing"));
         }
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            if (!Security.playerDetection.IsAnyPlayerInRange())
+            if (!PlayerDetection.IsAnyPlayerInRange())
             {
                 fsm.ChangeState(goToPatrolStateName);
             }
             else
             {
-                var closestPlayer = Security.playerDetection.GetClosestPlayer();
+                var closestPlayer = PlayerDetection.GetClosestPlayer();
                 if (_chasePlayerBehaviour != null)
                 {
-                    if (_chasePlayerBehaviour.player != null && closestPlayer == null)
-                    {
-                        Debug.Log("Lost Players :(");
-                    }
                     _chasePlayerBehaviour.player = closestPlayer;
                 }
             }
@@ -46,9 +48,9 @@ namespace FD.NPC.Security
                 _chasePlayerBehaviour.Weight = 0;
                 _chasePlayerBehaviour.player = null;
             }
-            if (!Security.playerDetection.IsAnyPlayerInRange())
+            if (!PlayerDetection.IsAnyPlayerInRange())
             {
-                Security.PlayAnimation("Alert");
+                SecurityNPC.PlayAnimation("Alert");
             }
         }
     }

@@ -128,13 +128,16 @@ namespace FD.AI.SteeringBehaviours
             }
         }
 
-        public T GetBehaviour<T>() where T : SteeringBehaviour
+        public bool TryGetBehaviour<T>(out T behaviour) where T : SteeringBehaviour
         {
-            if (_cachedBehaviours.TryGetValue(typeof(T), out var behaviour))
+            if (_cachedBehaviours.TryGetValue(typeof(T), out var foundBehaviour))
             {
-                return (T)behaviour;
+                behaviour = (T)foundBehaviour;
+                return true;
             }
-            return null;
+
+            behaviour = null;
+            return false;
         }
 
         protected virtual void Update()

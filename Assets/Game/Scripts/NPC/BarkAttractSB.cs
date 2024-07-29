@@ -26,31 +26,18 @@ namespace FD.NPC
         [Header("Callbacks")]
         public UnityEvent onBarkReact;
         public UnityEvent onBarkStopReact;
-            
+        public UnityEvent<Vector3> onBarkReaction;
+
         public bool IsReacting { get; set; }
         private Coroutine _barkCoroutine;
-        private Security.Security _security;
-
-        private void Awake()
-        {
-            _security = GetComponentInParent<Security.Security>();
-            if (_security != null)
-            {
-                _security.OnBarkReaction.AddListener(OnSecurityBarkReaction);
-            }
-        }
 
         public void React(Bark bark)
         {
             IsReacting = true;
             Target = bark.transform.position.Flatten().Bulk(transform.position.y);
             steeringAgent.reachedGoal = false;
-
             onBarkReact?.Invoke();
-            if (_security != null)
-            {
-                _security.ReactToBark(Target);
-            }
+            onBarkReaction?.Invoke(Target);
 
             if (attractStrategy == AttractStrategy.AttractByDistance) return;
             if (_barkCoroutine != null)
@@ -60,7 +47,7 @@ namespace FD.NPC
             _barkCoroutine = StartCoroutine(StopReactingAfterTime(attractTime));
         }
 
-        private void OnSecurityBarkReaction(Vector3 barkOrigin)
+        public void ReactToBarkOrigin(Vector3 barkOrigin)
         {
             Target = barkOrigin;
             IsReacting = true;
@@ -85,12 +72,11 @@ namespace FD.NPC
         private void StopReacting()
         {
             IsReacting = false;
-            IsReacting = false;
             if (steeringAgent.SteeringBehaviourCount == 1 && !shouldRunAwayForever)
             {
                 steeringAgent.reachedGoal = true;
             }
-            
+
             onBarkStopReact?.Invoke();
         }
 
@@ -117,14 +103,6 @@ namespace FD.NPC
             }
             
             StopReacting();
-        }
-
-        private void OnDestroy()
-        {
-            if (_security != null)
-            {
-                _security.OnBarkReaction.RemoveListener(OnSecurityBarkReaction);
-            }
         }
     }
 }

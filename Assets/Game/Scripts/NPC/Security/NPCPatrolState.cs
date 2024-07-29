@@ -1,3 +1,4 @@
+using FD.AI.FSM;
 using FD.AI.SteeringBehaviours;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -6,29 +7,31 @@ namespace FD.NPC.Security
 {
     public class SecurityNPCPatrolState : SecurityNPCBaseState
     {
-        [FormerlySerializedAs("GoToChaseStateName")] public string goToChaseStateName = "Chasing";
+        [SerializeField] private string goToChaseStateName = "Chasing";
         private FollowPathSteeringBehaviour _followPathBehaviour;
-        private bool _wasStayingInPlace;
+
+        public override void Init(GameObject owner, FSM fsm)
+        {
+            base.Init(owner, fsm);
+            CachedSpeed = SecurityNPC.patrolSpeed;
+        }
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
+            base.OnStateEnter(animator, stateInfo, layerIndex);
             Debug.Log("Security NPC is patrolling.");
-            _followPathBehaviour = Security.steeringAgent.GetBehaviour<FollowPathSteeringBehaviour>();
-            _wasStayingInPlace = Security.stayInPlace;
-            UpdateMovementBehavior();
+            if (SteeringAgent.TryGetBehaviour(out _followPathBehaviour))
+            {
+                _followPathBehaviour.Weight = 1;
+                _followPathBehaviour.onReachWaypoint.AddListener(OnReachWaypoint);
+            }
         }
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            if (Security.playerDetection.CanSeePlayer(true))
+            if (PlayerDetection.CanSeePlayer(true))
             {
                 fsm.ChangeState(goToChaseStateName);
-            }
-
-            if (_wasStayingInPlace != Security.stayInPlace)
-            {
-                _wasStayingInPlace = Security.stayInPlace;
-                UpdateMovementBehavior();
             }
         }
 
@@ -41,27 +44,9 @@ namespace FD.NPC.Security
             }
         }
 
-        private void UpdateMovementBehavior()
-        {
-            if (_followPathBehaviour != null)
-            {
-                if (!Security.stayInPlace)
-                {
-                    _followPathBehaviour.Weight = 1;
-                    _followPathBehaviour.onReachWaypoint.AddListener(OnReachWaypoint);
-                    Security.SetSpeed(Security.GetSpeedForState("Patrolling"));
-                }
-                else
-                {
-                    _followPathBehaviour.Weight = 0;
-                    _followPathBehaviour.onReachWaypoint.RemoveListener(OnReachWaypoint);
-                    Security.SetSpeed(0);
-                }
-            }
-        }
         private void OnReachWaypoint(Vector3 waypoint)
         {
-            Security.PlayAnimation("Idle");
+            SecurityNPC.PlayAnimation("Idle");
         }
     }
 }
