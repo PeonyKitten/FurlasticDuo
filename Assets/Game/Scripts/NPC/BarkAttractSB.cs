@@ -45,21 +45,18 @@ namespace FD.NPC
             IsReacting = true;
             Target = bark.transform.position.Flatten().Bulk(transform.position.y);
             steeringAgent.reachedGoal = false;
-            
-            onBarkReact?.Invoke();
 
+            onBarkReact?.Invoke();
             if (_security != null)
             {
-                _security.TriggerBarkReaction(Target);
+                _security.ReactToBark(Target);
             }
 
             if (attractStrategy == AttractStrategy.AttractByDistance) return;
-
             if (_barkCoroutine != null)
             {
                 StopCoroutine(_barkCoroutine);
             }
-
             _barkCoroutine = StartCoroutine(StopReactingAfterTime(attractTime));
         }
 

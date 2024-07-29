@@ -13,20 +13,29 @@ namespace FD.NPC.Security
         public SteeringAgent steeringAgent;
         public DetectPlayer playerDetection;
 
+        public bool IsReacting { get; set; }
+        public Vector3 barkOrigin { get; private set; }
+
         [Header("Speed Settings")]
         public float patrolSpeed;
         public float investigateSpeed;
         public float chaseSpeed;
+
+        [Header("Stay In Place Settings")]
+        public bool stayInPlace = false;
 
         private static readonly int IdleTrigger = Animator.StringToHash("IdleTrigger");
         private static readonly int AlertTrigger = Animator.StringToHash("AlertTrigger");
 
         public UnityEvent<Vector3> OnBarkReaction = new UnityEvent<Vector3>();
 
-
-        public void TriggerBarkReaction(Vector3 barkOrigin)
+        public void ReactToBark(Vector3 barkOrigin)
         {
-            OnBarkReaction.Invoke(barkOrigin);
+            var investigateState = fsmAnimator.GetBehaviour<NPCInvestigateState>();
+            if (investigateState != null)
+            {
+                investigateState.SetBarkOrigin(barkOrigin);
+            }
             ChangeState("Investigate");
         }
 

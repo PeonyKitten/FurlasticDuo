@@ -46,7 +46,10 @@ namespace FD.NPC.Security
                 _chasePlayerBehaviour.Weight = 0;
                 _chasePlayerBehaviour.player = null;
             }
-            Security.PlayAnimation("Alert");
+            if (!Security.playerDetection.IsAnyPlayerInRange())
+            {
+                Security.PlayAnimation("Alert");
+            }
         }
     }
 }

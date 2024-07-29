@@ -8,19 +8,28 @@ namespace FD.NPC.Security
         [FormerlySerializedAs("GoToPatrolStateName")] public string goToPatrolStateName = "Patrolling";
         [FormerlySerializedAs("GoToChaseStateName")] public string goToChaseStateName = "Chasing";
 
-        [SerializeField] private float _investigationTimer;
+        [SerializeField] private float investigationDuration = 5f;
+        private float _investigationTimer;
         private Vector3 _barkOrigin;
         private BarkAttractSB _barkAttractBehaviour;
 
         public void SetBarkOrigin(Vector3 origin)
         {
             _barkOrigin = origin;
+            _investigationTimer = investigationDuration;
+
+            Security.PlayAnimation("Alert");
+
+            if (_barkAttractBehaviour != null)
+            {
+                _barkAttractBehaviour.Target = _barkOrigin;
+            }
         }
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             Debug.Log("Security NPC is investigating a sound.");
-            Security.PlayAnimation("Alert");
+            //Security.PlayAnimation("Alert");
             Security.SetSpeed(Security.GetSpeedForState("Investigate"));
 
             _barkAttractBehaviour = Security.steeringAgent.GetBehaviour<BarkAttractSB>();
@@ -30,8 +39,7 @@ namespace FD.NPC.Security
                 _barkAttractBehaviour.Target = _barkOrigin;
                 _barkAttractBehaviour.IsReacting = true;
             }
-            _investigationTimer = 5f;
-
+            _investigationTimer = investigationDuration;
         }
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
