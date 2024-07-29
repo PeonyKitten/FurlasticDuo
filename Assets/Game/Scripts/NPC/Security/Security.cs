@@ -14,6 +14,7 @@ namespace FD.NPC.Security
         public DetectPlayer playerDetection;
 
         private BarkAttractSB _barkAttractSB;
+        private Vector3 _lastBarkOrigin;
 
         [Header("Speed Settings")]
         public float patrolSpeed = 1f;
@@ -21,6 +22,7 @@ namespace FD.NPC.Security
         public float chaseSpeed = 2f;
 
         public UnityEvent<Vector3> onBarkReaction = new UnityEvent<Vector3>();
+        public Vector3 GetLastBarkOrigin() => _lastBarkOrigin;
 
         protected virtual void Start()
         {
@@ -42,11 +44,11 @@ namespace FD.NPC.Security
 
         public void ReactToBark(Vector3 barkOrigin)
         {
-            ChangeState("Investigate");
             if (_barkAttractSB != null)
             {
-                _barkAttractSB.ReactToBarkOrigin(barkOrigin);
+                _lastBarkOrigin = barkOrigin;
             }
+            ChangeState("Investigate");
         }
 
         private void OnDestroy()

@@ -19,7 +19,7 @@ namespace FD.NPC.Security
             CachedSpeed = SecurityNPC.investigateSpeed;
         }
 
-        public void SetBarkOrigin(Vector3 origin)
+        private void SetBarkOrigin(Vector3 origin)
         {
             _barkOrigin = origin;
             _investigationTimer = investigationDuration;
@@ -30,6 +30,9 @@ namespace FD.NPC.Security
             base.OnStateEnter(animator, stateInfo, layerIndex);
             Debug.Log("Security NPC is investigating a sound.");
             SecurityNPC.PlayAnimation("Alert");
+
+            SetBarkOrigin(SecurityNPC.GetLastBarkOrigin());
+
             if (SteeringAgent.TryGetBehaviour(out _barkAttractBehaviour))
             {
                 _barkAttractBehaviour.Weight = 1;
