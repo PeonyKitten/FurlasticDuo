@@ -149,6 +149,7 @@ namespace FD.Player
 
         private void OnJumpStart()
         {
+            _playerController.animator?.SetBool("IsGrounded", false);
             if (jumpStartEffect)
             {
                 var rotation = ignoreGroundEffectSpawnRotation ? Quaternion.identity : Quaternion.FromToRotation(Vector3.up, _hitInfo.normal);
@@ -195,6 +196,7 @@ namespace FD.Player
         // We've touched the ground
         private void OnJumpOver()
         {
+            _playerController.animator?.SetBool("IsGrounded", true);
             if (jumpEndEffect)
             {
                 var rotation = ignoreGroundEffectSpawnRotation ? Quaternion.identity : Quaternion.FromToRotation(Vector3.up, _hitInfo.normal);
