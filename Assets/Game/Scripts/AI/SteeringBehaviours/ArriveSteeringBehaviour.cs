@@ -11,8 +11,6 @@ namespace FD.AI.SteeringBehaviours
 
         public override Vector3 CalculateForce()
         {
-            CheckMouseInput();
-
             return CalculateArriveForce();
         }
 

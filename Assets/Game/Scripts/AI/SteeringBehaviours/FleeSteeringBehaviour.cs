@@ -22,7 +22,6 @@ namespace FD.AI.SteeringBehaviours
             if (enemy)
             {
                 Target = enemy.position;
-                useMouseInput = false;
             }
             
 
