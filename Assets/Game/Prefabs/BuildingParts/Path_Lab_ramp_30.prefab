@@ -118,7 +118,7 @@ GameObject:
   - component: {fileID: 314037008710598565}
   - component: {fileID: 6572757422339276286}
   - component: {fileID: 6966303866314849170}
-  - component: {fileID: 8607793356182549166}
+  - component: {fileID: 2225635275412120905}
   m_Layer: 0
   m_Name: Path_Lab_ramp_30_Collider
   m_TagString: Untagged
@@ -191,8 +191,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &8607793356182549166
-MeshCollider:
+--- !u!65 &2225635275412120905
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -209,10 +209,9 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 513310311530293099, guid: 6dd7a0599971a9748bcd28c6bac4597e, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 2.250001, y: 3.1471438, z: 0.49872327}
+  m_Center: {x: -1.1249983, y: 1.2389269, z: -0.25}
 --- !u!1 &8026945409519749873
 GameObject:
   m_ObjectHideFlags: 0
