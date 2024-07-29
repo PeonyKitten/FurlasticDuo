@@ -309,6 +309,14 @@ namespace FD.Player
             speechBubble.Hide();
         }
 
+        private void OnCollisionEnter(Collision other)
+        {
+            if (other.gameObject.CompareTag("AirWall"))
+            {
+                animator?.SetTrigger("HitAirWall");
+            }
+        }
+
         private void OnDrawGizmos()
         {
             Gizmos.DrawRay(transform.position, _movement.Bulk());
