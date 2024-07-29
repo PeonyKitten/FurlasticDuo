@@ -39,20 +39,52 @@ namespace FD.NPC.Security
             return _playersInRange.Count > 0;
         }
 
+        public bool CanSeePlayer(bool inFOV = false)
+        {
+            var sphereRadius = _collider.radius * _collider.transform.lossyScale.magnitude;
+            
+            // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+            foreach (var player in _playersInRange)
+            {
+                if (inFOV && !fov.IsContained(player.position)) continue;
+                
+                var ray = new Ray(transform.position, player.position - transform.position);
+                var didHit = Physics.Raycast(ray, out var hitInfo, sphereRadius,
+                    wallLayerMask.value, QueryTriggerInteraction.Ignore);
+
+                if (didHit && hitInfo.collider.CompareTag("Player"))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public Transform GetClosestPlayer(bool inFOV = false)
         {
             var sphereRadius = _collider.radius * _collider.transform.lossyScale.magnitude;
-            return _playersInRange
-                .Where(p =>
+            
+            Transform result = null;
+            
+            foreach (var player in _playersInRange)
+            {
+                if (inFOV && !fov.IsContained(player.position)) continue;
+                
+                var ray = new Ray(transform.position, player.position - transform.position);
+                var didHit = Physics.Raycast(ray, out var hitInfo, sphereRadius,
+                    wallLayerMask.value, QueryTriggerInteraction.Ignore);
+            
+                if (!didHit || !hitInfo.collider.CompareTag("Player")) continue;
+                
+                if (result is null || Vector3.Distance(transform.position, player.position) <
+                    Vector3.Distance(transform.position, result.position))
                 {
-                    var ray = new Ray(transform.position, p.position - transform.position);
-                    var didHit = Physics.Raycast(ray, out var hitInfo, sphereRadius,
-                        wallLayerMask.value, QueryTriggerInteraction.Ignore);
-                    var fovCheck = !(inFOV && !fov.IsContained(p.position));
-                    return didHit && hitInfo.collider.CompareTag("Player") && fovCheck;
-                })
-                .OrderBy(p => Vector3.Distance(transform.position, p.position))
-                .FirstOrDefault();
+                    result = player;
+                }
+            }
+            
+            return result;
         }
 
         private void OnTriggerEnter(Collider other)

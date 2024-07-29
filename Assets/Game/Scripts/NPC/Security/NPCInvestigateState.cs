@@ -37,7 +37,7 @@ namespace FD.NPC.Security
                 Security.PlayAnimation("Alert");
                 fsm.ChangeState(goToPatrolStateName);
             }
-            else if (Security.playerDetection.GetClosestPlayer(true))
+            else if (Security.playerDetection.CanSeePlayer(true))
             {
                 fsm.ChangeState(goToChaseStateName);
             }

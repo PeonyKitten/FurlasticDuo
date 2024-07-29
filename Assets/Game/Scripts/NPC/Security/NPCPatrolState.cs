@@ -17,7 +17,7 @@ namespace FD.NPC.Security
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            if (Security.playerDetection.GetClosestPlayer(true))
+            if (Security.playerDetection.CanSeePlayer(true))
             {
                 fsm.ChangeState(goToChaseStateName);
             }
