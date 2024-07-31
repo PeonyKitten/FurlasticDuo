@@ -1374,6 +1374,8 @@ Transform:
   - {fileID: 600912937813467365}
   - {fileID: 4715869153864045613}
   - {fileID: 1087355857924128866}
+  - {fileID: 6691033126216109176}
+  - {fileID: 5586592339342656014}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1969428079484071542
@@ -16538,10 +16540,10 @@ MonoBehaviour:
   Emitters:
   - Target: {fileID: 0}
     Params:
-    - Name: Puzzle
-      Value: 1
     - Name: Garbage chute
       Value: 0
+    - Name: Puzzle
+      Value: 1
   TriggerEvent: 3
 --- !u!1001 &104622226482792647
 PrefabInstance:
@@ -18974,6 +18976,116 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 4684034390456540814}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &4878774627057295218
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1494158876540498281}
+    m_Modifications:
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -22.08931
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.1543732
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 130.13882
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6272525564793539890, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_Name
+      value: AudioTrigger (chase end)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6977622850364757238, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 25.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 6977622850364757238, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 5.19
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6272525564793539890, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3725685943027774225}
+  m_SourcePrefab: {fileID: 100100000, guid: d57c19c0a4242c14f908297d1b493906, type: 3}
+--- !u!1 &1493118546553803328 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6272525564793539890, guid: d57c19c0a4242c14f908297d1b493906,
+    type: 3}
+  m_PrefabInstance: {fileID: 4878774627057295218}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3725685943027774225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1493118546553803328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b0e04e2572f9a940a47465f6f3c2f00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: Player
+  Parameter: Puzzle
+  TriggerEvent: 3
+  Value: 1
+--- !u!4 &6691033126216109176 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+    type: 3}
+  m_PrefabInstance: {fileID: 4878774627057295218}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4907116513951983028
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19917,6 +20029,106 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6869858663757027848, guid: e92e02a29f9c2b24b94419f21ba985ab,
     type: 3}
   m_PrefabInstance: {fileID: 5783101764792392298}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &5974060794050760964
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1494158876540498281}
+    m_Modifications:
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -25.036499
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.4039154
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 36.998653
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6272525564793539890, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      propertyPath: m_Name
+      value: AudioTrigger (chase)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6272525564793539890, guid: d57c19c0a4242c14f908297d1b493906,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7892249766587553790}
+  m_SourcePrefab: {fileID: 100100000, guid: d57c19c0a4242c14f908297d1b493906, type: 3}
+--- !u!1 &424565864242125878 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6272525564793539890, guid: d57c19c0a4242c14f908297d1b493906,
+    type: 3}
+  m_PrefabInstance: {fileID: 5974060794050760964}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7892249766587553790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 424565864242125878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b0e04e2572f9a940a47465f6f3c2f00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: Player
+  Parameter: Puzzle
+  TriggerEvent: 3
+  Value: 0
+--- !u!4 &5586592339342656014 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2265223209253851914, guid: d57c19c0a4242c14f908297d1b493906,
+    type: 3}
+  m_PrefabInstance: {fileID: 5974060794050760964}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6203017186741434386
 PrefabInstance:
