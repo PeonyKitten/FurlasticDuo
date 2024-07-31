@@ -1763,6 +1763,8 @@ MonoBehaviour:
           m_StringArgument: Level-1-1-Falldown
           m_BoolArgument: 0
         m_CallState: 2
+  cinemachineStateEnter: Level-1-1-Falldown
+  cinemachineStateExit: 
 --- !u!114 &588346986148002387
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4158,13 +4160,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   performActionOnEvent: 1
-  checkIfPlayer: 1
+  checkIfPlayer: 0
   onAction:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6982854474663012755}
         m_TargetAssemblyTypeName: UnityEngine.Renderer, UnityEngine
-        m_MethodName: 
+        m_MethodName: set_enabled
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4193,7 +4195,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5149976194932208713}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: 
+        m_MethodName: SetActive
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4609,7 +4611,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 8492893139723418585}
         m_TargetAssemblyTypeName: UnityEngine.Renderer, UnityEngine
-        m_MethodName: 
+        m_MethodName: set_enabled
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5588,7 +5590,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5056108308950202514}
         m_TargetAssemblyTypeName: UnityEngine.Renderer, UnityEngine
-        m_MethodName: 
+        m_MethodName: set_enabled
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5617,7 +5619,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5507430672023202027}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: 
+        m_MethodName: SetActive
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

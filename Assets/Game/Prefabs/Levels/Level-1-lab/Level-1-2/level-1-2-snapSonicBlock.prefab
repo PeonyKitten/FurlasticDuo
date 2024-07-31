@@ -695,8 +695,7 @@ GameObject:
   - component: {fileID: 1006844465769786999}
   - component: {fileID: 3592154218207539558}
   - component: {fileID: 2777323958198230004}
-  - component: {fileID: 8483797551228362580}
-  - component: {fileID: 6652165733753283024}
+  - component: {fileID: 2676261153313520890}
   m_Layer: 9
   m_Name: Camera_Transition_Cube (5)
   m_TagString: Untagged
@@ -819,7 +818,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &8483797551228362580
+--- !u!114 &2676261153313520890
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -828,55 +827,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 6194047258950107507}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00d2a5e51bdd5d048934d622e592c04c, type: 3}
+  m_Script: {fileID: 11500000, guid: 5fd554bcd87e0e4489e71428f9962384, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  performActionOnEvent: 4
-  checkIfPlayer: 1
-  onAction:
+  onEnter:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: Play
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Level-1-2-Down2
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &6652165733753283024
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6194047258950107507}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00d2a5e51bdd5d048934d622e592c04c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  performActionOnEvent: 5
-  checkIfPlayer: 1
-  onAction:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: Play
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Level-1-2
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
+  cinemachineStateEnter: Level-1-2-Down2
+  cinemachineStateExit: Level-1-2
 --- !u!1 &7162279280141075299
 GameObject:
   m_ObjectHideFlags: 0

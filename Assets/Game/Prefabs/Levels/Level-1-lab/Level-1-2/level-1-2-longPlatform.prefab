@@ -682,6 +682,7 @@ GameObject:
   - component: {fileID: 410358266904274693}
   - component: {fileID: 3140052463973412689}
   - component: {fileID: 8980119128303336346}
+  - component: {fileID: 7020710393296687492}
   m_Layer: 9
   m_Name: Camera_Transition_Cube (4)
   m_TagString: Untagged
@@ -862,6 +863,23 @@ MonoBehaviour:
           m_StringArgument: Level-1-2
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &7020710393296687492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6802896502736148688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fd554bcd87e0e4489e71428f9962384, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  cinemachineStateEnter: Level-1-2-Down
+  cinemachineStateExit: Level-1-2
 --- !u!1 &7019386846503915847
 GameObject:
   m_ObjectHideFlags: 0
