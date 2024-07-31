@@ -1,14 +1,36 @@
-﻿using UnityEngine;
+﻿using Cinemachine;
+using UnityEngine;
 
 namespace FD.Utils
 {
     public static class CameraUtils
     {
         private static Camera _mainCamera;
+        private static Animator _stateDrivenCameraAnimator;
 
         public static void ResetMainCamera()
         {
             _mainCamera = null;
+        }
+
+        public static void ResetStateDrivenCameraAnimator()
+        {
+            _stateDrivenCameraAnimator = null;
+        }
+
+        public static Animator StateDrivenCameraAnimator
+        {
+            get
+            {
+                if (_stateDrivenCameraAnimator)
+                {
+                    return _stateDrivenCameraAnimator;
+                }
+
+                _stateDrivenCameraAnimator = Object.FindFirstObjectByType<CinemachineStateDrivenCamera>()
+                    .GetComponent<Animator>();
+                return _stateDrivenCameraAnimator;
+            }
         }
 
         public static Camera Main
