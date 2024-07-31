@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3207833534960628759}
   - component: {fileID: 5415720393454976343}
   - component: {fileID: 443665353801937623}
-  - component: {fileID: 7758725581754568104}
+  - component: {fileID: 4845576473756448894}
   m_Layer: 0
   m_Name: Path_Lab_base_Collider
   m_TagString: Untagged
@@ -84,8 +84,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &7758725581754568104
-MeshCollider:
+--- !u!65 &4845576473756448894
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -102,10 +102,9 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 2070238074913905352, guid: 6dd7a0599971a9748bcd28c6bac4597e, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 2.250001, y: 2.0221472, z: 0.49872318}
+  m_Center: {x: -1.1249986, y: 0.67642784, z: -0.25}
 --- !u!1 &4123894541089478490
 GameObject:
   m_ObjectHideFlags: 0
