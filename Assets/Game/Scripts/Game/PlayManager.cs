@@ -59,6 +59,7 @@ namespace FD.Game
         public void PlayGame(PlayMode mode, Scene scene)
         {
             CameraUtils.ResetMainCamera();
+            CameraUtils.ResetStateDrivenCameraAnimator();
             Mode = mode;
             _playerStart = FindFirstObjectByType<PlayerStart>(); 
             if (_playerStart is null)
