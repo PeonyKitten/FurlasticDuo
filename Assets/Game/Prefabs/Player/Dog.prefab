@@ -148,6 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5047372cc37eaa744b71ec145aab7ca1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerType: 1
   useCameraRelativeMovement: 1
   maxSpeed: 5
   acceleration: 200
@@ -219,15 +220,16 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   forceScale: {x: 1, y: 0, z: 1}
+  gravityMultiplier: {x: 1, y: 1, z: 1}
+  speedFactor: 1
+  accelerationFactor: 1
+  angularSpeedFactor: 1
+  ignoreGroundVelocity: 0
   rideHeight: 0.6
   groundCheckLength: 1
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 8
-  slopeCheckLayerMask:
-    serializedVersion: 2
-    m_Bits: 136
-  maxSlopeAngleDeg: 40
   rideSpring:
     strength: 2000
     damping: 100
@@ -235,16 +237,17 @@ MonoBehaviour:
     strength: 2000
     damping: 80
   primaryCamera: {fileID: 0}
-  disableSteepSlopeMovement: 1
   speechBubble: {fileID: 1183331349374326501}
-  meiyisSlider: 0.1
+  slopeCheckLayerMask:
+    serializedVersion: 2
+    m_Bits: 136
+  maxSlopeAngleDeg: 40
+  disableSteepSlopeMovement: 0
+  steepSlopeMovementMultiplier: 0.1
+  forceSlideOnSteepSlopes: 1
   animator: {fileID: 5010131548546137768}
-  playerType: 1
-  gravityMultiplier: {x: 1, y: 1, z: 1}
-  speedFactor: 1
-  accelerationFactor: 1
-  angularSpeedFactor: 1
-  ignoreGroundVelocity: 0
+  meiyisSlider: 0.1
+  idleDelay: 5
 --- !u!114 &5212653393664587358
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -28,6 +28,9 @@ namespace FD.Player
     [RequireComponent(typeof(Rigidbody))]
     public class PlayerController : MonoBehaviour, IReset
     {
+        [Header("Character Settings")]
+        public Player playerType = Player.Cat;
+        
         [Header("Movement")]
         [SerializeField] private bool useCameraRelativeMovement = true;
         [SerializeField] private float maxSpeed = 10f;
@@ -36,29 +39,32 @@ namespace FD.Player
         [SerializeField] private float maxAcceleration = 150f;
         [SerializeField] private AnimationCurve maxAccelerationFactorDot;
         [SerializeField] private Vector3 forceScale = new(1, 0, 1);
-        [SerializeField] private float idleDelay = 5f;
-
-        [Header("Character Controller")]
-        [SerializeField] private float rideHeight = 0.5f;
-        [SerializeField] private float groundCheckLength = 1f;
-        [SerializeField] private LayerMask groundLayerMask;
-        [SerializeField] private LayerMask slopeCheckLayerMask;
-        [SerializeField, Range(0, 90)] private float maxSlopeAngleDeg = 45;
-        [SerializeField] private Spring rideSpring = new() { strength = 100, damping = 10 };
-        [SerializeField] private Spring uprightJointSpring = new() { strength = 100, damping = 10 };
-        [SerializeField] private Camera primaryCamera;
-        [SerializeField] private bool disableSteepSlopeMovement = true;
-        [SerializeField] private SpeechBubble speechBubble;
-
-        [SerializeField, Range(0, 1)] private float meiyisSlider;
-
-        public Animator animator;
-        public Player playerType = Player.Cat;
         public Vector3 gravityMultiplier = Vector3.one;
         public float speedFactor = 1f;
         public float accelerationFactor = 1f;
         public float angularSpeedFactor = 1f;
         public bool ignoreGroundVelocity;
+
+        [Header("Character Controller")]
+        [SerializeField] private float rideHeight = 0.5f;
+        [SerializeField] private float groundCheckLength = 1f;
+        [SerializeField] private LayerMask groundLayerMask;
+        [SerializeField] private Spring rideSpring = new() { strength = 100, damping = 10 };
+        [SerializeField] private Spring uprightJointSpring = new() { strength = 100, damping = 10 };
+        [SerializeField] private Camera primaryCamera;
+        [SerializeField] private SpeechBubble speechBubble;
+        
+        [Header("Slope Settings")]
+        [SerializeField] private LayerMask slopeCheckLayerMask;
+        [SerializeField, Range(0, 90)] private float maxSlopeAngleDeg = 45;
+        [SerializeField] private bool disableSteepSlopeMovement = true;
+        [SerializeField, Range(0, 1)] private float steepSlopeMovementMultiplier = 0.1f;
+        [SerializeField] private bool forceSlideOnSteepSlopes = true;
+
+        [Header("Animation Settings")]
+        public Animator animator;
+        [SerializeField, Range(0, 1)] private float meiyisSlider;
+        [SerializeField] private float idleDelay = 5f;
 
         private Vector2 _movement;
         private Vector3 _goalVel;
@@ -67,7 +73,10 @@ namespace FD.Player
         private float _idleTimer;
 
         private Grabbing _grabbing;
+        
+        // Animator Hashes
         private static readonly int AnimHashSpeed = Animator.StringToHash("Speed");
+        private static readonly int AnimHashIsIdle = Animator.StringToHash("IsIdle");
 
         /// Camera to be used for camera-relative movement
         public Camera PrimaryCamera { get => primaryCamera; set => primaryCamera = value; }
@@ -124,7 +133,7 @@ namespace FD.Player
             if (input.sqrMagnitude > 0.05f)
             {
                 _idleTimer = idleDelay;
-                animator.SetBool("IsIdle", false);
+                animator.SetBool(AnimHashIsIdle, false);
             }
 
             _movement = input;
@@ -140,7 +149,9 @@ namespace FD.Player
             HoldPlayerUpright(Time.deltaTime);
 
             var onSlope = Physics.Raycast(groundRay, out var slopeHitInfo, groundCheckLength, slopeCheckLayerMask.value, QueryTriggerInteraction.Ignore);
-            var groundAngle = Vector3.Angle(Vector3.up, slopeHitInfo.normal);
+            
+            var groundNormal = onSlope ? slopeHitInfo.normal : Vector3.up;
+            var groundAngle = Vector3.Angle(Vector3.up, groundNormal);
             
             // TODO: speed factor bad. fix @alvin
             if (speedFactor > 1)
@@ -148,7 +159,7 @@ namespace FD.Player
                 Debug.LogWarning("SpeedFactor > 1. Clamping to 1");
                 speedFactor = 1;
             }
-            
+
             HandleMovement(groundVel, groundAngle);
 
             var effectiveGravity = Vector3.Scale(Physics.gravity, gravityMultiplier);
@@ -156,7 +167,7 @@ namespace FD.Player
             // Slopes
             if (onSlope)
             {
-                HandleStickingToSlopes(groundAngle, effectiveGravity, slopeHitInfo.normal);
+                HandleStickingToSlopes(groundAngle, effectiveGravity, groundNormal);
             }
             
             // Apply gravity
@@ -207,7 +218,7 @@ namespace FD.Player
         {
             // Do not move if we're on too steep of a slope
             if (disableSteepSlopeMovement && groundSlopeAngle > maxSlopeAngleDeg) return;
-
+            
             var movement = _movement.Bulk();
             var velDot = Vector3.Dot(movement, _goalVel.normalized);
 
@@ -235,15 +246,24 @@ namespace FD.Player
             var maxAccel = maxAcceleration * maxAccelerationFactorDot.Evaluate(velDot);
 
             neededAccel = Vector3.ClampMagnitude(neededAccel, maxAccel);
-            Rigidbody.AddForce(Vector3.Scale(neededAccel * Rigidbody.mass, forceScale));
+            
+            if (groundSlopeAngle > maxSlopeAngleDeg)
+            {
+                neededAccel *= steepSlopeMovementMultiplier;
+            }
+            
+            Rigidbody.AddForce(Vector3.Scale(neededAccel, forceScale), ForceMode.Acceleration);
         }
 
         private void HandleStickingToSlopes(float groundAngle, Vector3 gravity, Vector3 groundNormal)
         {
-            if (groundAngle > maxSlopeAngleDeg) return;
-            
             var gravityComponent = Vector3.ProjectOnPlane(gravity, groundNormal);
             var counterForce = -gravityComponent;
+            
+            if (forceSlideOnSteepSlopes && groundAngle > maxSlopeAngleDeg)
+            {
+                counterForce = gravityComponent;
+            }
             
             Rigidbody.AddForce(counterForce, ForceMode.Acceleration);
             
@@ -274,7 +294,7 @@ namespace FD.Player
 
             if (_idleTimer < 0)
             {
-                animator.SetBool("IsIdle", true);
+                animator.SetBool(AnimHashIsIdle, true);
             }
         }
 
@@ -287,6 +307,14 @@ namespace FD.Player
         public void StopSpeaking()
         {
             speechBubble.Hide();
+        }
+
+        private void OnCollisionEnter(Collision other)
+        {
+            if (other.gameObject.CompareTag("AirWall"))
+            {
+                animator?.SetTrigger("HitAirWall");
+            }
         }
 
         private void OnDrawGizmos()
