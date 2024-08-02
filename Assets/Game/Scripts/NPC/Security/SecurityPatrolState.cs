@@ -11,6 +11,9 @@ namespace FD.NPC.Security
 
         private FollowPathSteeringBehaviour _followPathBehaviour;
 
+        private float _idleTimer = 0f;
+        private const float IdleDuration = 2f;
+
         public override void Init(GameObject owner, FSM fsm)
         {
             base.Init(owner, fsm);
@@ -28,9 +31,19 @@ namespace FD.NPC.Security
         {
             if (PlayerDetection.CanSeePlayer(true))
             {
+                SecurityNPC.PlayAlert();
                 fsm.ChangeState(goToChaseStateName);
+                return;
             }
-            UpdateMovementBehavior();
+
+            if (_idleTimer > 0)
+            {
+                _idleTimer -= Time.deltaTime;
+                if (_idleTimer <= 0)
+                {
+                    UpdateMovementBehavior();
+                }
+            }
         }
 
         public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -55,7 +68,6 @@ namespace FD.NPC.Security
                 else
                 {
                     _followPathBehaviour.Weight = 0;
-                    _followPathBehaviour.onReachWaypoint.RemoveListener(OnReachWaypoint);
                     SecurityNPC.SetSpeed(0);
                 }
             }
@@ -63,7 +75,8 @@ namespace FD.NPC.Security
 
         private void OnReachWaypoint(Vector3 waypoint)
         {
-            SecurityNPC.PlayAnimation("Idle");
+            SecurityNPC.SetSpeed(0);
+            _idleTimer = IdleDuration;
         }
     }
 }

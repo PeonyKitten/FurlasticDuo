@@ -35,15 +35,15 @@ namespace FD.NPC.Security
                 _barkAttractSB.onBarkReaction.AddListener(ReactToBark);
             }
         }
-        public void PlayAnimation(string animationTrigger)
-        {
-            if (!visualAnimator) return;
-            visualAnimator.SetTrigger(animationTrigger);
-        }
-
         public void SetSpeed(float speed)
         {
             steeringAgent.maxSpeed = speed;
+            visualAnimator.SetFloat("Speed", speed);
+        }
+
+        public void PlayAlert()
+        {
+            visualAnimator.SetTrigger("Alert");
         }
 
         public void ReactToBark(Vector3 barkOrigin)
