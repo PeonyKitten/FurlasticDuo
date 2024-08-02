@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gate: {fileID: 9128510231619000640}
   usePosition: 0
+  useRigidbodyPosition: 0
   useGlobalPosition: 0
   openPosition: {x: 0, y: 0, z: 0}
   closePosition: {x: 0, y: 0, z: 0}
@@ -59,6 +60,13 @@ MonoBehaviour:
   openThreshold: 0.5
   startState: 0
   scriptOverride: 0
+  scriptOverrideCallbacks: 1
+  onDoorOpen:
+    m_PersistentCalls:
+      m_Calls: []
+  onDoorClose:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &3372096285571323122
 GameObject:
   m_ObjectHideFlags: 0
