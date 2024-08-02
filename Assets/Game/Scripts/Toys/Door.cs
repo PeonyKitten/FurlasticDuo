@@ -34,6 +34,8 @@ namespace FD.Toys
         [SerializeField] private float duration = 1f;
         [SerializeField, Range(0, 1)] private float openThreshold = 0.5f;
         [SerializeField] private StartState startState = StartState.None;
+        [SerializeField] private Animator animator;
+        [SerializeField] private bool reverseAnimation;
 
         [Header("Script Override")]
         [SerializeField] public bool scriptOverride;
@@ -62,11 +64,13 @@ namespace FD.Toys
                     _openness = 1;
                     ApplyPosition(openPosition);
                     ApplyRotation(openRotationDeg);
+                    UpdateAnimation();
                     break;
                 case StartState.Closed:
                     _openness = 0;
                     ApplyPosition(closePosition);
                     ApplyRotation(closeRotationDeg);
+                    UpdateAnimation();
                     break;
             }
         }
@@ -146,6 +150,7 @@ namespace FD.Toys
             
             ApplyPosition(Vector3.LerpUnclamped(closePosition, openPosition, _openness));
             ApplyRotation(Mathf.LerpUnclamped(closeRotationDeg, openRotationDeg, _openness));
+            UpdateAnimation();
             
             // Note: when being overridden by script, these callbacks are called *AFTER* the door's position and rotation are applied
             if (!scriptOverrideCallbacks) return;
@@ -198,6 +203,17 @@ namespace FD.Toys
 
             ApplyPosition(Vector3.LerpUnclamped(closePosition, openPosition, _openness));
             ApplyRotation(Mathf.LerpUnclamped(closeRotationDeg, openRotationDeg, _openness));
+            UpdateAnimation();
+        }
+
+        private void UpdateAnimation()
+        {
+            if (animator is null) return;
+
+            var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            var openness = reverseAnimation ? 1 - _openness : _openness;
+            animator.Play(stateInfo.fullPathHash, 0, openness);
+            animator.speed = 0;
         }
     }
 }
