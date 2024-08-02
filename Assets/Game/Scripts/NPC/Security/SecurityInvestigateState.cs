@@ -30,8 +30,10 @@ namespace FD.NPC.Security
         {
             base.OnStateEnter(animator, stateInfo, layerIndex);
             Debug.Log("Security NPC is investigating a sound.");
-            SecurityNPC.PlayAlert();
+            SecurityNPC.PlayAnimation("Alert");
+
             SetBarkOrigin(SecurityNPC.GetLastBarkOrigin());
+
             if (SteeringAgent.TryGetBehaviour(out _barkAttractBehaviour))
             {
                 _barkAttractBehaviour.Weight = 1;
@@ -46,16 +48,16 @@ namespace FD.NPC.Security
             _investigationTimer -= Time.deltaTime;
             if (_investigationTimer <= 0)
             {
-                SecurityNPC.SetSpeed(CachedSpeed);
+                fsm.ChangeState(goToPatrolStateName);
+                return;
             }
             if (Vector3.Distance(SecurityNPC.transform.position, _barkOrigin) < 0.1f)
             {
-                SecurityNPC.PlayAlert();
+                SecurityNPC.PlayAnimation("Alert");
                 fsm.ChangeState(goToPatrolStateName);
             }
             else if (PlayerDetection.CanSeePlayer(true))
             {
-                SecurityNPC.PlayAlert();
                 fsm.ChangeState(goToChaseStateName);
             }
         }

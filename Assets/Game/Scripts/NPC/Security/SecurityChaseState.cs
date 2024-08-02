@@ -20,7 +20,6 @@ namespace FD.NPC.Security
         {
             base.OnStateEnter(animator, stateInfo, layerIndex);
             Debug.Log("Security NPC is chasing.");
-            SecurityNPC.SetSpeed(CachedSpeed);
             if (SteeringAgent.TryGetBehaviour(out _chasePlayerBehaviour))
             {
                 _chasePlayerBehaviour.Weight = 1;
@@ -31,7 +30,6 @@ namespace FD.NPC.Security
         {
             if (!PlayerDetection.IsAnyPlayerInRange())
             {
-                SecurityNPC.PlayAlert();
                 fsm.ChangeState(goToPatrolStateName);
             }
             else
@@ -50,6 +48,10 @@ namespace FD.NPC.Security
             {
                 _chasePlayerBehaviour.Weight = 0;
                 _chasePlayerBehaviour.player = null;
+            }
+            if (!PlayerDetection.IsAnyPlayerInRange())
+            {
+                SecurityNPC.PlayAnimation("Alert");
             }
         }
     }
