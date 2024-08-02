@@ -8,7 +8,10 @@ namespace FD.NPC.Security
     public class SecurityPatrolState : SecurityBaseState
     {
         [SerializeField] private string goToChaseStateName = "Chasing";
+        [SerializeField] private float idleDuration = 2f;
+        [SerializeField] private int idleChoiceAtWaypoint = 1; 
 
+        private float _idleTimer;
         private FollowPathSteeringBehaviour _followPathBehaviour;
 
         public override void Init(GameObject owner, FSM fsm)
@@ -26,11 +29,24 @@ namespace FD.NPC.Security
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            if (PlayerDetection.CanSeePlayer(true))
+            if (_idleTimer > 0)
             {
+                _idleTimer -= Time.deltaTime;
+                if (_idleTimer <= 0)
+                {
+                    UpdateMovementBehavior();
+                }
+            }
+            else if (PlayerDetection.CanSeePlayer(true))
+            {
+                SecurityNPC.PlayAnimation("Alert");
                 fsm.ChangeState(goToChaseStateName);
             }
-            UpdateMovementBehavior();
+            else
+            {
+                UpdateMovementBehavior();
+            }
+
         }
 
         public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -63,7 +79,9 @@ namespace FD.NPC.Security
 
         private void OnReachWaypoint(Vector3 waypoint)
         {
-            SecurityNPC.PlayAnimation("Idle");
+            SecurityNPC.SetSpeed(0);
+            SecurityNPC.SetIdleChoice(idleChoiceAtWaypoint);
+            _idleTimer = idleDuration;
         }
     }
 }

@@ -46,6 +46,14 @@ namespace FD.NPC.Security
             steeringAgent.maxSpeed = speed;
         }
 
+        public void SetIdleChoice(float choice)
+        {
+            if (visualAnimator != null)
+            {
+                visualAnimator.SetFloat("IdleChoice", choice);
+            }
+        }
+
         public void ReactToBark(Vector3 barkOrigin)
         {
             if (_barkAttractSB != null)
