@@ -98,7 +98,7 @@ namespace FD.AI.SteeringBehaviours
             return totalForce;
         }
 
-        protected virtual void Start()
+        protected virtual void Awake()
         {
             // Force calculation of inverse mass
             Mass = mass;
