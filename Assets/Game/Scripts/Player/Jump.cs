@@ -50,6 +50,7 @@ namespace FD.Player
         private float _coyoteTimeTimer;
         private float _jumpInputBufferTimer;
         private float _jumpTimer;
+        private GameObject _fallEffect;
 
         private PlayerController _playerController;
         private Rigidbody _rb;  
@@ -57,7 +58,6 @@ namespace FD.Player
         private RaycastHit _hitInfo;
 
         private GameObject _currentGroundIndicator;
-
 
         private void Start()
         {
@@ -175,14 +175,7 @@ namespace FD.Player
         {
             if (fallStartEffect)
             {
-                if (globalFallEffect)
-                {
-                    Instantiate(fallStartEffect, transform.position, Quaternion.identity);
-                }
-                else
-                {
-                    Instantiate(fallStartEffect, transform);
-                }
+                _fallEffect = globalFallEffect ? Instantiate(fallStartEffect, transform.position, Quaternion.identity) : Instantiate(fallStartEffect, transform);
             }
             _playerController.gravityMultiplier = Vector3.one * fallGravityMultiplier;
             
@@ -197,6 +190,11 @@ namespace FD.Player
         private void OnJumpOver()
         {
             _playerController.animator?.SetBool("IsGrounded", true);
+            if (_fallEffect)
+            {
+                Destroy(_fallEffect);
+                _fallEffect = null;
+            }
             if (jumpEndEffect)
             {
                 var rotation = ignoreGroundEffectSpawnRotation ? Quaternion.identity : Quaternion.FromToRotation(Vector3.up, _hitInfo.normal);
