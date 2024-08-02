@@ -208,8 +208,8 @@ namespace FD.Toys
 
         private void UpdateAnimation()
         {
-            if (animator is null) return;
-
+            if (!animator) return;
+            
             var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
             var openness = reverseAnimation ? 1 - _openness : _openness;
             animator.Play(stateInfo.fullPathHash, 0, openness);
