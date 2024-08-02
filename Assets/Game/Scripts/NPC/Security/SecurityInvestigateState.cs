@@ -4,11 +4,12 @@ using UnityEngine.Serialization;
 
 namespace FD.NPC.Security
 {
-    public class NPCInvestigateState : SecurityNPCBaseState
+    public class SecurityInvestigateState : SecurityBaseState
     {
         [SerializeField] private string goToPatrolStateName = "Patrolling";
         [SerializeField] private string goToChaseStateName = "Chasing";
         [SerializeField] private float investigationDuration = 5f;
+
         private float _investigationTimer;
         private Vector3 _barkOrigin;
         private BarkAttractSB _barkAttractBehaviour;

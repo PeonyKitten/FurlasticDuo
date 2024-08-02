@@ -4,9 +4,10 @@ using UnityEngine.Serialization;
 
 namespace FD.NPC.Security
 {
-    public class SecurityNPCChaseState : SecurityNPCBaseState
+    public class SecurityChaseState : SecurityBaseState
     {
         [SerializeField] private string goToPatrolStateName = "Patrolling";
+
         private ChasePlayerSteeringBehaviour _chasePlayerBehaviour;
 
         public override void Init(GameObject owner, FSM fsm)

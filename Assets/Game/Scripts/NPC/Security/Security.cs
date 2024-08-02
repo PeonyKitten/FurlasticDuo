@@ -10,6 +10,7 @@ namespace FD.NPC.Security
     public class Security : FSM, IReset
     {
         [SerializeField] private Animator visualAnimator;
+
         public SteeringAgent steeringAgent;
         public DetectPlayer playerDetection;
 

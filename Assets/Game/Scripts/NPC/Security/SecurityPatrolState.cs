@@ -5,9 +5,10 @@ using UnityEngine.Serialization;
 
 namespace FD.NPC.Security
 {
-    public class SecurityNPCPatrolState : SecurityNPCBaseState
+    public class SecurityPatrolState : SecurityBaseState
     {
         [SerializeField] private string goToChaseStateName = "Chasing";
+
         private FollowPathSteeringBehaviour _followPathBehaviour;
 
         public override void Init(GameObject owner, FSM fsm)
@@ -29,8 +30,6 @@ namespace FD.NPC.Security
             {
                 fsm.ChangeState(goToChaseStateName);
             }
-
-            UpdateStayInPlace();
             UpdateMovementBehavior();
         }
 
