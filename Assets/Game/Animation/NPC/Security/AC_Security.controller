@@ -113,13 +113,13 @@ AnimatorController:
   m_Name: AC_Security
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: IdleTrigger
+  - m_Name: Idle
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: AlertTrigger
+  - m_Name: Alert
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -203,7 +203,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: AlertTrigger
+    m_ConditionEvent: Alert
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -2679415073197847802}
@@ -228,7 +228,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: IdleTrigger
+    m_ConditionEvent: Idle
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -5981512581212745687}

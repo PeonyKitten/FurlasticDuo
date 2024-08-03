@@ -26,37 +26,31 @@ namespace FD.NPC
         [Header("Callbacks")]
         public UnityEvent onBarkReact;
         public UnityEvent onBarkStopReact;
-            
+        public UnityEvent<Vector3> onBarkReaction;
+
         public bool IsReacting { get; set; }
         private Coroutine _barkCoroutine;
-        private Security.Security _security;
-
-        private void Awake()
-        {
-            _security = GetComponentInParent<Security.Security>();
-        }
 
         public void React(Bark bark)
         {
             IsReacting = true;
             Target = bark.transform.position.Flatten().Bulk(transform.position.y);
             steeringAgent.reachedGoal = false;
-            
             onBarkReact?.Invoke();
-
-            if (_security != null)
-            {
-                _security.ReactToBark(Target);
-            }
+            onBarkReaction?.Invoke(Target);
 
             if (attractStrategy == AttractStrategy.AttractByDistance) return;
-
             if (_barkCoroutine != null)
             {
                 StopCoroutine(_barkCoroutine);
             }
-
             _barkCoroutine = StartCoroutine(StopReactingAfterTime(attractTime));
+        }
+
+        public void ReactToBarkOrigin(Vector3 barkOrigin)
+        {
+            Target = barkOrigin;
+            IsReacting = true;
         }
 
         public override Vector3 CalculateForce()
@@ -78,12 +72,11 @@ namespace FD.NPC
         private void StopReacting()
         {
             IsReacting = false;
-            IsReacting = false;
             if (steeringAgent.SteeringBehaviourCount == 1 && !shouldRunAwayForever)
             {
                 steeringAgent.reachedGoal = true;
             }
-            
+
             onBarkStopReact?.Invoke();
         }
 
