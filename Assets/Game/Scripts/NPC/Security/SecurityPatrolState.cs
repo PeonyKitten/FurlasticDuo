@@ -24,7 +24,12 @@ namespace FD.NPC.Security
         {
             base.OnStateEnter(animator, stateInfo, layerIndex);
             Debug.Log("Security NPC is patrolling.");
+            if (SteeringAgent.TryGetBehaviour(out _followPathBehaviour))
+            {
+                _followPathBehaviour.onReachWaypoint.AddListener(OnReachWaypoint);
+            }
             UpdateMovementBehavior();
+
         }
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -60,18 +65,16 @@ namespace FD.NPC.Security
 
         private void UpdateMovementBehavior()
         {
-            if (SteeringAgent.TryGetBehaviour(out _followPathBehaviour))
+            if (_followPathBehaviour != null)
             {
                 if (!StayInPlace)
                 {
                     _followPathBehaviour.Weight = 1;
-                    _followPathBehaviour.onReachWaypoint.AddListener(OnReachWaypoint);
                     SecurityNPC.SetSpeed(CachedSpeed);
                 }
                 else
                 {
                     _followPathBehaviour.Weight = 0;
-                    _followPathBehaviour.onReachWaypoint.RemoveListener(OnReachWaypoint);
                     SecurityNPC.SetSpeed(0);
                 }
             }
