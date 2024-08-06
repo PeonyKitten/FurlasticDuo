@@ -64,6 +64,7 @@ namespace FD.Elastic
         private bool _isApplyingSnapback;
         private bool _applySnapbackPlayer1;
         private bool _applySnapbackPlayer2;
+        private bool _snappedBack;
         
         private static readonly int AnimHashElasticLength = Animator.StringToHash("ElasticLength");
         private static readonly int AnimHashIsSnapping = Animator.StringToHash("IsSnapping");
@@ -102,6 +103,11 @@ namespace FD.Elastic
             var forceDirection2 = (midpoint - player2Position).NormalizedWithMagnitude(out var distance2);
 
             var distance = distance1 + distance2;
+
+            if (distance < MaxDistance * snapbackThreshold)
+            {
+                _snappedBack = true;
+            }
 
             SetCharacterMovementDifficulty(forceDirection1, distance);
 
@@ -146,7 +152,11 @@ namespace FD.Elastic
                 _applySnapbackPlayer2 = snapbackPlayer2;
                 _isApplyingSnapback = true;
 
-                FMODUnity.RuntimeManager.PlayOneShot("event:/Elastic_Snap");
+                if (_snappedBack)
+                {
+                    FMODUnity.RuntimeManager.PlayOneShot("event:/Elastic_Snap");
+                }
+                _snappedBack = false;
                 
                 // Use good ol' Impulses
                 if (snapbackMode == SnapbackMode.Impulse)
