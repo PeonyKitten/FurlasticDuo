@@ -83,6 +83,7 @@ PrefabInstance:
     - {fileID: 2882453447218491893, guid: 790365d60d4c4994f8a4edf887bdd459, type: 3}
     - {fileID: 7970236817953211139, guid: 790365d60d4c4994f8a4edf887bdd459, type: 3}
     - {fileID: 8794757895566131725, guid: 790365d60d4c4994f8a4edf887bdd459, type: 3}
+    - {fileID: 166204549831164678, guid: 790365d60d4c4994f8a4edf887bdd459, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 827027355028622271, guid: 790365d60d4c4994f8a4edf887bdd459,
@@ -94,12 +95,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 3827558123831513378}
   m_SourcePrefab: {fileID: 100100000, guid: 790365d60d4c4994f8a4edf887bdd459, type: 3}
---- !u!23 &1777105606044584943 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 979780419358492121, guid: 790365d60d4c4994f8a4edf887bdd459,
-    type: 3}
-  m_PrefabInstance: {fileID: 1527121851864288822}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2182941544294155657 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 827027355028622271, guid: 790365d60d4c4994f8a4edf887bdd459,
@@ -159,19 +154,6 @@ MonoBehaviour:
           m_StringArgument: activate
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1777105606044584943}
-        m_TargetAssemblyTypeName: UnityEngine.Renderer, UnityEngine
-        m_MethodName: set_material
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 2100000, guid: 689ee7be19531234984e4a07ba799f07,
-            type: 2}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Material, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: activate
-          m_BoolArgument: 0
-        m_CallState: 2
   onRelease:
     m_PersistentCalls:
       m_Calls:
@@ -182,19 +164,6 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: deactivate
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1777105606044584943}
-        m_TargetAssemblyTypeName: UnityEngine.Renderer, UnityEngine
-        m_MethodName: set_material
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 2100000, guid: eb6e7804b5f305f419419658ee5054e2,
-            type: 2}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Material, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: deactivate

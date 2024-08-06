@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &1527121851864288822
+--- !u!1001 &2365879816159166565
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -11,24 +11,19 @@ PrefabInstance:
     - target: {fileID: 827027355028622271, guid: 790365d60d4c4994f8a4edf887bdd459,
         type: 3}
       propertyPath: m_Name
-      value: PV_LabButtons_Press
+      value: PV_LabButtons_Lever
       objectReference: {fileID: 0}
-    - target: {fileID: 3349546760014717379, guid: 790365d60d4c4994f8a4edf887bdd459,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 7bd238be1d304384c8203b820bd31215, type: 2}
-    - target: {fileID: 4749413981968575305, guid: 790365d60d4c4994f8a4edf887bdd459,
+    - target: {fileID: 3310151366094809974, guid: 790365d60d4c4994f8a4edf887bdd459,
         type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4749413981968575305, guid: 790365d60d4c4994f8a4edf887bdd459,
+    - target: {fileID: 3310151366094809974, guid: 790365d60d4c4994f8a4edf887bdd459,
         type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4749413981968575305, guid: 790365d60d4c4994f8a4edf887bdd459,
+    - target: {fileID: 3310151366094809974, guid: 790365d60d4c4994f8a4edf887bdd459,
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
@@ -36,17 +31,17 @@ PrefabInstance:
     - target: {fileID: 6994723607371442576, guid: 790365d60d4c4994f8a4edf887bdd459,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.638212
+      value: -9.683217
       objectReference: {fileID: 0}
     - target: {fileID: 6994723607371442576, guid: 790365d60d4c4994f8a4edf887bdd459,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.00000011920929
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6994723607371442576, guid: 790365d60d4c4994f8a4edf887bdd459,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.9487865
+      value: 0.37954557
       objectReference: {fileID: 0}
     - target: {fileID: 6994723607371442576, guid: 790365d60d4c4994f8a4edf887bdd459,
         type: 3}
@@ -86,33 +81,33 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 2882453447218491893, guid: 790365d60d4c4994f8a4edf887bdd459, type: 3}
+    - {fileID: 7970236817953211139, guid: 790365d60d4c4994f8a4edf887bdd459, type: 3}
     - {fileID: 4946032753913082307, guid: 790365d60d4c4994f8a4edf887bdd459, type: 3}
     - {fileID: 8794757895566131725, guid: 790365d60d4c4994f8a4edf887bdd459, type: 3}
-    - {fileID: 166204549831164678, guid: 790365d60d4c4994f8a4edf887bdd459, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 827027355028622271, guid: 790365d60d4c4994f8a4edf887bdd459,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5133254790027808093}
+      addedObject: {fileID: 642866574699110755}
     - targetCorrespondingSourceObject: {fileID: 827027355028622271, guid: 790365d60d4c4994f8a4edf887bdd459,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7034467325486300249}
+      addedObject: {fileID: 642968506965869791}
   m_SourcePrefab: {fileID: 100100000, guid: 790365d60d4c4994f8a4edf887bdd459, type: 3}
---- !u!1 &2182941544294155657 stripped
+--- !u!1 &3147870827960863706 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 827027355028622271, guid: 790365d60d4c4994f8a4edf887bdd459,
     type: 3}
-  m_PrefabInstance: {fileID: 1527121851864288822}
+  m_PrefabInstance: {fileID: 2365879816159166565}
   m_PrefabAsset: {fileID: 0}
---- !u!65 &5133254790027808093
+--- !u!65 &642866574699110755
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2182941544294155657}
+  m_GameObject: {fileID: 3147870827960863706}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -126,14 +121,14 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.5, y: 1, z: 0.5}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7034467325486300249
+  m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &642968506965869791
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2182941544294155657}
+  m_GameObject: {fileID: 3147870827960863706}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 00d2a5e51bdd5d048934d622e592c04c, type: 3}
@@ -144,7 +139,7 @@ MonoBehaviour:
   onAction:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6953457158083568793}
+      - m_Target: {fileID: 6168667473878149834}
         m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
         m_MethodName: SetTrigger
         m_Mode: 5
@@ -156,9 +151,9 @@ MonoBehaviour:
           m_StringArgument: activate
           m_BoolArgument: 0
         m_CallState: 2
---- !u!95 &6953457158083568793 stripped
+--- !u!95 &6168667473878149834 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 8452914870443862703, guid: 790365d60d4c4994f8a4edf887bdd459,
     type: 3}
-  m_PrefabInstance: {fileID: 1527121851864288822}
+  m_PrefabInstance: {fileID: 2365879816159166565}
   m_PrefabAsset: {fileID: 0}
