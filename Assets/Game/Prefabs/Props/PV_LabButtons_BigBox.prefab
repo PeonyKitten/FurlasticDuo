@@ -83,6 +83,7 @@ PrefabInstance:
     - {fileID: 7970236817953211139, guid: 790365d60d4c4994f8a4edf887bdd459, type: 3}
     - {fileID: 4946032753913082307, guid: 790365d60d4c4994f8a4edf887bdd459, type: 3}
     - {fileID: 8794757895566131725, guid: 790365d60d4c4994f8a4edf887bdd459, type: 3}
+    - {fileID: 166204549831164678, guid: 790365d60d4c4994f8a4edf887bdd459, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 827027355028622271, guid: 790365d60d4c4994f8a4edf887bdd459,
@@ -153,19 +154,6 @@ MonoBehaviour:
           m_StringArgument: activate
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 3485213305109275251}
-        m_TargetAssemblyTypeName: UnityEngine.Renderer, UnityEngine
-        m_MethodName: set_material
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 2100000, guid: 689ee7be19531234984e4a07ba799f07,
-            type: 2}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Material, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: activate
-          m_BoolArgument: 0
-        m_CallState: 2
   onRelease:
     m_PersistentCalls:
       m_Calls:
@@ -181,25 +169,6 @@ MonoBehaviour:
           m_StringArgument: deactivate
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 3485213305109275251}
-        m_TargetAssemblyTypeName: UnityEngine.Renderer, UnityEngine
-        m_MethodName: set_material
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 2100000, guid: eb6e7804b5f305f419419658ee5054e2,
-            type: 2}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Material, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: deactivate
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!23 &3485213305109275251 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 2696699819322993733, guid: 790365d60d4c4994f8a4edf887bdd459,
-    type: 3}
-  m_PrefabInstance: {fileID: 1527121851864288822}
-  m_PrefabAsset: {fileID: 0}
 --- !u!95 &6953457158083568793 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 8452914870443862703, guid: 790365d60d4c4994f8a4edf887bdd459,
