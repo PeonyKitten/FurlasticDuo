@@ -47,7 +47,8 @@ namespace FD.Grab
             {
                 _rb.isKinematic = false;
             }
-
+            
+            player.animator.SetBool(AnimHashIsDragging, true);
             onGrab?.Invoke();
         }
 
@@ -73,6 +74,7 @@ namespace FD.Grab
                 _grabCount = 0;
             }
 
+            player.animator.SetBool(AnimHashIsDragging, false);
             onGrabRelease?.Invoke();
         }
 
@@ -87,6 +89,7 @@ namespace FD.Grab
                 {
                     Destroy(joint);
                 }
+                player.animator.SetBool(AnimHashIsDragging, false);
             }
             _grabCount = 0;
             UpdateMaterial();

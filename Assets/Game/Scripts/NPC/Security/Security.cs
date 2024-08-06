@@ -2,72 +2,72 @@ using FD.AI.FSM;
 using FD.AI.SteeringBehaviours;
 using FD.Levels.Checkpoints;
 using UnityEngine;
+using UnityEngine.Events;
+
 
 namespace FD.NPC.Security
 {
     public class Security : FSM, IReset
     {
         [SerializeField] private Animator visualAnimator;
+
         public SteeringAgent steeringAgent;
-        public FollowPathSteeringBehaviour followPathBehaviour;
-        public BarkAttractSB barkAttractBehaviour;
-        public ChasePlayerSteeringBehaviour chasePlayerBehaviour;
         public DetectPlayer playerDetection;
-        public bool IsReacting { get; set; }
-        public Vector3 barkOrigin { get; private set; }
+
+        private BarkAttractSB _barkAttractSB;
+        private Vector3 _lastBarkOrigin;
 
         [Header("Speed Settings")]
-        public float patrolSpeed;
-        public float investigateSpeed;
-        public float chaseSpeed;
+        public float patrolSpeed = 1f;
+        public float investigateSpeed = 1.5f;
+        public float chaseSpeed = 2f;
 
-        [Header("Investigation Settings")]
-        public float investigationResetTime = 5f;
+        [Header("Behavior Settings")]
+        public bool stayInPlace = false;
 
-        private static readonly int IdleTrigger = Animator.StringToHash("IdleTrigger");
-        private static readonly int AlertTrigger = Animator.StringToHash("AlertTrigger");
+        public UnityEvent<Vector3> onBarkReaction = new UnityEvent<Vector3>();
+        public Vector3 GetLastBarkOrigin() => _lastBarkOrigin;
 
-        public void ReactToBark(Vector3 barkOrigin)
+        protected virtual void Start()
         {
-            this.barkOrigin = barkOrigin;
-            IsReacting = true;
-            ChangeState("Investigate");
+            if (steeringAgent.TryGetBehaviour(out _barkAttractSB))
+            {
+                _barkAttractSB.onBarkReaction.AddListener(ReactToBark);
+            }
         }
-
         public void PlayAnimation(string animationTrigger)
         {
             if (!visualAnimator) return;
-        
-            switch (animationTrigger)
+            visualAnimator.SetTrigger(animationTrigger);
+        }
+
+        public void SetSpeed(float speed)
+        {
+            steeringAgent.maxSpeed = speed;
+        }
+
+        public void SetIdleChoice(float choice)
+        {
+            if (visualAnimator != null)
             {
-                case "Idle":
-                    visualAnimator.SetTrigger(IdleTrigger);
-                    break;
-                case "Alert":
-                    visualAnimator.SetTrigger(AlertTrigger);
-                    break;
-                default:
-                    Debug.Log($"Animation: {animationTrigger}");
-                    break;
+                visualAnimator.SetFloat("IdleChoice", choice);
             }
         }
 
-        public void SetSpeedForState(string stateName)
+        public void ReactToBark(Vector3 barkOrigin)
         {
-            switch (stateName)
+            if (_barkAttractSB != null)
             {
-                case "Patrolling":
-                    steeringAgent.maxSpeed = patrolSpeed;
-                    break;
-                case "Investigate":
-                    steeringAgent.maxSpeed = investigateSpeed;
-                    break;
-                case "Chasing":
-                    steeringAgent.maxSpeed = chaseSpeed;
-                    break;
-                default:
-                    Debug.LogWarning($"Unkniown State: {stateName}. Speed is not set");
-                    break;
+                _lastBarkOrigin = barkOrigin;
+            }
+            ChangeState("Investigate");
+        }
+
+        private void OnDestroy()
+        {
+            if (_barkAttractSB != null)
+            {
+                _barkAttractSB.onBarkReaction.RemoveListener(ReactToBark);
             }
         }
 

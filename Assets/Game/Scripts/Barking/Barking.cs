@@ -1,5 +1,6 @@
 using FD.Player;
 using UnityEngine;
+using FMODUnity; // Add this line to import FMOD Unity integration
 
 namespace FD.Barking
 {
@@ -9,6 +10,7 @@ namespace FD.Barking
         [SerializeField] private float barkDelay = 0.5f;
         [SerializeField] private GameObject barkEffect;
         [SerializeField] private Transform barkSpawn;
+        [SerializeField] private EventReference barkEvent; // Add this line for the FMOD event
 
         private PlayerController _controller;
         private float _barkTimer = 0f;
@@ -24,7 +26,9 @@ namespace FD.Barking
         {
             _controller.animator?.ResetTrigger(AnimHashBark);
             if (_barkTimer > 0) return;
-            FMODUnity.RuntimeManager.PlayOneShot("event:/Bark"); 
+
+            // Play the FMOD event
+            RuntimeManager.PlayOneShot(barkEvent);
 
             _controller.animator?.SetTrigger(AnimHashBark);
             if (barkEffect)
@@ -41,7 +45,6 @@ namespace FD.Barking
                 var npcReaction = hitCollider.GetComponentInChildren<IBarkReaction>();
                 npcReaction?.React(this);
             }
-
             _barkTimer = barkDelay;
         }
 

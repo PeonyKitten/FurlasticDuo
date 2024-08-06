@@ -50,6 +50,7 @@ namespace FD.Player
         private float _coyoteTimeTimer;
         private float _jumpInputBufferTimer;
         private float _jumpTimer;
+        private GameObject _fallEffect;
 
         private PlayerController _playerController;
         private Rigidbody _rb;  
@@ -57,8 +58,10 @@ namespace FD.Player
         private RaycastHit _hitInfo;
 
         private GameObject _currentGroundIndicator;
-
-
+        
+        private static readonly int AnimHashJumpStart = Animator.StringToHash("JumpStart");
+        private static readonly int AnimHashIsGrounded = Animator.StringToHash("IsGrounded");
+        
         private void Start()
         {
             _playerController = GetComponent<PlayerController>();
@@ -149,7 +152,8 @@ namespace FD.Player
 
         private void OnJumpStart()
         {
-            _playerController.animator?.SetBool("IsGrounded", false);
+            _playerController.animator.SetBool(AnimHashIsGrounded, false);
+            _playerController.animator.SetTrigger(AnimHashJumpStart);
             if (jumpStartEffect)
             {
                 var rotation = ignoreGroundEffectSpawnRotation ? Quaternion.identity : Quaternion.FromToRotation(Vector3.up, _hitInfo.normal);
@@ -175,14 +179,7 @@ namespace FD.Player
         {
             if (fallStartEffect)
             {
-                if (globalFallEffect)
-                {
-                    Instantiate(fallStartEffect, transform.position, Quaternion.identity);
-                }
-                else
-                {
-                    Instantiate(fallStartEffect, transform);
-                }
+                _fallEffect = globalFallEffect ? Instantiate(fallStartEffect, transform.position, Quaternion.identity) : Instantiate(fallStartEffect, transform);
             }
             _playerController.gravityMultiplier = Vector3.one * fallGravityMultiplier;
             
@@ -196,7 +193,13 @@ namespace FD.Player
         // We've touched the ground
         private void OnJumpOver()
         {
-            _playerController.animator?.SetBool("IsGrounded", true);
+            _playerController.animator.SetBool(AnimHashIsGrounded, true);
+            if (_fallEffect)
+            {
+                Destroy(_fallEffect);
+                _fallEffect = null;
+            }
+            
             if (jumpEndEffect)
             {
                 var rotation = ignoreGroundEffectSpawnRotation ? Quaternion.identity : Quaternion.FromToRotation(Vector3.up, _hitInfo.normal);

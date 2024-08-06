@@ -26,6 +26,7 @@ namespace FD.Grab
         private InputAction _grabAction;
         private readonly Collider[] _colliders = new Collider[10];
         private static readonly int AnimHashMoveDirectionDot = Animator.StringToHash("MoveDirectionDot");
+        private static readonly int IsDragging = Animator.StringToHash("IsDragging");
 
         public bool IsGrabbing { get; private set; }
         public IGrabbable CurrentGrabbable { get; private set; }
@@ -36,6 +37,11 @@ namespace FD.Grab
             _grabPoint = new GameObject("GrabPoint").transform;
             _grabPoint.SetParent(transform);
             _grabPoint.localPosition = new Vector3(0, 0, 1.4f);
+        }
+
+        private void Update()
+        {
+            _playerController.animator.SetFloat(AnimHashMoveDirectionDot, Vector3.Dot(_playerController.Movement, transform.forward));
         }
 
         private void OnGrab()
