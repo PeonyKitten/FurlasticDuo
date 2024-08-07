@@ -99,6 +99,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 7034467325486300249}
+    - targetCorrespondingSourceObject: {fileID: 827027355028622271, guid: 790365d60d4c4994f8a4edf887bdd459,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6761821706891724549}
   m_SourcePrefab: {fileID: 100100000, guid: 790365d60d4c4994f8a4edf887bdd459, type: 3}
 --- !u!1 &2182941544294155657 stripped
 GameObject:
@@ -156,6 +160,61 @@ MonoBehaviour:
           m_StringArgument: activate
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 6761821706891724549}
+        m_TargetAssemblyTypeName: FMODUnity.StudioEventEmitter, FMODUnity
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: activate
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 5133254790027808093}
+        m_TargetAssemblyTypeName: UnityEngine.Collider, UnityEngine
+        m_MethodName: set_enabled
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: activate
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &6761821706891724549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2182941544294155657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  EventReference:
+    Guid:
+      Data1: 1106744515
+      Data2: 1248787022
+      Data3: 1266631858
+      Data4: -770120771
+    Path: event:/Switch
+  Event: 
+  PlayEvent: 0
+  StopEvent: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  NonRigidbodyVelocity: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 1
+  OverrideMaxDistance: 20
 --- !u!95 &6953457158083568793 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 8452914870443862703, guid: 790365d60d4c4994f8a4edf887bdd459,
