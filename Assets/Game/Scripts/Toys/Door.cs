@@ -2,6 +2,7 @@ using System;
 using FMODUnity;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace FD.Toys
 {
@@ -38,8 +39,11 @@ namespace FD.Toys
         [SerializeField] private Animator animator;
         [SerializeField] private bool reverseAnimation;
 
+        [FormerlySerializedAs("doorOpenSound")]
         [Header("FMOD Events")]
-        [SerializeField] private StudioEventEmitter doorOpenSound;
+        [SerializeField] private StudioEventEmitter doorStartOpenSound;
+        [SerializeField] private StudioEventEmitter doorOpenedSound;
+        [SerializeField] private StudioEventEmitter doorStartCloseSound;
         [SerializeField] private StudioEventEmitter doorClosedSound;
 
         [Header("Script Override")]
@@ -120,22 +124,48 @@ namespace FD.Toys
             }
         }
 
+        private void OnStartOpen()
+        {
+            if (doorStartOpenSound)
+            {
+                doorStartOpenSound.Play();
+            }
+        }
+
+        private void OnStartClose()
+        {
+            if (doorStartCloseSound)
+            {
+                doorStartCloseSound.Play();
+            }
+        }
+
         public void OpenDoor()
         {
             _isOpening = true;
             _isClosing = false;
+            OnStartOpen();
         }
 
         public void CloseDoor()
         {
             _isClosing = true;
             _isOpening = false;
+            OnStartClose();
         }
 
         public void ToggleDoor()
         {
              _isClosing = IsOpen;
              _isOpening = !IsOpen;
+             if (_isOpening)
+             {
+                 OnStartOpen();
+             }
+             else
+             {
+                 OnStartClose();
+             }
         }
 
         public void ApplyOpenness(float openness)
@@ -180,9 +210,9 @@ namespace FD.Toys
 
         private void OnDoorOpen()
         {
-            if (doorOpenSound)
+            if (doorOpenedSound)
             {
-                doorOpenSound.Play();
+                doorOpenedSound.Play();
             }
             onDoorOpen?.Invoke();
         }
