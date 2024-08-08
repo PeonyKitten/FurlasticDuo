@@ -21,9 +21,8 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: MV_HamWheel_Walk
-  m_Shader: {fileID: -6465566751694194690, guid: bf00925b2fbda49499ccc0de47e0d8ca,
-    type: 3}
-  m_Parent: {fileID: 2100000, guid: 019907f1de7aba64087280ee8ea1fa30, type: 2}
+  m_Shader: {fileID: 4800000, guid: c8c99305e21e7ac4c9a3f88ab12e11c6, type: 3}
+  m_Parent: {fileID: 2100000, guid: 45b015eb90f96a146bb321ed31bd73e5, type: 2}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -33,12 +32,12 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
+  m_LockedProperties: _Metallic
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _Texture0:
-        m_Texture: {fileID: 2800000, guid: 0cf39dff221b7eb4a8f70d2dd1be2e63, type: 3}
+        m_Texture: {fileID: 2800000, guid: c1884be0564356b4a9223b26a3a367ce, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _mainTex:
@@ -47,9 +46,16 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Metallic: 0.54
+    - _Smoothness: 0
+    - _Tile: 8
+    - _Tile_Pattern: 0.2
     - _scale: 1.36
     m_Colors:
     - _Color: {r: 1, g: 0.033018887, b: 0.033018887, a: 1}
+    - _Color_A: {r: 0.374466, g: 0.4200354, b: 0.4811321, a: 1}
+    - _Color_B: {r: 0.5849056, g: 0.5381027, b: 0.23451404, a: 1}
+    - _Emis: {r: 0.13089006, g: 0.14843035, b: 0.9999999, a: 0}
     - _Glow: {r: 2.010471, g: 0.7680477, b: 0, a: 0}
     - _colorTint: {r: 0.57627267, g: 0.60545427, b: 0.6981132, a: 0}
     - _rim: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 0}
