@@ -13,7 +13,6 @@ Shader "FD/S_Thehole_lid"
 		_Color_A("Color_A", Color) = (0.5372549,0.6509804,0.7176471,1)
 		_Color_B("Color_B", Color) = (0.5372549,0.6509804,0.7176471,1)
 		[HDR]_Emis1("Emis", Color) = (0.06150281,1,0,0)
-		_Metallic("Metallic", Range( 0 , 1)) = 0
 		_Smoothness("Smoothness", Range( 0 , 1)) = 0
 		_Tile("Tile", Float) = 1
 		_Tile_Pattern("Tile_Pattern", Float) = 1
@@ -339,7 +338,6 @@ Shader "FD/S_Thehole_lid"
 			float _Tile_Pattern;
 			float _Tile;
 			float _Melting;
-			float _Metallic;
 			float _Smoothness;
 			float _distance;
 			float _Min;
@@ -597,26 +595,22 @@ Shader "FD/S_Thehole_lid"
 				float4 temp_output_25_0 = ( _MeltingColor * tex2DNode13.g );
 				float4 lerpResult66 = lerp( ( floor_Emis52 + temp_output_25_0 ) , temp_output_25_0 , tex2DNode13.g);
 				
-				float Floor_metallic53 = ( tex2DNode50.r * _Metallic );
-				float lerpResult65 = lerp( Floor_metallic53 , 0.0 , tex2DNode13.g);
-				
 				float Floor_Smothness54 = ( tex2DNode50.a * _Smoothness );
 				float lerpResult64 = lerp( Floor_Smothness54 , 0.0 , tex2DNode13.g);
 				
 				float2 appendResult20 = (float2(0.0 , ( _Melting + _distance )));
 				float2 texCoord19 = IN.ase_texcoord8.xy * float2( 1,1 ) + appendResult20;
 				float2 texCoord12 = IN.ase_texcoord8.zw * float2( 1,1 ) + float2( 0,0 );
-				float temp_output_27_0 = ( 1.0 - ( tex2D( _Texture0, texCoord19 ).g * (_Min + (tex2D( _Texture0, texCoord12 ).r - _Melting) * (1.0 - _Min) / (1.0 - _Melting)) ) );
 				
 
 				float3 BaseColor = lerpResult70.rgb;
 				float3 Normal = float3(0, 0, 1);
 				float3 Emission = lerpResult66.rgb;
 				float3 Specular = 0.5;
-				float Metallic = lerpResult65;
+				float Metallic = 0;
 				float Smoothness = lerpResult64;
 				float Occlusion = 1;
-				float Alpha = temp_output_27_0;
+				float Alpha = ( 1.0 - ( tex2D( _Texture0, texCoord19 ).g * (_Min + (tex2D( _Texture0, texCoord12 ).r - _Melting) * (1.0 - _Min) / (1.0 - _Melting)) ) );
 				float AlphaClipThreshold = _Clip;
 				float AlphaClipThresholdShadow = 0.5;
 				float3 BakedGI = 0;
@@ -952,7 +946,6 @@ Shader "FD/S_Thehole_lid"
 			float _Tile_Pattern;
 			float _Tile;
 			float _Melting;
-			float _Metallic;
 			float _Smoothness;
 			float _distance;
 			float _Min;
@@ -1164,10 +1157,9 @@ Shader "FD/S_Thehole_lid"
 				float2 appendResult20 = (float2(0.0 , ( _Melting + _distance )));
 				float2 texCoord19 = IN.ase_texcoord3.xy * float2( 1,1 ) + appendResult20;
 				float2 texCoord12 = IN.ase_texcoord3.zw * float2( 1,1 ) + float2( 0,0 );
-				float temp_output_27_0 = ( 1.0 - ( tex2D( _Texture0, texCoord19 ).g * (_Min + (tex2D( _Texture0, texCoord12 ).r - _Melting) * (1.0 - _Min) / (1.0 - _Melting)) ) );
 				
 
-				float Alpha = temp_output_27_0;
+				float Alpha = ( 1.0 - ( tex2D( _Texture0, texCoord19 ).g * (_Min + (tex2D( _Texture0, texCoord12 ).r - _Melting) * (1.0 - _Min) / (1.0 - _Melting)) ) );
 				float AlphaClipThreshold = _Clip;
 				float AlphaClipThresholdShadow = 0.5;
 
@@ -1299,7 +1291,6 @@ Shader "FD/S_Thehole_lid"
 			float _Tile_Pattern;
 			float _Tile;
 			float _Melting;
-			float _Metallic;
 			float _Smoothness;
 			float _distance;
 			float _Min;
@@ -1490,10 +1481,9 @@ Shader "FD/S_Thehole_lid"
 				float2 appendResult20 = (float2(0.0 , ( _Melting + _distance )));
 				float2 texCoord19 = IN.ase_texcoord3.xy * float2( 1,1 ) + appendResult20;
 				float2 texCoord12 = IN.ase_texcoord3.zw * float2( 1,1 ) + float2( 0,0 );
-				float temp_output_27_0 = ( 1.0 - ( tex2D( _Texture0, texCoord19 ).g * (_Min + (tex2D( _Texture0, texCoord12 ).r - _Melting) * (1.0 - _Min) / (1.0 - _Melting)) ) );
 				
 
-				float Alpha = temp_output_27_0;
+				float Alpha = ( 1.0 - ( tex2D( _Texture0, texCoord19 ).g * (_Min + (tex2D( _Texture0, texCoord12 ).r - _Melting) * (1.0 - _Min) / (1.0 - _Melting)) ) );
 				float AlphaClipThreshold = _Clip;
 
 				#ifdef ASE_DEPTH_WRITE_ON
@@ -1603,7 +1593,6 @@ Shader "FD/S_Thehole_lid"
 			float _Tile_Pattern;
 			float _Tile;
 			float _Melting;
-			float _Metallic;
 			float _Smoothness;
 			float _distance;
 			float _Min;
@@ -1819,12 +1808,11 @@ Shader "FD/S_Thehole_lid"
 				float2 appendResult20 = (float2(0.0 , ( _Melting + _distance )));
 				float2 texCoord19 = IN.ase_texcoord4.xy * float2( 1,1 ) + appendResult20;
 				float2 texCoord12 = IN.ase_texcoord4.zw * float2( 1,1 ) + float2( 0,0 );
-				float temp_output_27_0 = ( 1.0 - ( tex2D( _Texture0, texCoord19 ).g * (_Min + (tex2D( _Texture0, texCoord12 ).r - _Melting) * (1.0 - _Min) / (1.0 - _Melting)) ) );
 				
 
 				float3 BaseColor = lerpResult70.rgb;
 				float3 Emission = lerpResult66.rgb;
-				float Alpha = temp_output_27_0;
+				float Alpha = ( 1.0 - ( tex2D( _Texture0, texCoord19 ).g * (_Min + (tex2D( _Texture0, texCoord12 ).r - _Melting) * (1.0 - _Min) / (1.0 - _Melting)) ) );
 				float AlphaClipThreshold = _Clip;
 
 				#ifdef _ALPHATEST_ON
@@ -1925,7 +1913,6 @@ Shader "FD/S_Thehole_lid"
 			float _Tile_Pattern;
 			float _Tile;
 			float _Melting;
-			float _Metallic;
 			float _Smoothness;
 			float _distance;
 			float _Min;
@@ -2121,11 +2108,10 @@ Shader "FD/S_Thehole_lid"
 				float2 appendResult20 = (float2(0.0 , ( _Melting + _distance )));
 				float2 texCoord19 = IN.ase_texcoord2.xy * float2( 1,1 ) + appendResult20;
 				float2 texCoord12 = IN.ase_texcoord2.zw * float2( 1,1 ) + float2( 0,0 );
-				float temp_output_27_0 = ( 1.0 - ( tex2D( _Texture0, texCoord19 ).g * (_Min + (tex2D( _Texture0, texCoord12 ).r - _Melting) * (1.0 - _Min) / (1.0 - _Melting)) ) );
 				
 
 				float3 BaseColor = lerpResult70.rgb;
-				float Alpha = temp_output_27_0;
+				float Alpha = ( 1.0 - ( tex2D( _Texture0, texCoord19 ).g * (_Min + (tex2D( _Texture0, texCoord12 ).r - _Melting) * (1.0 - _Min) / (1.0 - _Melting)) ) );
 				float AlphaClipThreshold = _Clip;
 
 				half4 color = half4(BaseColor, Alpha );
@@ -2253,7 +2239,6 @@ Shader "FD/S_Thehole_lid"
 			float _Tile_Pattern;
 			float _Tile;
 			float _Melting;
-			float _Metallic;
 			float _Smoothness;
 			float _distance;
 			float _Min;
@@ -2460,11 +2445,10 @@ Shader "FD/S_Thehole_lid"
 				float2 appendResult20 = (float2(0.0 , ( _Melting + _distance )));
 				float2 texCoord19 = IN.ase_texcoord5.xy * float2( 1,1 ) + appendResult20;
 				float2 texCoord12 = IN.ase_texcoord5.zw * float2( 1,1 ) + float2( 0,0 );
-				float temp_output_27_0 = ( 1.0 - ( tex2D( _Texture0, texCoord19 ).g * (_Min + (tex2D( _Texture0, texCoord12 ).r - _Melting) * (1.0 - _Min) / (1.0 - _Melting)) ) );
 				
 
 				float3 Normal = float3(0, 0, 1);
-				float Alpha = temp_output_27_0;
+				float Alpha = ( 1.0 - ( tex2D( _Texture0, texCoord19 ).g * (_Min + (tex2D( _Texture0, texCoord12 ).r - _Melting) * (1.0 - _Min) / (1.0 - _Melting)) ) );
 				float AlphaClipThreshold = _Clip;
 
 				#ifdef ASE_DEPTH_WRITE_ON
@@ -2668,7 +2652,6 @@ Shader "FD/S_Thehole_lid"
 			float _Tile_Pattern;
 			float _Tile;
 			float _Melting;
-			float _Metallic;
 			float _Smoothness;
 			float _distance;
 			float _Min;
@@ -2921,26 +2904,22 @@ Shader "FD/S_Thehole_lid"
 				float4 temp_output_25_0 = ( _MeltingColor * tex2DNode13.g );
 				float4 lerpResult66 = lerp( ( floor_Emis52 + temp_output_25_0 ) , temp_output_25_0 , tex2DNode13.g);
 				
-				float Floor_metallic53 = ( tex2DNode50.r * _Metallic );
-				float lerpResult65 = lerp( Floor_metallic53 , 0.0 , tex2DNode13.g);
-				
 				float Floor_Smothness54 = ( tex2DNode50.a * _Smoothness );
 				float lerpResult64 = lerp( Floor_Smothness54 , 0.0 , tex2DNode13.g);
 				
 				float2 appendResult20 = (float2(0.0 , ( _Melting + _distance )));
 				float2 texCoord19 = IN.ase_texcoord8.xy * float2( 1,1 ) + appendResult20;
 				float2 texCoord12 = IN.ase_texcoord8.zw * float2( 1,1 ) + float2( 0,0 );
-				float temp_output_27_0 = ( 1.0 - ( tex2D( _Texture0, texCoord19 ).g * (_Min + (tex2D( _Texture0, texCoord12 ).r - _Melting) * (1.0 - _Min) / (1.0 - _Melting)) ) );
 				
 
 				float3 BaseColor = lerpResult70.rgb;
 				float3 Normal = float3(0, 0, 1);
 				float3 Emission = lerpResult66.rgb;
 				float3 Specular = 0.5;
-				float Metallic = lerpResult65;
+				float Metallic = 0;
 				float Smoothness = lerpResult64;
 				float Occlusion = 1;
-				float Alpha = temp_output_27_0;
+				float Alpha = ( 1.0 - ( tex2D( _Texture0, texCoord19 ).g * (_Min + (tex2D( _Texture0, texCoord12 ).r - _Melting) * (1.0 - _Min) / (1.0 - _Melting)) ) );
 				float AlphaClipThreshold = _Clip;
 				float AlphaClipThresholdShadow = 0.5;
 				float3 BakedGI = 0;
@@ -3129,7 +3108,6 @@ Shader "FD/S_Thehole_lid"
 			float _Tile_Pattern;
 			float _Tile;
 			float _Melting;
-			float _Metallic;
 			float _Smoothness;
 			float _distance;
 			float _Min;
@@ -3299,10 +3277,9 @@ Shader "FD/S_Thehole_lid"
 				float2 appendResult20 = (float2(0.0 , ( _Melting + _distance )));
 				float2 texCoord19 = IN.ase_texcoord.xy * float2( 1,1 ) + appendResult20;
 				float2 texCoord12 = IN.ase_texcoord.zw * float2( 1,1 ) + float2( 0,0 );
-				float temp_output_27_0 = ( 1.0 - ( tex2D( _Texture0, texCoord19 ).g * (_Min + (tex2D( _Texture0, texCoord12 ).r - _Melting) * (1.0 - _Min) / (1.0 - _Melting)) ) );
 				
 
-				surfaceDescription.Alpha = temp_output_27_0;
+				surfaceDescription.Alpha = ( 1.0 - ( tex2D( _Texture0, texCoord19 ).g * (_Min + (tex2D( _Texture0, texCoord12 ).r - _Melting) * (1.0 - _Min) / (1.0 - _Melting)) ) );
 				surfaceDescription.AlphaClipThreshold = _Clip;
 
 				#if _ALPHATEST_ON
@@ -3412,7 +3389,6 @@ Shader "FD/S_Thehole_lid"
 			float _Tile_Pattern;
 			float _Tile;
 			float _Melting;
-			float _Metallic;
 			float _Smoothness;
 			float _distance;
 			float _Min;
@@ -3581,10 +3557,9 @@ Shader "FD/S_Thehole_lid"
 				float2 appendResult20 = (float2(0.0 , ( _Melting + _distance )));
 				float2 texCoord19 = IN.ase_texcoord.xy * float2( 1,1 ) + appendResult20;
 				float2 texCoord12 = IN.ase_texcoord.zw * float2( 1,1 ) + float2( 0,0 );
-				float temp_output_27_0 = ( 1.0 - ( tex2D( _Texture0, texCoord19 ).g * (_Min + (tex2D( _Texture0, texCoord12 ).r - _Melting) * (1.0 - _Min) / (1.0 - _Melting)) ) );
 				
 
-				surfaceDescription.Alpha = temp_output_27_0;
+				surfaceDescription.Alpha = ( 1.0 - ( tex2D( _Texture0, texCoord19 ).g * (_Min + (tex2D( _Texture0, texCoord12 ).r - _Melting) * (1.0 - _Min) / (1.0 - _Melting)) ) );
 				surfaceDescription.AlphaClipThreshold = _Clip;
 
 				#if _ALPHATEST_ON
@@ -3623,7 +3598,7 @@ Node;AmplifyShaderEditor.RangedFloatNode;17;-2096,400;Inherit;False;Property;_Me
 Node;AmplifyShaderEditor.SimpleAddOpNode;21;-1728,544;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;15;-1984,288;Inherit;False;Constant;_U;U;1;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.DynamicAppendNode;20;-1488,512;Inherit;False;FLOAT2;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT2;0
-Node;AmplifyShaderEditor.TexturePropertyNode;10;-1216,-256;Inherit;True;Property;_Texture0;Texture 0;2;0;Create;True;0;0;0;False;0;False;81c9b213a665113479eea817ee3f70ad;None;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
+Node;AmplifyShaderEditor.TexturePropertyNode;10;-1216,-256;Inherit;True;Property;_Texture0;Texture 0;2;0;Create;True;0;0;0;False;0;False;81c9b213a665113479eea817ee3f70ad;81c9b213a665113479eea817ee3f70ad;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
 Node;AmplifyShaderEditor.TextureCoordinatesNode;12;-1296,-48;Inherit;False;0;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.TextureCoordinatesNode;19;-1296,464;Inherit;False;1;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.SamplerNode;11;-880,-48;Inherit;True;Property;_TextureSample0;Texture Sample 0;1;0;Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
@@ -3664,23 +3639,22 @@ Node;AmplifyShaderEditor.RangedFloatNode;55;-336,-512;Inherit;False;Property;_Sm
 Node;AmplifyShaderEditor.TexturePropertyNode;56;-1472,-1024;Inherit;True;Property;_Floor;Floor;3;0;Create;True;0;0;0;False;0;False;None;None;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
 Node;AmplifyShaderEditor.WorldPosInputsNode;57;-2336,-960;Inherit;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
 Node;AmplifyShaderEditor.RangedFloatNode;58;-352,-640;Inherit;False;Property;_Metallic;Metallic;7;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.LerpOp;70;32,-192;Inherit;False;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
-Node;AmplifyShaderEditor.GetLocalVarNode;59;-384,-208;Inherit;False;51;Floor_Color;1;0;OBJECT;;False;1;COLOR;0
 Node;AmplifyShaderEditor.SimpleAddOpNode;72;-320,-1648;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;73;320,-1632;Inherit;False;Color_Flat;-1;True;1;0;COLOR;0,0,0,0;False;1;COLOR;0
-Node;AmplifyShaderEditor.GetLocalVarNode;74;-384,-112;Inherit;False;73;Color_Flat;1;0;OBJECT;;False;1;COLOR;0
-Node;AmplifyShaderEditor.GetLocalVarNode;60;-400,0;Inherit;False;52;floor_Emis;1;0;OBJECT;;False;1;COLOR;0
 Node;AmplifyShaderEditor.LerpOp;66;48,48;Inherit;False;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
 Node;AmplifyShaderEditor.SimpleAddOpNode;67;-144,0;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.LerpOp;65;64,192;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;61;-224,192;Inherit;False;53;Floor_metallic;1;0;OBJECT;;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;75;-224,272;Inherit;False;Constant;_Float1;Float 1;14;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.SaturateNode;69;-32,512;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.OneMinusNode;27;-208,512;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;24;-224,640;Inherit;False;Property;_Clip;Clip;11;0;Create;True;0;0;0;False;0;False;0.5;0;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.LerpOp;64;48,352;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;62;-288,352;Inherit;False;54;Floor_Smothness;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;76;-256,432;Inherit;False;Constant;_Float2;Float 2;14;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.LerpOp;70;-128,-320;Inherit;False;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
+Node;AmplifyShaderEditor.GetLocalVarNode;60;-400,0;Inherit;False;52;floor_Emis;1;0;OBJECT;;False;1;COLOR;0
+Node;AmplifyShaderEditor.GetLocalVarNode;74;-544,-240;Inherit;False;73;Color_Flat;1;0;OBJECT;;False;1;COLOR;0
+Node;AmplifyShaderEditor.GetLocalVarNode;59;-544,-336;Inherit;False;51;Floor_Color;1;0;OBJECT;;False;1;COLOR;0
+Node;AmplifyShaderEditor.RangedFloatNode;75;-208,272;Inherit;False;Constant;_Float1;Float 1;14;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;0;128,80;Float;False;False;-1;2;UnityEditor.ShaderGraphLitGUI;0;1;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ExtraPrePass;0;0;ExtraPrePass;5;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;0;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;0;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;2;0,0;Float;False;False;-1;2;UnityEditor.ShaderGraphLitGUI;0;1;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ShadowCaster;0;2;ShadowCaster;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;False;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;True;3;False;;False;True;1;LightMode=ShadowCaster;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;3;0,0;Float;False;False;-1;2;UnityEditor.ShaderGraphLitGUI;0;1;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;DepthOnly;0;3;DepthOnly;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;True;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;False;False;True;1;LightMode=DepthOnly;False;False;0;;0;0;Standard;0;False;0
@@ -3742,9 +3716,6 @@ WireConnection;51;0;47;0
 WireConnection;52;0;49;0
 WireConnection;53;0;46;0
 WireConnection;54;0;45;0
-WireConnection;70;0;59;0
-WireConnection;70;1;74;0
-WireConnection;70;2;13;2
 WireConnection;72;0;42;0
 WireConnection;72;1;41;0
 WireConnection;73;0;72;0
@@ -3756,16 +3727,17 @@ WireConnection;67;1;25;0
 WireConnection;65;0;61;0
 WireConnection;65;1;75;0
 WireConnection;65;2;13;2
-WireConnection;69;0;27;0
 WireConnection;27;0;23;0
 WireConnection;64;0;62;0
 WireConnection;64;1;76;0
 WireConnection;64;2;13;2
+WireConnection;70;0;59;0
+WireConnection;70;1;74;0
+WireConnection;70;2;13;2
 WireConnection;1;0;70;0
 WireConnection;1;2;66;0
-WireConnection;1;3;65;0
 WireConnection;1;4;64;0
 WireConnection;1;6;27;0
 WireConnection;1;7;24;0
 ASEEND*/
-//CHKSM=E0CD8B20E17CFBD4A40ADFD2AA4AE7C00E4CDCC4
+//CHKSM=531A032DD0E04224B8BBA4544EA3990908ED53AC
