@@ -22,9 +22,6 @@ namespace FD.NPC.Security
         public float investigateSpeed = 1.5f;
         public float chaseSpeed = 2f;
 
-        [Header("Behavior Settings")]
-        public bool stayInPlace = false;
-
         public UnityEvent<Vector3> onBarkReaction = new UnityEvent<Vector3>();
         public Vector3 GetLastBarkOrigin() => _lastBarkOrigin;
 
