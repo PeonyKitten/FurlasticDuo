@@ -67,24 +67,24 @@ namespace FD.NPC.Security
         {
             if (_followPathBehaviour != null)
             {
-                if (!StayInPlace)
-                {
-                    _followPathBehaviour.Weight = 1;
-                    SecurityNPC.SetSpeed(CachedSpeed);
-                }
-                else
-                {
-                    _followPathBehaviour.Weight = 0;
-                    SecurityNPC.SetSpeed(0);
-                }
+                _followPathBehaviour.Weight = 1;
+                SecurityNPC.SetSpeed(CachedSpeed);
             }
         }
 
         private void OnReachWaypoint(Vector3 waypoint)
         {
-            SecurityNPC.SetSpeed(0);
-            SecurityNPC.SetIdleChoice(idleChoiceAtWaypoint);
-            _idleTimer = idleDuration;
+            if (!PlayerDetection.CanSeePlayer(true))
+            {
+                SecurityNPC.SetSpeed(0);
+                SecurityNPC.SetIdleChoice(idleChoiceAtWaypoint);
+                _idleTimer = idleDuration;
+            }
+           else
+            {
+                SecurityNPC.PlayAnimation("Alert");
+                fsm.ChangeState(goToChaseStateName);
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ namespace FD.NPC.Security
     {
         public FOV fov;
         [SerializeField] private LayerMask wallLayerMask;
+        [SerializeField] private float closeDetectionRadius = 2f;
         private readonly HashSet<Transform> _playersInRange = new();
         private SphereCollider _collider;
 
@@ -46,6 +47,11 @@ namespace FD.NPC.Security
             // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
             foreach (var player in _playersInRange)
             {
+                if (Vector3.Distance(transform.position, player.position) <= closeDetectionRadius)
+                {
+                    return true;
+                }
+
                 if (inFOV && !fov.IsContained(player.position)) continue;
                 
                 var ray = new Ray(transform.position, player.position - transform.position);
@@ -66,9 +72,17 @@ namespace FD.NPC.Security
             var sphereRadius = _collider.radius * _collider.transform.lossyScale.magnitude;
             
             Transform result = null;
-            
+            float closestDistance = float.MaxValue;
+
             foreach (var player in _playersInRange)
             {
+                float distance = Vector3.Distance(transform.position, player.position);
+
+                if (distance <= closeDetectionRadius)
+                {
+                    return player;
+                }
+
                 if (inFOV && !fov.IsContained(player.position)) continue;
                 
                 var ray = new Ray(transform.position, player.position - transform.position);
@@ -76,10 +90,10 @@ namespace FD.NPC.Security
                     wallLayerMask.value, QueryTriggerInteraction.Ignore);
             
                 if (!didHit || !hitInfo.collider.CompareTag("Player")) continue;
-                
-                if (result is null || Vector3.Distance(transform.position, player.position) <
-                    Vector3.Distance(transform.position, result.position))
+
+                if (result == null || distance < closestDistance)
                 {
+                    closestDistance = distance;
                     result = player;
                 }
             }
@@ -106,6 +120,12 @@ namespace FD.NPC.Security
         public void Reset()
         { 
             _playersInRange.Clear();
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, closeDetectionRadius);
         }
     }
 }

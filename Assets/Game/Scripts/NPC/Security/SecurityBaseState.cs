@@ -9,7 +9,6 @@ namespace FD.NPC.Security
         protected Security SecurityNPC;
         protected SteeringAgent SteeringAgent;
         protected DetectPlayer PlayerDetection;
-        protected bool StayInPlace => SecurityNPC.stayInPlace;
         protected float CachedSpeed { get; set; }
 
         public override void Init(GameObject owner, FSM fsm)
