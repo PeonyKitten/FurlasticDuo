@@ -1,6 +1,8 @@
 using System;
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace FD.Toys
 {
@@ -36,6 +38,13 @@ namespace FD.Toys
         [SerializeField] private StartState startState = StartState.None;
         [SerializeField] private Animator animator;
         [SerializeField] private bool reverseAnimation;
+
+        [FormerlySerializedAs("doorOpenSound")]
+        [Header("FMOD Events")]
+        [SerializeField] private StudioEventEmitter doorStartOpenSound;
+        [SerializeField] private StudioEventEmitter doorOpenedSound;
+        [SerializeField] private StudioEventEmitter doorStartCloseSound;
+        [SerializeField] private StudioEventEmitter doorClosedSound;
 
         [Header("Script Override")]
         [SerializeField] public bool scriptOverride;
@@ -115,22 +124,48 @@ namespace FD.Toys
             }
         }
 
+        private void OnStartOpen()
+        {
+            if (doorStartOpenSound)
+            {
+                doorStartOpenSound.Play();
+            }
+        }
+
+        private void OnStartClose()
+        {
+            if (doorStartCloseSound)
+            {
+                doorStartCloseSound.Play();
+            }
+        }
+
         public void OpenDoor()
         {
             _isOpening = true;
             _isClosing = false;
+            OnStartOpen();
         }
 
         public void CloseDoor()
         {
             _isClosing = true;
             _isOpening = false;
+            OnStartClose();
         }
 
         public void ToggleDoor()
         {
              _isClosing = IsOpen;
              _isOpening = !IsOpen;
+             if (_isOpening)
+             {
+                 OnStartOpen();
+             }
+             else
+             {
+                 OnStartClose();
+             }
         }
 
         public void ApplyOpenness(float openness)
@@ -158,19 +193,37 @@ namespace FD.Toys
             if (_isOpening && openness >= 1)
             {
                 _isOpening = false;
-                onDoorOpen?.Invoke();
+                OnDoorOpen();
             }
             
             if (_isClosing && openness <= 0)
             {
                 _isClosing = false;
-                onDoorClose?.Invoke();
+                OnDoorClose();
             }
         }
 
         public void IncrementOpenness(float increment)
         {
             ApplyOpenness(_openness + increment);
+        }
+
+        private void OnDoorOpen()
+        {
+            if (doorOpenedSound)
+            {
+                doorOpenedSound.Play();
+            }
+            onDoorOpen?.Invoke();
+        }
+
+        private void OnDoorClose()
+        {
+            if (doorClosedSound)
+            {
+                doorClosedSound.Play();
+            }
+            onDoorClose?.Invoke();
         }
 
         private void Update()
@@ -191,14 +244,14 @@ namespace FD.Toys
             {
                 _openness = 1;
                 _isOpening = false;
-                onDoorOpen?.Invoke();
+                OnDoorOpen();
             }
 
             if (_openness < 0)
             {
                 _openness = 0;
                 _isClosing = false;
-                onDoorClose?.Invoke();
+                OnDoorClose();
             }
 
             ApplyPosition(Vector3.LerpUnclamped(closePosition, openPosition, _openness));
