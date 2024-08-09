@@ -53,6 +53,7 @@ namespace FD.Toys
         [Header("Callbacks")]
         public UnityEvent onDoorOpen;
         public UnityEvent onDoorClose;
+        public UnityEvent<float> onOpennessUpdate;
 
         public bool IsOpen => _openness > openThreshold;
         public float Openness => _openness;
@@ -71,12 +72,14 @@ namespace FD.Toys
             {
                 case StartState.Open:
                     _openness = 1;
+                    OnUpdateOpenness();
                     ApplyPosition(openPosition);
                     ApplyRotation(openRotationDeg);
                     UpdateAnimation();
                     break;
                 case StartState.Closed:
                     _openness = 0;
+                    OnUpdateOpenness();
                     ApplyPosition(closePosition);
                     ApplyRotation(closeRotationDeg);
                     UpdateAnimation();
@@ -140,6 +143,11 @@ namespace FD.Toys
             }
         }
 
+        private void OnUpdateOpenness()
+        {
+            onOpennessUpdate?.Invoke(_openness);
+        }
+
         public void OpenDoor()
         {
             _isOpening = true;
@@ -201,6 +209,8 @@ namespace FD.Toys
                 _isClosing = false;
                 OnDoorClose();
             }
+            
+            OnUpdateOpenness();
         }
 
         public void IncrementOpenness(float increment)
@@ -253,7 +263,8 @@ namespace FD.Toys
                 _isClosing = false;
                 OnDoorClose();
             }
-
+            
+            OnUpdateOpenness();
             ApplyPosition(Vector3.LerpUnclamped(closePosition, openPosition, _openness));
             ApplyRotation(Mathf.LerpUnclamped(closeRotationDeg, openRotationDeg, _openness));
             UpdateAnimation();
